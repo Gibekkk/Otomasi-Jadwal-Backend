@@ -14,28 +14,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "sessions")
-public class Session {
+@Table(name = "lecturer_types")
+public class LecturerType {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_session_user"))
-    private User user_id;
+    @Column(name = "name", nullable = false, length = 255)
+    private String name;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
-
-    @Column(name = "last_seen_at", nullable = false)
-    private LocalDateTime last_seen_at;
-
+    @OneToMany(mappedBy = "lecturer_type_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Lecturer> lecturers;
 }
