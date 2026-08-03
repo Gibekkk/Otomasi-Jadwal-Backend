@@ -4,10 +4,12 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
@@ -30,7 +32,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "username", nullable = false, length = 100)
+    @Column(name = "username", nullable = false, length = 50)
     private String username;
 
     @Column(name = "password", nullable = false, length = 255)
@@ -40,59 +42,59 @@ public class User {
     private String name;
 
     @Column(name = "deleted_at", nullable = true)
-    private LocalDateTime deleted_at;
+    private LocalDateTime deletedAt;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(nullable = true, name = "group_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_user_group_id"))
-    private UserGroup group_id;
+    private UserGroup groupId;
 
     @ManyToOne
     @JoinColumn(nullable = true, name = "prodi_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_user_prodi_id"))
-    private Category prodi_id;
+    private Category prodiId;
 
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Session> user_sessions;
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Session> userSessions;
 
-    @OneToMany(mappedBy = "created_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecturer> user_lecturer_created_by;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Lecturer> userLecturerCreatedBy;
 
-    @OneToMany(mappedBy = "edited_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecturer> user_lecturer_edited_by;
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Lecturer> userLecturerEditedBy;
 
-    @OneToMany(mappedBy = "created_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> user_course_created_by;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Course> userCourseCreatedBy;
 
-    @OneToMany(mappedBy = "edited_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> user_course_edited_by;
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Course> userCourseEditedBy;
 
-    @OneToMany(mappedBy = "created_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Room> user_room_created_by;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Room> userRoomCreatedBy;
 
-    @OneToMany(mappedBy = "edited_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Room> user_room_edited_by;
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Room> userRoomEditedBy;
 
-    @OneToMany(mappedBy = "created_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseSchedule> user_course_created_by;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<CourseSchedule> userCourseScheduleCreatedBy;
 
-    @OneToMany(mappedBy = "edited_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseSchedule> user_course_edited_by;
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<CourseSchedule> userCourseScheduleEditedBy;
 
-    @OneToMany(mappedBy = "created_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Category> user_category_created_by;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Category> userCategoryCreatedBy;
 
-    @OneToMany(mappedBy = "edited_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Category> user_category_edited_by;
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Category> userCategoryEditedBy;
 
-    @OneToMany(mappedBy = "created_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSpecialization> user_lecturer_specialization_created_by;
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<LecturerSpecialization> userLecturerSpecializationCreatedBy;
 
-    @OneToMany(mappedBy = "edited_by", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSpecialization> user_lecturer_specialization_edited_by;
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<LecturerSpecialization> userLecturerSpecializationEditedBy;
 
 }

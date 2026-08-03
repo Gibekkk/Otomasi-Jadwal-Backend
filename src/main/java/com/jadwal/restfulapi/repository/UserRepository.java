@@ -7,5 +7,5 @@ import com.jadwal.restfulapi.model.User;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, String> {
-    public Optional<User> findByEmailAndDeletedAtIsNull(String email);
+    public Optional<User> findByUsernameAndDeletedAtIsNull(String username);
 }

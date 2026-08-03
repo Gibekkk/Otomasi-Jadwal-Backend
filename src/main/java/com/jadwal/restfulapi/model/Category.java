@@ -4,10 +4,12 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
@@ -34,32 +36,32 @@ public class Category {
     private String name;
 
     @Column(name = "is_prodi", nullable = false)
-    private Boolean is_prodi;
+    private Boolean isProdi;
 
     @Column(name = "deleted_at", nullable = true)
-    private LocalDateTime deleted_at;
+    private LocalDateTime deletedAt;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_category_created_by"))
-    private User created_by;
+    private User createdBy;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "edited_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_category_edited_by"))
-    private User edited_by;
+    private User editedBy;
 
-    @OneToMany(mappedBy = "category_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> category_courses;
+    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Course> categoryCourses;
 
-    @OneToMany(mappedBy = "prodi_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<User> category_users;
+    @OneToMany(mappedBy = "prodiId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<User> categoryUsers;
 
-    @OneToMany(mappedBy = "prodi_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecturer> category_lecturers;
+    @OneToMany(mappedBy = "prodiId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Lecturer> categoryLecturers;
 
 }

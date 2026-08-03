@@ -30,12 +30,12 @@ public class Session {
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_session_user"))
-    private User user_id;
+    private User userId;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "last_seen_at", nullable = false)
-    private LocalDateTime last_seen_at;
+    private LocalDateTime lastSeenAt;
 
 }

@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -30,27 +30,27 @@ public class Lecture {
 
     @ManyToOne
     @JoinColumn(nullable = true, name = "lecturer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_lecturer_id"))
-    private Lecturer lecturer_id;
+    private Lecturer lecturerId;
 
     @ManyToOne
     @JoinColumn(nullable = true, name = "course_schedule_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_course_schedule_id"))
-    private CourseSchedule course_schedule_id;
+    private CourseSchedule courseScheduleId;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_created_by"))
-    private User created_by;
+    private User createdBy;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "edited_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_edited_by"))
-    private User edited_by;
+    private User editedBy;
 
     @Column(name = "deleted_at", nullable = true)
-    private LocalDateTime deleted_at;
+    private LocalDateTime deletedAt;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
 }

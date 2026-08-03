@@ -1,20 +1,28 @@
 package com.jadwal.restfulapi.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import com.jadwal.restfulapi.model.enums.Religion;
 
 @Getter
 @Setter
@@ -32,10 +40,10 @@ public class Lecturer {
     private String name;
 
     @Column(name = "is_dlb", nullable = false)
-    private Boolean is_dlb;
+    private Boolean isDlb;
 
     @Column(name = "is_male", nullable = false)
-    private Boolean is_male;
+    private Boolean isMale;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "religion", nullable = false)
@@ -43,35 +51,35 @@ public class Lecturer {
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "lecturer_type_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_lecturer_type"))
-    private LecturerType lecturer_type_id;
+    private LecturerType lecturerTypeId;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_created_by"))
-    private User created_by;
+    private User createdBy;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "edited_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_edited_by"))
-    private User edited_by;
+    private User editedBy;
 
     @ManyToOne
     @JoinColumn(nullable = true, name = "prodi_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_prodi_id"))
-    private Category prodi_id;
+    private Category prodiId;
 
     @Column(name = "deleted_at", nullable = true)
-    private LocalDateTime deleted_at;
+    private LocalDateTime deletedAt;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "lecturer_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSpecialization> lecturer_specializations;
+    @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<LecturerSpecialization> lecturerSpecializations;
 
-    @OneToMany(mappedBy = "lecturer_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSchedule> lecturer_schedules;
+    @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<LecturerSchedule> lecturerSchedules;
 
-    @OneToMany(mappedBy = "lecturer_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Lecture> lectures;
 }
