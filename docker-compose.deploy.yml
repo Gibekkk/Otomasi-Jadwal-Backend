@@ -1,8 +1,8 @@
 services:
   app:
-    image: moodbites-api:0.0.1
+    image: jadwal-api:0.0.1
     pull_policy: never
-    container_name: moodbites-app
+    container_name: jadwal-app
     restart: unless-stopped
     ports:
       - "8000:8080"
@@ -19,8 +19,8 @@ services:
       SERVER_IMAGE_HOST: ${SERVER_IMAGE_HOST}
       FIREBASE_CONFIG_NAME: ${FIREBASE_CONFIG_NAME}
     networks:
-      - moodbites-network
+      - jadwal-network
 
 networks:
-  moodbites-network:
+  jadwal-network:
     external: true

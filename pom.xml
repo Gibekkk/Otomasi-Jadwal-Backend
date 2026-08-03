@@ -10,11 +10,11 @@
 		<relativePath />
 		<!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.moodbites</groupId>
+	<groupId>com.jadwal</groupId>
 	<artifactId>restfulapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>restfulapi</name>
-	<description>MoodBites Backend Application</description>
+	<description>Jadwal Backend Application</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

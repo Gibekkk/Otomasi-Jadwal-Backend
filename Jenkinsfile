@@ -6,12 +6,12 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME         = 'moodbites-api'
+        IMAGE_NAME         = 'jadwal-api'
         IMAGE_TAG          = '0.0.1'
-        DEPLOY_DIR         = '/home/moodbites/moodbites/moodbites-backend'
+        DEPLOY_DIR         = '/home/jadwal/jadwal/jadwal-backend'
         HOST_IP            = '103.185.52.161'
-        HOST_USER          = 'moodbites'
-        FIREBASE_FILE_NAME = 'moodbites-7650f-firebase-adminsdk-fbsvc-1c0415a063.json'
+        HOST_USER          = 'jadwal'
+        FIREBASE_FILE_NAME = 'jadwal-7650f-firebase-adminsdk-fbsvc-1c0415a063.json'
     }
 
     stages {
@@ -36,10 +36,10 @@ pipeline {
         stage('Build & Deploy') {
             steps {
                 withCredentials([
-                    file(credentialsId: 'moodbites-env-file', variable: 'ENV_FILE'),
-                    file(credentialsId: 'moodbites-firebase-secret', variable: 'FIREBASE_FILE'),
+                    file(credentialsId: 'jadwal-env-file', variable: 'ENV_FILE'),
+                    file(credentialsId: 'jadwal-firebase-secret', variable: 'FIREBASE_FILE'),
                     sshUserPrivateKey(
-                        credentialsId: 'moodbites-host-ssh',
+                        credentialsId: 'jadwal-host-ssh',
                         keyFileVariable: 'SSH_KEY',
                         usernameVariable: 'SSH_USER'
                     )
