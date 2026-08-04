@@ -8,6 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.jadwal.restfulapi.model.LecturerType;
 
 public interface LecturerTypeRepository extends JpaRepository<LecturerType, String> {
-    public Optional<LecturerType> findById(String id);
-    public List<LecturerType> findAll();
 }

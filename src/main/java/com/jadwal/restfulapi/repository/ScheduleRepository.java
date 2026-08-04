@@ -8,6 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.jadwal.restfulapi.model.Schedule;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, String> {
-    public Optional<Schedule> findById(String id);
-    public List<Schedule> findAll();
 }

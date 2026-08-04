@@ -10,7 +10,5 @@ import com.jadwal.restfulapi.model.Session;
 
 
 public interface SessionRepository extends JpaRepository<Session, String> {
-    public Optional<Session> findByFcmToken(String fcmToken);
-    public Optional<Session> findByToken(String token);
     public ArrayList<Session> findByLastSeenAtBefore(LocalDateTime time);
 }
