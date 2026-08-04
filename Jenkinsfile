@@ -75,15 +75,17 @@ pipeline {
                         scp -i $SSH_KEY -o StrictHostKeyChecking=no \
                             $ENV_FILE $SSH_USER@${HOST_IP}:${DEPLOY_DIR}/.env
 
-                        ssh -i **** -o StrictHostKeyChecking=no ****@10.1.49.202 \
-                            "cd /opt/jadwal/jadwal-backend && \
-                            docker network create jadwal-network || true && \
-                            docker compose down || true && \
-                            gunzip -c jadwal-api-12.tar.gz | docker load && \
-                            docker tag jadwal-api:12 jadwal-api:0.0.1 && \
-                            docker compose up -d && \
-                            rm -f jadwal-api-12.tar.gz .env && \
-                            docker image prune -f"
+                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no \
+                            $SSH_USER@${HOST_IP} "
+                                cd ${DEPLOY_DIR} && \
+                                docker network create jadwal-network || true && \
+                                docker compose down || true && \
+                                gunzip -c ${IMAGE_TAR} | docker load && \
+                                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:0.0.1 && \
+                                docker compose up -d && \
+                                rm -f ${IMAGE_TAR} .env && \
+                                docker image prune -f
+                            "
                     '''
                 }
             }
