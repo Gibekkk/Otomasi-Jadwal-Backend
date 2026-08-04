@@ -78,10 +78,10 @@ pipeline {
                         ssh -i $SSH_KEY -o StrictHostKeyChecking=no \
                             $SSH_USER@${HOST_IP} "
                                 cd ${DEPLOY_DIR} &&
-                                docker compose --env-file .env down || true &&
+                                docker compose down || true &&
                                 gunzip -c ${IMAGE_TAR} | docker load &&
                                 docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:0.0.1 &&
-                                docker compose --env-file .env up -d &&
+                                docker compose up -d &&
                                 rm -f ${IMAGE_TAR} .env &&
                                 docker image prune -f
                             "
