@@ -11,6 +11,7 @@ pipeline {
         DEPLOY_DIR          = '/opt/jadwal/jadwal-backend'
         HOST_IP             = '10.1.49.202'
         HOST_USER           = 'root'
+        FIREBASE_FILE_NAME  = 'jadwal-7650f-firebase-adminsdk-fbsvc-1c0415a063.json'
         IMAGE_TAR           = "${IMAGE_NAME}-${IMAGE_TAG}.tar.gz"
     }
 
