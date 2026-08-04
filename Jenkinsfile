@@ -6,13 +6,12 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME          = 'jadwal-api'
-        IMAGE_TAG           = "${env.BUILD_NUMBER}"
-        DEPLOY_DIR          = '/opt/jadwal/jadwal-backend'
-        HOST_IP             = '10.1.49.202'
-        HOST_USER           = 'root'
-        FIREBASE_FILE_NAME  = 'jadwal-7650f-firebase-adminsdk-fbsvc-1c0415a063.json'
-        IMAGE_TAR           = "${IMAGE_NAME}-${IMAGE_TAG}.tar.gz"
+        IMAGE_NAME = 'jadwal-api'
+        IMAGE_TAG  = "${env.BUILD_NUMBER}"
+        DEPLOY_DIR = '/opt/jadwal/jadwal-backend'
+        HOST_IP    = '10.1.49.202'
+        HOST_USER  = 'root'
+        IMAGE_TAR  = "${IMAGE_NAME}-${IMAGE_TAG}.tar.gz"
     }
 
     stages {
@@ -36,15 +35,10 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                withCredentials([
-                    file(credentialsId: 'jadwal-firebase-secret', variable: 'FIREBASE_FILE')
-                ]) {
-                    sh '''
-                        cp $FIREBASE_FILE src/main/resources/${FIREBASE_FILE_NAME}
-                        docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
-                    '''
-                }
+                sh '''
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+                '''
             }
         }
 
@@ -67,11 +61,9 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        # Siapkan direktori deploy di server dev
                         ssh -i $SSH_KEY -o StrictHostKeyChecking=no \
                             $SSH_USER@${HOST_IP} "mkdir -p ${DEPLOY_DIR}"
 
-                        # Kirim image, compose file, dan env
                         scp -i $SSH_KEY -o StrictHostKeyChecking=no \
                             ${IMAGE_TAR} \
                             $SSH_USER@${HOST_IP}:${DEPLOY_DIR}/${IMAGE_TAR}
@@ -83,7 +75,6 @@ pipeline {
                         scp -i $SSH_KEY -o StrictHostKeyChecking=no \
                             $ENV_FILE $SSH_USER@${HOST_IP}:${DEPLOY_DIR}/.env
 
-                        # Load image dan jalankan ulang container
                         ssh -i $SSH_KEY -o StrictHostKeyChecking=no \
                             $SSH_USER@${HOST_IP} "
                                 cd ${DEPLOY_DIR} &&
@@ -102,7 +93,7 @@ pipeline {
 
     post {
         always {
-            sh 'rm -f ${IMAGE_TAR} src/main/resources/${FIREBASE_FILE_NAME} || true'
+            sh 'rm -f ${IMAGE_TAR} || true'
             sh 'docker rmi ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest || true'
         }
         success {
