@@ -1,11 +1,42 @@
 services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: mariadb
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_PASS}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASS}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - jadwal-network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80" # Akses phpMyAdmin dari browser lewat port 8081
+    environment:
+      PMA_HOST: mariadb # Mengarah ke hostname service MariaDB
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M # Opsional: menaikkan batas upload dump SQL
+    depends_on:
+      - mariadb
+    networks:
+      - jadwal-network
+
   app:
     image: jadwal-api:0.0.1
     pull_policy: never
     container_name: jadwal-app
     restart: unless-stopped
     ports:
-      - "8000:8080"
+      - "8080:8080"
     environment:
       DB_HOST: mariadb
       DB_PORT: 3306
@@ -18,8 +49,15 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       SERVER_IMAGE_HOST: ${SERVER_IMAGE_HOST}
       FIREBASE_CONFIG_NAME: ${FIREBASE_CONFIG_NAME}
+    depends_on:
+      mariadb:
+        condition: service_started
     networks:
       - jadwal-network
+
+volumes:
+  mariadb_data:
+    driver: local
 
 networks:
   jadwal-network:
