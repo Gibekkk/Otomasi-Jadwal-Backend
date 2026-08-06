@@ -9,7 +9,7 @@ pipeline {
         IMAGE_NAME = 'jadwal-api'
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
         DEPLOY_DIR = '/opt/jadwal/jadwal-backend'
-        HOST_IP    = '10.1.49.211'
+        HOST_IP    = '10.1.49.167'
         HOST_USER  = 'root'
         IMAGE_TAR  = "${IMAGE_NAME}-${IMAGE_TAG}.tar.gz"
     }
