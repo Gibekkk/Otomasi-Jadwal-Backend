@@ -15,23 +15,23 @@ public class UserGroupService {
     private UserGroupRepository userGroupRepository;
 
     public Boolean isProdiExistById(String groupId) {
-        return userGroupRepository.findByIdAndDeletedAtIsNull(groupId).isPresent();
+        return userGroupRepository.findById(groupId).isPresent();
     }
 
     public Optional<UserGroup> findUserGroupById(String id) {
-        return userGroupRepository.findByIdAndDeletedAtIsNull(id);
+        return userGroupRepository.findById(id);
     }
 
     public List<UserGroup> findAllUserGroup() {
-        return userGroupRepository.findAllByDeletedAtIsNull();
+        return userGroupRepository.findAll();
     }
 
     public Optional<UserGroup> findUserGroupByName(String name) {
-        return userGroupRepository.findByNameAndDeletedAtIsNull(name);
+        return userGroupRepository.findByName(name);
     }
 
     public Optional<UserGroup> findUserGroupByIdAndNotSuperAdmin(String id) {
-        return userGroupRepository.findByIdAndNameNotAndDeletedAtIsNull(id, "Super Admin");
+        return userGroupRepository.findByIdAndNameNot(id, "Super Admin");
     }
 
 }
