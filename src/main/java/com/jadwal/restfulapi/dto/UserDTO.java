@@ -58,6 +58,9 @@ public class UserDTO {
     }
 
     public void trim() {
+        this.name = Optional.ofNullable(this.name).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
+        this.groupId = Optional.ofNullable(this.groupId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
+        this.prodiId = Optional.ofNullable(this.prodiId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
         this.username = Optional.ofNullable(this.username).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
         this.password = Optional.ofNullable(this.password).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
     }

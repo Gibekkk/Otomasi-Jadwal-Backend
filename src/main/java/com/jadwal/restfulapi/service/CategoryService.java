@@ -17,6 +17,10 @@ public class CategoryService {
     public Boolean isProdiExistById(String prodiId) {
         return categoryRepository.findByIdAndIsProdiTrueAndDeletedAtIsNull(prodiId).isPresent();
     }
+    
+    public Boolean isCategoryExistById(String categoryId) {
+        return categoryRepository.findByIdAndDeletedAtIsNull(categoryId).isPresent();
+    }
 
     public Optional<Category> findCategoryById(String id) {
         return categoryRepository.findByIdAndDeletedAtIsNull(id);
