@@ -10,6 +10,8 @@ import com.jadwal.restfulapi.model.Category;
 public interface CategoryRepository extends JpaRepository<Category, String> {
     public Optional<Category> findByIdAndDeletedAtIsNull(String id);
     public List<Category> findAllByDeletedAtIsNull();
-    public List<Category> findAllByIsProdiAndDeletedAtIsNull(Boolean isProdi);
+    public List<Category> findAllByIsProdiTrueAndDeletedAtIsNull();
+    public List<Category> findAllByIsProdiFalseAndDeletedAtIsNull();
     public Optional<Category> findByIdAndIsProdiTrueAndDeletedAtIsNull(String id);
+    public Optional<Category> findByIdAndIsProdiFalseAndDeletedAtIsNull(String id);
 }
