@@ -47,6 +47,26 @@ public class AuthService {
         return Optional.empty();
     }
 
+    public Boolean isSuperAdmin(User user) {
+        return user.getGroupId().getName().equals("Super Admin");
+    }
+
+    public Boolean isProdiAdmin(User user) {
+        return user.getGroupId().getName().equals("Prodi Admin");
+    }
+
+    public Boolean isBaaAdmin(User user) {
+        return user.getGroupId().getName().equals("BAA Admin");
+    }
+
+    public Boolean isNtHumAdmin(User user) {
+        return user.getGroupId().getName().equals("NTHUM Admin");
+    }
+
+    public Boolean isPmAdmin(User user) {
+        return user.getGroupId().getName().equals("PM Admin");
+    }
+
     public boolean isUsernameAvailable(String email) {
         Optional<User> userOpt = userRepository.findByUsernameAndDeletedAtIsNull(email);
         return userOpt.isEmpty();
