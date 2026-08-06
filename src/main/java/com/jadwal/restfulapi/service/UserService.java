@@ -12,12 +12,8 @@ import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.UserGroup;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.dto.UserDTO;
-import com.jadwal.restfulapi.model.Session;
-import com.jadwal.restfulapi.repository.SessionRepository;
 import com.jadwal.restfulapi.repository.UserRepository;
 import com.jadwal.restfulapi.util.PasswordHasherMatcher;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {

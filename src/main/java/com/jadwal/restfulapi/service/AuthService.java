@@ -2,7 +2,6 @@ package com.jadwal.restfulapi.service;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.UUID;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
