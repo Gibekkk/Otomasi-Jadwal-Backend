@@ -92,9 +92,9 @@ public class User {
     private Set<Category> userCategoryEditedBy;
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSpecialization> userLecturerSpecializationCreatedBy;
+    private Set<Specialization> userSpecializationCreatedBy;
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSpecialization> userLecturerSpecializationEditedBy;
+    private Set<Specialization> userSpecializationEditedBy;
 
 }
