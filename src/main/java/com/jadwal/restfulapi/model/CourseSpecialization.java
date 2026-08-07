@@ -19,19 +19,19 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "lecturer_specializations")
-public class LecturerSpecialization {
+@Table(name = "course_specializations")
+public class CourseSpecialization {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "lecturer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_specialization_lecturer_id"))
-    private Lecturer lecturerId;
+    @JoinColumn(nullable = true, name = "course_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_specialization_course_id"))
+    private Course courseId;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "specialization_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_specialization_specialization_id"))
+    @JoinColumn(nullable = true, name = "specialization_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_specialization_specialization_id"))
     private Specialization specializationId;
 
 }

@@ -3,6 +3,8 @@ package com.jadwal.restfulapi.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +22,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.jadwal.restfulapi.model.enums.Day;
+
 @Getter
 @Setter
 @Entity
@@ -34,6 +38,13 @@ public class CourseSchedule {
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;
+
+    @Column(name = "index", nullable = false, length = 1)
+    private String index;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day", nullable = false)
+    private Day day;
 
     @ManyToOne
     @JoinColumn(nullable = true, name = "schedule_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_schedule_id"))

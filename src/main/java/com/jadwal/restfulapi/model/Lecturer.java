@@ -45,13 +45,12 @@ public class Lecturer {
     @Column(name = "is_male", nullable = false)
     private Boolean isMale;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "religion", nullable = false)
     private Religion religion;
-
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "lecturer_type_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_lecturer_type"))
-    private LecturerType lecturerTypeId;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_created_by"))
@@ -62,8 +61,8 @@ public class Lecturer {
     private User editedBy;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "prodi_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_prodi_id"))
-    private Category prodiId;
+    @JoinColumn(nullable = true, name = "category_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_category_id"))
+    private Category categoryId;
 
     @Column(name = "deleted_at", nullable = true)
     private LocalDateTime deletedAt;
