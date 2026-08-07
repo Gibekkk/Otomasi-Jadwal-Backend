@@ -61,7 +61,7 @@ public class Category {
     @OneToMany(mappedBy = "prodiId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<User> categoryUsers;
 
-    @OneToMany(mappedBy = "prodiId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Lecturer> categoryLecturers;
 
 }
