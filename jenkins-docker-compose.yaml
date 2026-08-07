@@ -1,0 +1,35 @@
+name: jenkins
+services:
+  jenkins:
+    cpu_shares: 50
+    command: []
+    container_name: Jenkins
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+    hostname: Jenkins
+    image: jenkins/jenkins:lts-jdk17
+    labels:
+      icon: https://icon.casaos.io/main/all/jenkins.png
+    ports:
+      - target: 8080
+        published: "8080"
+        protocol: tcp
+    restart: always
+    user: root
+    volumes:
+      - type: bind
+        source: /DATA/AppData/Jenkins/data
+        target: /data
+      - type: bind
+        source: /var/lib/docker/volumes/b098c98b2c5dec792246dc33375853c05958ace7c144f4aa157326a6f6c0de4c/_data
+        target: /var/jenkins_home
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    devices: []
+    cap_add: []
+    environment: []
+    network_mode: bridge
+    privileged: false
