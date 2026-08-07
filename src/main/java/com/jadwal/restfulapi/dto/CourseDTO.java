@@ -23,6 +23,12 @@ public class CourseDTO {
 
     private String name;
     private int sksCount;
+    private int lecturerCount;
+    private int capacity;
+    private Boolean isInterdicipline;
+    private Boolean isOdd;
+    private Boolean isActive;
+    private Boolean isLab;
     private String categoryId;
 
     public void checkDTO() {
@@ -33,7 +39,11 @@ public class CourseDTO {
         if (this.categoryId == null)
             throw new IllegalArgumentException("Category ID Cannot Be NULL");
         if (this.sksCount == 0)
-            throw new IllegalArgumentException("SKS Count Cannot Be NULL");
+            throw new IllegalArgumentException("SKS Count Cannot Be 0");
+        if (this.lecturerCount == 0)
+            throw new IllegalArgumentException("Lecturer Count Cannot Be 0");
+        if (this.capacity < 5 || this.capacity > 300)
+            throw new IllegalArgumentException("Capacity Must Be Between 5 And 300");
         if (!categoryService.isCategoryExistById(this.categoryId))
             throw new IllegalArgumentException("Category ID Not Found");
     }

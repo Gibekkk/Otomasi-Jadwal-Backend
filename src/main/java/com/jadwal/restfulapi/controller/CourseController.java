@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.CourseService;
@@ -60,13 +61,19 @@ public class CourseController {
                     List<Course> courses = courseService.findAllCourse();
                     ArrayList<Map<String, Object>> courseList = new ArrayList<>();
                     for (Course course : courses) {
-                        courseList.add(Map.of(
-                                "id", course.getId(),
-                                "name", course.getName(),
-                                "sksCount", course.getSksCount(),
-                                "category", course.getCategoryId().getName(),
-                                "createdAt", course.getCreatedAt(),
-                                "updatedAt", course.getUpdatedAt()));
+                        courseList.add(Map.ofEntries(
+                                Map.entry("id", course.getId()),
+                                Map.entry("name", course.getName()),
+                                Map.entry("sksCount", course.getSksCount()),
+                                Map.entry("lecturerCount", course.getLecturerCount()),
+                                Map.entry("capacity", course.getCapacity()),
+                                Map.entry("isInterdicipline", course.getIsInterdicipline()),
+                                Map.entry("isOdd", course.getIsOdd()),
+                                Map.entry("isActive", course.getIsActive()),
+                                Map.entry("isLab", course.getIsLab()),
+                                Map.entry("category", course.getCategoryId().getName()),
+                                Map.entry("createdAt", course.getCreatedAt()),
+                                Map.entry("updatedAt", course.getUpdatedAt())));
                     }
                     data = courseList;
                 } else {
@@ -104,13 +111,19 @@ public class CourseController {
                     Optional<Course> courseOpt = courseService.findCourseById(courseId);
                     if (courseOpt.isPresent()) {
                         Course c = courseOpt.get();
-                        data = Map.of(
-                                "id", c.getId(),
-                                "name", c.getName(),
-                                "sksCount", c.getSksCount(),
-                                "category", c.getCategoryId().getName(),
-                                "createdAt", c.getCreatedAt(),
-                                "updatedAt", c.getUpdatedAt());
+                        data = Map.ofEntries(
+                                Map.entry("id", c.getId()),
+                                Map.entry("name", c.getName()),
+                                Map.entry("sksCount", c.getSksCount()),
+                                Map.entry("lecturerCount", c.getLecturerCount()),
+                                Map.entry("capacity", c.getCapacity()),
+                                Map.entry("isInterdicipline", c.getIsInterdicipline()),
+                                Map.entry("isOdd", c.getIsOdd()),
+                                Map.entry("isActive", c.getIsActive()),
+                                Map.entry("isLab", c.getIsLab()),
+                                Map.entry("category", c.getCategoryId().getName()),
+                                Map.entry("createdAt", c.getCreatedAt()),
+                                Map.entry("updatedAt", c.getUpdatedAt()));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -151,8 +164,8 @@ public class CourseController {
                     if (courseOpt.isPresent()) {
                         Course c = courseOpt.get();
                         courseService.deleteCourse(c);
-                        data = Map.of(
-                                "message", "Course Deleted Successfully");
+                        data = Map.ofEntries(
+                                Map.entry("message", "Course Deleted Successfully"));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -192,13 +205,19 @@ public class CourseController {
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
                     Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
                     Course createdCourse = courseService.createCourse(courseDTO, category, user);
-                    data = Map.of(
-                            "courseId", createdCourse.getId(),
-                            "name", createdCourse.getName(),
-                            "sksCount", createdCourse.getSksCount(),
-                            "category", createdCourse.getCategoryId().getName(),
-                            "createdAt", createdCourse.getCreatedAt(),
-                            "updatedAt", createdCourse.getUpdatedAt());
+                    data = Map.ofEntries(
+                            Map.entry("courseId", createdCourse.getId()),
+                            Map.entry("name", createdCourse.getName()),
+                            Map.entry("sksCount", createdCourse.getSksCount()),
+                            Map.entry("lecturerCount", createdCourse.getLecturerCount()),
+                            Map.entry("capacity", createdCourse.getCapacity()),
+                            Map.entry("isInterdicipline", createdCourse.getIsInterdicipline()),
+                            Map.entry("isOdd", createdCourse.getIsOdd()),
+                            Map.entry("isActive", createdCourse.getIsActive()),
+                            Map.entry("isLab", createdCourse.getIsLab()),
+                            Map.entry("category", createdCourse.getCategoryId().getName()),
+                            Map.entry("createdAt", createdCourse.getCreatedAt()),
+                            Map.entry("updatedAt", createdCourse.getUpdatedAt()));
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -238,13 +257,72 @@ public class CourseController {
                         Course editedCourse = editedCourseOpt.get();
                         Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
                         editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user);
-                        data = Map.of(
-                                "courseId", editedCourse.getId(),
-                                "name", editedCourse.getName(),
-                                "sksCount", editedCourse.getSksCount(),
-                                "category", editedCourse.getCategoryId().getName(),
-                                "createdAt", editedCourse.getCreatedAt(),
-                                "updatedAt", editedCourse.getUpdatedAt());
+                        data = Map.ofEntries(
+                                Map.entry("courseId", editedCourse.getId()),
+                                Map.entry("name", editedCourse.getName()),
+                                Map.entry("sksCount", editedCourse.getSksCount()),
+                                Map.entry("lecturerCount", editedCourse.getLecturerCount()),
+                                Map.entry("capacity", editedCourse.getCapacity()),
+                                Map.entry("isInterdicipline", editedCourse.getIsInterdicipline()),
+                                Map.entry("isOdd", editedCourse.getIsOdd()),
+                                Map.entry("isActive", editedCourse.getIsActive()),
+                                Map.entry("isLab", editedCourse.getIsLab()),
+                                Map.entry("category", editedCourse.getCategoryId().getName()),
+                                Map.entry("createdAt", editedCourse.getCreatedAt()),
+                                Map.entry("updatedAt", editedCourse.getUpdatedAt()));
+                    } else {
+                        httpCode = HTTPCode.NOT_FOUND;
+                        data = new ErrorMessage(httpCode, "Course Not Found");
+                    }
+                } else {
+                    httpCode = HTTPCode.FORBIDDEN;
+                    data = new ErrorMessage(httpCode, "Access Denied");
+                }
+            } else {
+                httpCode = HTTPCode.FORBIDDEN;
+                data = new ErrorMessage(httpCode, "Authentication Failed");
+            }
+        } catch (IllegalArgumentException e) {
+            httpCode = HTTPCode.BAD_REQUEST;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
+
+    @PatchMapping("/toggle/{courseId}")
+    public ResponseEntity<Object> toggleCourseActive(HttpServletRequest request, @PathVariable String courseId) {
+        String sessionToken = request.getHeader("Token");
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
+            if (sessionOpt.isPresent()) {
+                Session session = sessionOpt.get();
+                User user = session.getUserId();
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                    Optional<Course> editedCourseOpt = courseService.findCourseById(courseId);
+                    if (editedCourseOpt.isPresent()) {
+                        Course editedCourse = editedCourseOpt.get();
+                        Boolean isActive = courseService.toggleCourseActive(editedCourse);
+                        data = Map.ofEntries(
+                                Map.entry("courseId", editedCourse.getId()),
+                                Map.entry("name", editedCourse.getName()),
+                                Map.entry("sksCount", editedCourse.getSksCount()),
+                                Map.entry("lecturerCount", editedCourse.getLecturerCount()),
+                                Map.entry("capacity", editedCourse.getCapacity()),
+                                Map.entry("isInterdicipline", editedCourse.getIsInterdicipline()),
+                                Map.entry("isOdd", editedCourse.getIsOdd()),
+                                Map.entry("isActive", isActive),
+                                Map.entry("isLab", editedCourse.getIsLab()),
+                                Map.entry("category", editedCourse.getCategoryId().getName()),
+                                Map.entry("createdAt", editedCourse.getCreatedAt()),
+                                Map.entry("updatedAt", editedCourse.getUpdatedAt()));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");

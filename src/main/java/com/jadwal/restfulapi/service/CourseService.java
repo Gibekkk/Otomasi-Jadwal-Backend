@@ -36,10 +36,22 @@ public class CourseService {
         courseRepository.save(course);
     }
 
+    public Boolean toggleCourseActive(Course course) {
+        course.setIsActive(!course.getIsActive());
+        courseRepository.save(course);
+        return course.getIsActive();
+    }
+
     public Course createCourse(CourseDTO courseDTO, Category category, User admin) {
         Course course = new Course();
         course.setName(courseDTO.getName());
         course.setSksCount(courseDTO.getSksCount());
+        course.setLecturerCount(courseDTO.getLecturerCount());
+        course.setCapacity(courseDTO.getCapacity());
+        course.setIsInterdicipline(courseDTO.getIsInterdicipline());
+        course.setIsOdd(courseDTO.getIsOdd());
+        course.setIsActive(courseDTO.getIsActive());
+        course.setIsLab(courseDTO.getIsLab());
         course.setCategoryId(category);
         course.setCreatedBy(admin);
         course.setEditedBy(admin);
@@ -51,6 +63,12 @@ public class CourseService {
     public Course editCourse(Course editedCourse, CourseDTO courseDTO, Category category, User admin) {
         editedCourse.setName(courseDTO.getName());
         editedCourse.setSksCount(courseDTO.getSksCount());
+        editedCourse.setLecturerCount(courseDTO.getLecturerCount());
+        editedCourse.setCapacity(courseDTO.getCapacity());
+        editedCourse.setIsInterdicipline(courseDTO.getIsInterdicipline());
+        editedCourse.setIsOdd(courseDTO.getIsOdd());
+        editedCourse.setIsActive(courseDTO.getIsActive());
+        editedCourse.setIsLab(courseDTO.getIsLab());
         editedCourse.setCategoryId(category);
         editedCourse.setEditedBy(admin);
         editedCourse.setUpdatedAt(LocalDateTime.now());
