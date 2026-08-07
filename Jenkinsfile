@@ -61,22 +61,22 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no \
-                            $SSH_USER@${HOST_IP} "mkdir -p ${DEPLOY_DIR}"
+                        ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no \
+                            "$SSH_USER@${HOST_IP}" "mkdir -p ${DEPLOY_DIR}"
 
-                        scp -i $SSH_KEY -o StrictHostKeyChecking=no \
-                            ${IMAGE_TAR} \
-                            $SSH_USER@${HOST_IP}:${DEPLOY_DIR}/${IMAGE_TAR}
+                        scp -i "$SSH_KEY" -o StrictHostKeyChecking=no \
+                            "${IMAGE_TAR}" \
+                            "$SSH_USER@${HOST_IP}:${DEPLOY_DIR}/${IMAGE_TAR}"
 
-                        scp -i $SSH_KEY -o StrictHostKeyChecking=no \
+                        scp -i "$SSH_KEY" -o StrictHostKeyChecking=no \
                             docker-compose.deploy.yml \
-                            $SSH_USER@${HOST_IP}:${DEPLOY_DIR}/docker-compose.yml
+                            "$SSH_USER@${HOST_IP}:${DEPLOY_DIR}/docker-compose.yml"
 
-                        scp -i $SSH_KEY -o StrictHostKeyChecking=no \
-                            $ENV_FILE $SSH_USER@${HOST_IP}:${DEPLOY_DIR}/.env
+                        scp -i "$SSH_KEY" -o StrictHostKeyChecking=no \
+                            "$ENV_FILE" "$SSH_USER@${HOST_IP}:${DEPLOY_DIR}/.env"
 
-                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no \
-                            $SSH_USER@${HOST_IP} "
+                        ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no \
+                            "$SSH_USER@${HOST_IP}" "
                                 cd ${DEPLOY_DIR} && \
                                 docker network create jadwal-network || true && \
                                 docker compose down || true && \
