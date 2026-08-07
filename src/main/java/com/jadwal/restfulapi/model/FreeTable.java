@@ -29,7 +29,7 @@ public class FreeTable {
     @Column(name = "is_odd", nullable = false)
     private Boolean isOdd;
 
-    @Column(name = "year", nullable = false, length = 4)
-    private int year;
+    @Column(name = "academic_year", nullable = false, length = 4)
+    private int academicYear;
 
 }

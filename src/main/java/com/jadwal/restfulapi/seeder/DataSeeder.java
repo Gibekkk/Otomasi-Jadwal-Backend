@@ -96,13 +96,13 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedFreeTable() {
         boolean exists = freeTableRepository
-                .findByYearAndIsOdd(FREE_TABLE_YEAR, FREE_TABLE_IS_ODD)
+                .findByAcademicYearAndIsOdd(FREE_TABLE_YEAR, FREE_TABLE_IS_ODD)
                 .isPresent();
         if (!exists) {
             FreeTable freeTable = new FreeTable();
             freeTable.setIsGenerating(FREE_TABLE_IS_GENERATING);
             freeTable.setIsOdd(FREE_TABLE_IS_ODD);
-            freeTable.setYear(FREE_TABLE_YEAR);
+            freeTable.setAcademicYear(FREE_TABLE_YEAR);
             freeTableRepository.save(freeTable);
             System.out.println("FreeTable seeder: data ditambahkan.");
         }

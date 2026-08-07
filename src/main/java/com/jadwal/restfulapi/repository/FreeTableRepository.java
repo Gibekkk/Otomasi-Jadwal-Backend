@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.jadwal.restfulapi.model.FreeTable;
 
 public interface FreeTableRepository extends JpaRepository<FreeTable, String> {
-    Optional<FreeTable> findByYearAndIsOdd(int year, Boolean isOdd);
+    Optional<FreeTable> findByAcademicYearAndIsOdd(int academicYear, Boolean isOdd);
 }

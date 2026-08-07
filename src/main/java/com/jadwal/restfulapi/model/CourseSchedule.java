@@ -39,8 +39,8 @@ public class CourseSchedule {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "index", nullable = false, length = 1)
-    private String index;
+    @Column(name = "course_index", nullable = false, length = 1)
+    private String courseIndex;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "day", nullable = false)
