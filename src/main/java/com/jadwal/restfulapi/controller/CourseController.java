@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.CourseService;
 import com.jadwal.restfulapi.service.CategoryService;
+import com.jadwal.restfulapi.service.SpecializationService;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 
 import com.jadwal.restfulapi.model.Session;
+import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Course;
@@ -45,6 +47,9 @@ public class CourseController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private SpecializationService specializationService;
 
     private Object data = "";
 
@@ -204,7 +209,8 @@ public class CourseController {
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
                     Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
-                    Course createdCourse = courseService.createCourse(courseDTO, category, user);
+                    List<Specialization> specializations = specializationService.findAllSpecializationById(courseDTO.getSpecializations());
+                    Course createdCourse = courseService.createCourse(courseDTO, category, user, specializations);
                     data = Map.ofEntries(
                             Map.entry("courseId", createdCourse.getId()),
                             Map.entry("name", createdCourse.getName()),
@@ -256,7 +262,8 @@ public class CourseController {
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
                         Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
-                        editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user);
+                        List<Specialization> specializations = specializationService.findAllSpecializationById(courseDTO.getSpecializations());
+                        editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user, specializations);
                         data = Map.ofEntries(
                                 Map.entry("courseId", editedCourse.getId()),
                                 Map.entry("name", editedCourse.getName()),

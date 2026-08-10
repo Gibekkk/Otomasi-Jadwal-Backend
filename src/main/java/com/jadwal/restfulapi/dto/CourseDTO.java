@@ -3,10 +3,12 @@ package com.jadwal.restfulapi.dto;
 import lombok.Setter;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jadwal.restfulapi.service.CategoryService;
+import com.jadwal.restfulapi.service.SpecializationService;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +23,9 @@ public class CourseDTO {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private SpecializationService specializationService;
+
     private String name;
     private int sksCount;
     private int lecturerCount;
@@ -30,6 +35,7 @@ public class CourseDTO {
     private Boolean isActive;
     private Boolean isLab;
     private String categoryId;
+    private List<String> specializations;
 
     public void checkDTO() {
         trim();
@@ -46,6 +52,12 @@ public class CourseDTO {
             throw new IllegalArgumentException("Capacity Must Be Between 5 And 300");
         if (!categoryService.isCategoryExistById(this.categoryId))
             throw new IllegalArgumentException("Category ID Not Found");
+        if (this.specializations != null && !this.specializations.isEmpty()) {
+            List<String> nonExistentSpecializations = specializationService.checkNonExistentSpecializations(this.specializations);
+            if (!nonExistentSpecializations.isEmpty()) {
+                throw new IllegalArgumentException("Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+            }
+        }
     }
 
     public void checkLength() {

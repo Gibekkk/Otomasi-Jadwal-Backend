@@ -8,16 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.model.Course;
+import com.jadwal.restfulapi.model.CourseSpecialization;
+import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.dto.CourseDTO;
 import com.jadwal.restfulapi.repository.CourseRepository;
+import com.jadwal.restfulapi.repository.CourseSpecializationRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private CourseSpecializationRepository courseSpecializationRepository;
 
     public Optional<Course> findCourseById(String id) {
         return courseRepository.findByIdAndDeletedAtIsNull(id);
@@ -42,7 +50,7 @@ public class CourseService {
         return course.getIsActive();
     }
 
-    public Course createCourse(CourseDTO courseDTO, Category category, User admin) {
+    public Course createCourse(CourseDTO courseDTO, Category category, User admin, List<Specialization> specializations) {
         Course course = new Course();
         course.setName(courseDTO.getName());
         course.setSksCount(courseDTO.getSksCount());
@@ -57,10 +65,16 @@ public class CourseService {
         course.setEditedBy(admin);
         course.setCreatedAt(LocalDateTime.now());
         course.setUpdatedAt(LocalDateTime.now());
-        return courseRepository.save(course);
+        Course savedCourse = courseRepository.save(course);
+
+        for (Specialization specialization : specializations) {
+            courseSpecializationRepository.save(new CourseSpecialization(null, savedCourse, specialization));
+        }
+
+        return savedCourse;
     }
 
-    public Course editCourse(Course editedCourse, CourseDTO courseDTO, Category category, User admin) {
+    public Course editCourse(Course editedCourse, CourseDTO courseDTO, Category category, User admin, List<Specialization> specializations) {
         editedCourse.setName(courseDTO.getName());
         editedCourse.setSksCount(courseDTO.getSksCount());
         editedCourse.setLecturerCount(courseDTO.getLecturerCount());
@@ -72,6 +86,18 @@ public class CourseService {
         editedCourse.setCategoryId(category);
         editedCourse.setEditedBy(admin);
         editedCourse.setUpdatedAt(LocalDateTime.now());
-        return courseRepository.save(editedCourse);
+        Course savedCourse = courseRepository.save(editedCourse);
+
+        deleteCourseSpecializationsByCourse(savedCourse);
+        for (Specialization specialization : specializations) {
+            courseSpecializationRepository.save(new CourseSpecialization(null, savedCourse, specialization));
+        }
+
+        return savedCourse;
+    }
+
+    @Transactional
+    public void deleteCourseSpecializationsByCourse(Course course) {
+        courseSpecializationRepository.deleteAllByCourseId(course);
     }
 }

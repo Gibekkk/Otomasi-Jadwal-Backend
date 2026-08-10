@@ -9,4 +9,5 @@ import com.jadwal.restfulapi.model.Course;
 
 public interface CourseSpecializationRepository extends JpaRepository<CourseSpecialization, String> {
     public List<CourseSpecialization> findAllByCourseId(Course courseId);
+    public void deleteAllByCourseId(Course courseId);
 }

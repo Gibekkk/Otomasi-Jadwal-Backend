@@ -25,6 +25,10 @@ public class SpecializationService {
         return specializationRepository.findAllByDeletedAtIsNull();
     }
 
+    public List<Specialization> findAllSpecializationById(List<String> specializationIds) {
+        return specializationRepository.findAllByIdAndDeletedAtIsNull(specializationIds);
+    }
+
     public Optional<Specialization> findSpecializationByName(String name) {
         return specializationRepository.findByNameAndDeletedAtIsNull(name);
     }
@@ -49,5 +53,11 @@ public class SpecializationService {
         editedSpecialization.setEditedBy(user);
         editedSpecialization.setUpdatedAt(LocalDateTime.now());
         return specializationRepository.save(editedSpecialization);
+    }
+
+    public List<String> checkNonExistentSpecializations(List<String> specializationIds) {
+        List<Specialization> existingSpecializations = findAllSpecializationById(specializationIds);
+        specializationIds.removeIf(id -> existingSpecializations.stream().anyMatch(s -> s.getId().equals(id)));
+        return specializationIds;
     }
 }
