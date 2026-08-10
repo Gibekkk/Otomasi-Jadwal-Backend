@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.jadwal.restfulapi.service.AuthService;
-import com.jadwal.restfulapi.service.CategoryService;
+import com.jadwal.restfulapi.service.SpecializationService;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 
 import com.jadwal.restfulapi.model.Session;
-import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
+import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.dto.NameDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -31,19 +31,19 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "${storage.api-prefix}/category")
-public class CategoryController {
+@RequestMapping(value = "${storage.api-prefix}/specialization")
+public class SpecializationController {
 
     @Autowired
     private AuthService authService;
 
     @Autowired
-    private CategoryService categoryService;
+    private SpecializationService specializationService;
 
     private Object data = "";
 
     @GetMapping("/")
-    public ResponseEntity<Object> getCategory(HttpServletRequest request) {
+    public ResponseEntity<Object> getSpecializations(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -52,14 +52,16 @@ public class CategoryController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    List<Category> categories = categoryService.findAllCategory();
-                    ArrayList<Map<String, Object>> categoryList = new ArrayList<>();
-                    for (Category category : categories) {
-                        categoryList.add(Map.of(
-                                "id", category.getId(),
-                                "name", category.getName()));
+                    List<Specialization> specializations = specializationService.findAllSpecialization();
+                    ArrayList<Map<String, Object>> specializationList = new ArrayList<>();
+                    for (Specialization specialization : specializations) {
+                        specializationList.add(Map.ofEntries(
+                                Map.entry("id", specialization.getId()),
+                                Map.entry("name", specialization.getName()),
+                                Map.entry("createdAt", specialization.getCreatedAt()),
+                                Map.entry("updatedAt", specialization.getUpdatedAt())));
                     }
-                    data = categoryList;
+                    data = specializationList;
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -82,8 +84,8 @@ public class CategoryController {
                 .body(data);
     }
 
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<Object> getCategoryById(HttpServletRequest request, @PathVariable String categoryId) {
+    @GetMapping("/{specializationId}")
+    public ResponseEntity<Object> getSpecializationById(HttpServletRequest request, @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -92,15 +94,17 @@ public class CategoryController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> categoryOpt = categoryService.findCategoryById(categoryId);
-                    if (categoryOpt.isPresent()) {
-                        Category c = categoryOpt.get();
-                        data = Map.of(
-                                "id", c.getId(),
-                                "name", c.getName());
+                    Optional<Specialization> specializationOpt = specializationService.findSpecializationById(specializationId);
+                    if (specializationOpt.isPresent()) {
+                        Specialization specialization = specializationOpt.get();
+                        data = Map.ofEntries(
+                                Map.entry("id", specialization.getId()),
+                                Map.entry("name", specialization.getName()),
+                                Map.entry("createdAt", specialization.getCreatedAt()),
+                                Map.entry("updatedAt", specialization.getUpdatedAt()));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Category Not Found");
+                        data = new ErrorMessage(httpCode, "Specialization Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
@@ -124,8 +128,8 @@ public class CategoryController {
                 .body(data);
     }
 
-    @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Object> deleteCategory(HttpServletRequest request, @PathVariable String categoryId) {
+    @DeleteMapping("/{specializationId}")
+    public ResponseEntity<Object> deleteSpecialization(HttpServletRequest request, @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -134,15 +138,15 @@ public class CategoryController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> categoryOpt = categoryService.findCategoryById(categoryId);
-                    if (categoryOpt.isPresent()) {
-                        Category c = categoryOpt.get();
-                        categoryService.deleteCategory(c);
-                        data = Map.of(
-                                "message", "Category Deleted Successfully");
+                    Optional<Specialization> specializationOpt = specializationService.findSpecializationById(specializationId);
+                    if (specializationOpt.isPresent()) {
+                        Specialization specialization = specializationOpt.get();
+                        specializationService.deleteSpecialization(specialization);
+                        data = Map.ofEntries(
+                                Map.entry("message", "Specialization Deleted Successfully"));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Category Not Found");
+                        data = new ErrorMessage(httpCode, "Specialization Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
@@ -167,22 +171,22 @@ public class CategoryController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Object> createCategory(HttpServletRequest request, @RequestBody NameDTO categoryDTO) {
+    public ResponseEntity<Object> createSpecialization(HttpServletRequest request, @RequestBody NameDTO nameDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            categoryDTO.checkDTO();
+            nameDTO.checkDTO();
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Category category = categoryService.createCategory(categoryDTO, user);
-                    data = Map.of(
-                            "categoryId", category.getId(),
-                            "name", category.getName(),
-                            "createdAt", category.getCreatedAt(),
-                            "updatedAt", category.getUpdatedAt());
+                    Specialization createdSpecialization = specializationService.createSpecialization(nameDTO, user);
+                    data = Map.ofEntries(
+                                Map.entry("id", createdSpecialization.getId()),
+                                Map.entry("name", createdSpecialization.getName()),
+                                Map.entry("createdAt", createdSpecialization.getCreatedAt()),
+                                Map.entry("updatedAt", createdSpecialization.getUpdatedAt()));
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -205,30 +209,30 @@ public class CategoryController {
                 .body(data);
     }
 
-    @PutMapping("/{categoryId}")
-    public ResponseEntity<Object> editCategory(HttpServletRequest request, @RequestBody NameDTO categoryDTO,
-            @PathVariable String categoryId) {
+    @PutMapping("/{specializationId}")
+    public ResponseEntity<Object> editSpecialization(HttpServletRequest request, @RequestBody NameDTO nameDTO,
+            @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            categoryDTO.checkDTO();
+            nameDTO.checkDTO();
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> editedCategoryOpt = categoryService.findCategoryById(categoryId);
-                    if (editedCategoryOpt.isPresent()) {
-                        Category editedCategory = editedCategoryOpt.get();
-                        editedCategory = categoryService.editCategory(editedCategory, categoryDTO, user);
-                        data = Map.of(
-                                "categoryId", editedCategory.getId(),
-                                "name", editedCategory.getName(),
-                                "createdAt", editedCategory.getCreatedAt(),
-                                "updatedAt", editedCategory.getUpdatedAt());
+                    Optional<Specialization> editedSpecializationOpt = specializationService.findSpecializationById(specializationId);
+                    if (editedSpecializationOpt.isPresent()) {
+                        Specialization editedSpecialization = editedSpecializationOpt.get();
+                        editedSpecialization = specializationService.editSpecialization(editedSpecialization, nameDTO, user);
+                        data = Map.ofEntries(
+                                Map.entry("id", editedSpecialization.getId()),
+                                Map.entry("name", editedSpecialization.getName()),
+                                Map.entry("createdAt", editedSpecialization.getCreatedAt()),
+                                Map.entry("updatedAt", editedSpecialization.getUpdatedAt()));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Category Not Found");
+                        data = new ErrorMessage(httpCode, "Specialization Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;

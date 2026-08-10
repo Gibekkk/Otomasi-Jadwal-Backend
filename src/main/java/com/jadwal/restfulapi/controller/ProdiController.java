@@ -21,7 +21,7 @@ import com.jadwal.restfulapi.util.HTTPCode;
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
-import com.jadwal.restfulapi.dto.CategoryDTO;
+import com.jadwal.restfulapi.dto.NameDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
@@ -167,7 +167,7 @@ public class ProdiController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Object> createProdi(HttpServletRequest request, @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<Object> createProdi(HttpServletRequest request, @RequestBody NameDTO categoryDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -206,7 +206,7 @@ public class ProdiController {
     }
 
     @PutMapping("/{prodiId}")
-    public ResponseEntity<Object> editProdi(HttpServletRequest request, @RequestBody CategoryDTO categoryDTO,
+    public ResponseEntity<Object> editProdi(HttpServletRequest request, @RequestBody NameDTO categoryDTO,
             @PathVariable String prodiId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDTO {
+public class NameDTO {
     private String name;
     public void checkDTO() {
         trim();

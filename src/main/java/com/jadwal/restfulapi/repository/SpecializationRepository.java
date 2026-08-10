@@ -10,4 +10,5 @@ import com.jadwal.restfulapi.model.Specialization;
 public interface SpecializationRepository extends JpaRepository<Specialization, String> {
     public Optional<Specialization> findByIdAndDeletedAtIsNull(String id);
     public List<Specialization> findAllByDeletedAtIsNull();
+    public Optional<Specialization> findByNameAndDeletedAtIsNull(String name);
 }
