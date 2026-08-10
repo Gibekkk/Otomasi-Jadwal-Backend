@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.SpecializationService;
 import com.jadwal.restfulapi.util.ErrorMessage;
@@ -42,6 +44,8 @@ public class SpecializationController {
 
     private Object data = "";
 
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @GetMapping("/")
     public ResponseEntity<Object> getSpecializations(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -84,6 +88,9 @@ public class SpecializationController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @NotFoundExample("Specialization Not Found")
     @GetMapping("/{specializationId}")
     public ResponseEntity<Object> getSpecializationById(HttpServletRequest request, @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
@@ -128,6 +135,8 @@ public class SpecializationController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"message\":\"Specialization Deleted Successfully\"}")
+    @NotFoundExample("Specialization Not Found")
     @DeleteMapping("/{specializationId}")
     public ResponseEntity<Object> deleteSpecialization(HttpServletRequest request, @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
@@ -170,6 +179,8 @@ public class SpecializationController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @PostMapping("/")
     public ResponseEntity<Object> createSpecialization(HttpServletRequest request, @RequestBody NameDTO nameDTO) {
         String sessionToken = request.getHeader("Token");
@@ -209,6 +220,9 @@ public class SpecializationController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @NotFoundExample("Specialization Not Found")
     @PutMapping("/{specializationId}")
     public ResponseEntity<Object> editSpecialization(HttpServletRequest request, @RequestBody NameDTO nameDTO,
             @PathVariable String specializationId) {

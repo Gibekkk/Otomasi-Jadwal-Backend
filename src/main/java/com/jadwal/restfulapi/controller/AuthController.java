@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.jadwal.restfulapi.annotation.NoAuth;
+import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.dto.LoginDTO;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.util.ErrorMessage;
@@ -31,6 +33,8 @@ public class AuthController {
 
     private Object data = "";
 
+    @NoAuth
+    @SuccessExample(value = "{\"userId\":\"uuid-user\",\"token\":\"uuid-session-token\"}")
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginDTO loginDTO) {
         HTTPCode httpCode = HTTPCode.OK;
@@ -59,6 +63,7 @@ public class AuthController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"message\":\"Logout Successful\"}")
     @PostMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -88,6 +93,7 @@ public class AuthController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid-user\",\"name\":\"Budi Santoso\"}")
     @GetMapping("/check")
     public ResponseEntity<Object> checkToken(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");

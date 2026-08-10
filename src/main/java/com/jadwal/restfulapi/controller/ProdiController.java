@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.CategoryService;
 import com.jadwal.restfulapi.util.ErrorMessage;
@@ -42,6 +44,7 @@ public class ProdiController {
 
     private Object data = "";
 
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Teknik Informatika\"}]")
     @GetMapping("/")
     public ResponseEntity<Object> getProdi(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -82,6 +85,8 @@ public class ProdiController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Teknik Informatika\"}")
+    @NotFoundExample("Category Not Found")
     @GetMapping("/{prodiId}")
     public ResponseEntity<Object> getProdiById(HttpServletRequest request, @PathVariable String prodiId) {
         String sessionToken = request.getHeader("Token");
@@ -124,6 +129,8 @@ public class ProdiController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"message\":\"Prodi Deleted Successfully\"}")
+    @NotFoundExample("Prodi Not Found")
     @DeleteMapping("/{prodiId}")
     public ResponseEntity<Object> deleteProdi(HttpServletRequest request, @PathVariable String prodiId) {
         String sessionToken = request.getHeader("Token");
@@ -166,6 +173,8 @@ public class ProdiController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Teknik Informatika\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @PostMapping("/")
     public ResponseEntity<Object> createProdi(HttpServletRequest request, @RequestBody NameDTO categoryDTO) {
         String sessionToken = request.getHeader("Token");
@@ -205,6 +214,9 @@ public class ProdiController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Teknik Informatika\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @NotFoundExample("Prodi Not Found")
     @PutMapping("/{prodiId}")
     public ResponseEntity<Object> editProdi(HttpServletRequest request, @RequestBody NameDTO categoryDTO,
             @PathVariable String prodiId) {

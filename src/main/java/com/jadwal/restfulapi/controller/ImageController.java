@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jadwal.restfulapi.annotation.NoAuth;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 
@@ -33,6 +34,7 @@ public class ImageController {
     @Value("${storage.api-prefix}/images/")
     private String apiEndpoint;
 
+    @NoAuth
     @GetMapping("/**")
     public ResponseEntity<Object> getImage(HttpServletRequest request) throws Exception {
         HTTPCode httpCode = HTTPCode.OK;

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.CategoryService;
 import com.jadwal.restfulapi.util.ErrorMessage;
@@ -42,6 +44,7 @@ public class CategoryController {
 
     private Object data = "";
 
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Wajib\"}]")
     @GetMapping("/")
     public ResponseEntity<Object> getCategory(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -82,6 +85,8 @@ public class CategoryController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Wajib\"}")
+    @NotFoundExample("Category Not Found")
     @GetMapping("/{categoryId}")
     public ResponseEntity<Object> getCategoryById(HttpServletRequest request, @PathVariable String categoryId) {
         String sessionToken = request.getHeader("Token");
@@ -124,6 +129,8 @@ public class CategoryController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"message\":\"Category Deleted Successfully\"}")
+    @NotFoundExample("Category Not Found")
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Object> deleteCategory(HttpServletRequest request, @PathVariable String categoryId) {
         String sessionToken = request.getHeader("Token");
@@ -166,6 +173,8 @@ public class CategoryController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @PostMapping("/")
     public ResponseEntity<Object> createCategory(HttpServletRequest request, @RequestBody NameDTO categoryDTO) {
         String sessionToken = request.getHeader("Token");
@@ -205,6 +214,9 @@ public class CategoryController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @NotFoundExample("Category Not Found")
     @PutMapping("/{categoryId}")
     public ResponseEntity<Object> editCategory(HttpServletRequest request, @RequestBody NameDTO categoryDTO,
             @PathVariable String categoryId) {

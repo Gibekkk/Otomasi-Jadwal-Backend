@@ -6,10 +6,12 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jadwal.restfulapi.annotation.NoAuth;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 import org.springframework.http.MediaType;
 
+@NoAuth
 @RestController
 public class CustomErrorController implements ErrorController {
 

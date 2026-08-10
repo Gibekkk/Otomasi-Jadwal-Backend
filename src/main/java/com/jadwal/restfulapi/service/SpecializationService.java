@@ -26,7 +26,7 @@ public class SpecializationService {
     }
 
     public List<Specialization> findAllSpecializationById(List<String> specializationIds) {
-        return specializationRepository.findAllByIdAndDeletedAtIsNull(specializationIds);
+        return specializationRepository.findAllByIdInAndDeletedAtIsNull(specializationIds);
     }
 
     public Optional<Specialization> findSpecializationByName(String name) {
@@ -48,7 +48,8 @@ public class SpecializationService {
         return specializationRepository.save(specialization);
     }
 
-    public Specialization editSpecialization(Specialization editedSpecialization, NameDTO specializationDTO, User user) {
+    public Specialization editSpecialization(Specialization editedSpecialization, NameDTO specializationDTO,
+            User user) {
         editedSpecialization.setName(specializationDTO.getName());
         editedSpecialization.setEditedBy(user);
         editedSpecialization.setUpdatedAt(LocalDateTime.now());

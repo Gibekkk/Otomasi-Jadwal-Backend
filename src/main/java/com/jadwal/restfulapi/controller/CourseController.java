@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PatchMapping;
 
+import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.CourseService;
 import com.jadwal.restfulapi.service.CategoryService;
@@ -53,6 +55,9 @@ public class CourseController {
 
     private Object data = "";
 
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
+            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @GetMapping("/")
     public ResponseEntity<Object> getCourses(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -103,6 +108,10 @@ public class CourseController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
+            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @NotFoundExample("Course Not Found")
     @GetMapping("/{courseId}")
     public ResponseEntity<Object> getCourseById(HttpServletRequest request, @PathVariable String courseId) {
         String sessionToken = request.getHeader("Token");
@@ -155,6 +164,8 @@ public class CourseController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"message\":\"Course Deleted Successfully\"}")
+    @NotFoundExample("Course Not Found")
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Object> deleteCourse(HttpServletRequest request, @PathVariable String courseId) {
         String sessionToken = request.getHeader("Token");
@@ -197,6 +208,9 @@ public class CourseController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
+            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @PostMapping("/")
     public ResponseEntity<Object> createCourse(HttpServletRequest request, @RequestBody CourseDTO courseDTO) {
         String sessionToken = request.getHeader("Token");
@@ -246,6 +260,10 @@ public class CourseController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
+            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @NotFoundExample("Course Not Found")
     @PutMapping("/{courseId}")
     public ResponseEntity<Object> editCourse(HttpServletRequest request, @RequestBody CourseDTO courseDTO,
             @PathVariable String courseId) {
@@ -303,6 +321,10 @@ public class CourseController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
+            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":false,\"isLab\":false,"
+            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @NotFoundExample("Course Not Found")
     @PatchMapping("/toggle/{courseId}")
     public ResponseEntity<Object> toggleCourseActive(HttpServletRequest request, @PathVariable String courseId) {
         String sessionToken = request.getHeader("Token");

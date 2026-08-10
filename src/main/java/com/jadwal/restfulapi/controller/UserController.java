@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.UserService;
 import com.jadwal.restfulapi.service.CategoryService;
@@ -52,6 +54,9 @@ public class UserController {
 
     private Object data = "";
 
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
+            + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @GetMapping("/")
     public ResponseEntity<Object> getUsers(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -97,6 +102,10 @@ public class UserController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
+            + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @NotFoundExample("User Not Found")
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getUserById(HttpServletRequest request, @PathVariable String userId) {
         String sessionToken = request.getHeader("Token");
@@ -144,6 +153,8 @@ public class UserController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"message\":\"User Deleted Successfully\"}")
+    @NotFoundExample("User Not Found")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Object> deleteUser(HttpServletRequest request, @PathVariable String userId) {
         String sessionToken = request.getHeader("Token");
@@ -186,6 +197,9 @@ public class UserController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"userId\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
+            + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @PostMapping("/")
     public ResponseEntity<Object> createUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String sessionToken = request.getHeader("Token");
@@ -241,6 +255,10 @@ public class UserController {
                 .body(data);
     }
 
+    @SuccessExample(value = "{\"userId\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
+            + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @NotFoundExample("User Not Found")
     @PutMapping("/{userId}")
     public ResponseEntity<Object> editUser(HttpServletRequest request, @RequestBody UserDTO userDTO, @PathVariable String userId) {
         String sessionToken = request.getHeader("Token");
