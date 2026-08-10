@@ -27,7 +27,7 @@ public class DataSeeder implements CommandLineRunner {
     private final FreeTableRepository freeTableRepository;
 
     private static final LocalTime SCHEDULE_START = LocalTime.of(7, 30);
-    private static final LocalTime SCHEDULE_END = LocalTime.of(22, 30);
+    private static final LocalTime SCHEDULE_END = LocalTime.of(16, 40);
     private static final int SCHEDULE_INTERVAL_MINUTES = 50;
 
     private static final List<String> USER_GROUP_NAMES = List.of(
