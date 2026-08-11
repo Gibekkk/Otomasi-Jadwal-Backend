@@ -57,7 +57,7 @@ public class UserController {
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
             + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getUsers(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
