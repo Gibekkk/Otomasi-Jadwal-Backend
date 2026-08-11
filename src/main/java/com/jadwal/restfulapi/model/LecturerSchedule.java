@@ -36,21 +36,4 @@ public class LecturerSchedule {
     @JoinColumn(nullable = true, name = "schedule_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_schedule_schedule_id"))
     private Schedule scheduleId;
 
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_schedule_created_by"))
-    private User createdBy;
-
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "edited_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_schedule_edited_by"))
-    private User editedBy;
-
-    @Column(name = "deleted_at", nullable = true)
-    private LocalDateTime deletedAt;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
 }

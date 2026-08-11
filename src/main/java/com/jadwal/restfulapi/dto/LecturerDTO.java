@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.jadwal.restfulapi.service.CategoryService;
 import com.jadwal.restfulapi.model.enums.Religion;
 import com.jadwal.restfulapi.service.SpecializationService;
+import com.jadwal.restfulapi.service.ScheduleService;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,9 @@ public class LecturerDTO {
     @Autowired
     private SpecializationService specializationService;
 
+    @Autowired
+    private ScheduleService scheduleService;
+
     private String name;
     private Boolean isDlb;
     private Boolean isMale;
@@ -34,6 +38,7 @@ public class LecturerDTO {
     private String religion;
     private String categoryId;
     private List<String> specializations;
+    private List<String> schedules;
 
     public void checkDTO() {
         trim();
@@ -50,6 +55,12 @@ public class LecturerDTO {
             List<String> nonExistentSpecializations = specializationService.checkNonExistentSpecializations(this.specializations);
             if (!nonExistentSpecializations.isEmpty()) {
                 throw new IllegalArgumentException("Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+            }
+        }
+        if (this.schedules != null && !this.schedules.isEmpty()) {
+            List<String> nonExistentSchedules = scheduleService.checkNonExistentSchedules(this.schedules);
+            if (!nonExistentSchedules.isEmpty()) {
+                throw new IllegalArgumentException("Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
             }
         }
         if (this.religion != null && !Religion.checkExist(this.religion)) {

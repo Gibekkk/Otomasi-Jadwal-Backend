@@ -20,11 +20,13 @@ import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.LecturerService;
 import com.jadwal.restfulapi.service.CategoryService;
 import com.jadwal.restfulapi.service.SpecializationService;
+import com.jadwal.restfulapi.service.ScheduleService;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.Specialization;
+import com.jadwal.restfulapi.model.Schedule;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Lecturer;
@@ -52,6 +54,9 @@ public class LecturerController {
 
     @Autowired
     private SpecializationService specializationService;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
     private Object data = "";
 
@@ -271,8 +276,9 @@ public class LecturerController {
                     }
                     List<Specialization> specializations = specializationService
                             .findAllSpecializationById(lecturerDTO.getSpecializations());
+                    List<Schedule> schedules = scheduleService.findAllScheduleById(lecturerDTO.getSchedules());
                     Lecturer createdLecturer = lecturerService.createLecturer(lecturerDTO, category, user,
-                            specializations);
+                            specializations, schedules);
                     data = Map.ofEntries(
                             Map.entry("id", createdLecturer.getId()),
                             Map.entry("name", createdLecturer.getName()),
@@ -341,8 +347,9 @@ public class LecturerController {
                         Category category = categoryService.findCategoryById(lecturerDTO.getCategoryId()).get();
                         List<Specialization> specializations = specializationService
                                 .findAllSpecializationById(lecturerDTO.getSpecializations());
+                        List<Schedule> schedules = scheduleService.findAllScheduleById(lecturerDTO.getSchedules());
                         editedLecturer = lecturerService.editLecturer(editedLecturer, lecturerDTO, category, user,
-                                specializations);
+                                specializations, schedules);
                         data = Map.ofEntries(
                                 Map.entry("id", editedLecturer.getId()),
                                 Map.entry("name", editedLecturer.getName()),

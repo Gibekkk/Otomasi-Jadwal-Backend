@@ -57,10 +57,4 @@ public class RoomService {
         editedRoom.setUpdatedAt(LocalDateTime.now());
         return roomRepository.save(editedRoom);
     }
-
-    public List<String> checkNonExistentRooms(List<String> roomIds) {
-        List<Room> existingRooms = findAllRoomById(roomIds);
-        roomIds.removeIf(id -> existingRooms.stream().anyMatch(s -> s.getId().equals(id)));
-        return roomIds;
-    }
 }
