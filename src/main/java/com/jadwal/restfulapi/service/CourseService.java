@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.model.Course;
 import com.jadwal.restfulapi.model.CourseSpecialization;
-import com.jadwal.restfulapi.model.Lecturer;
 import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Category;
