@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.UserService;
@@ -57,6 +57,8 @@ public class UserController {
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
             + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @GetMapping("/")
     public ResponseEntity<Object> getUsers(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -105,7 +107,9 @@ public class UserController {
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
             + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
-    @NotFoundExample("User Not Found")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "User Not Found")
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getUserById(HttpServletRequest request, @PathVariable String userId) {
         String sessionToken = request.getHeader("Token");
@@ -154,7 +158,9 @@ public class UserController {
     }
 
     @SuccessExample(value = "{\"message\":\"User Deleted Successfully\"}")
-    @NotFoundExample("User Not Found")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "User Not Found")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Object> deleteUser(HttpServletRequest request, @PathVariable String userId) {
         String sessionToken = request.getHeader("Token");
@@ -200,6 +206,10 @@ public class UserController {
     @SuccessExample(value = "{\"userId\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
             + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @ErrorExample(code = "400", name = "invalid-body", message = "Username Cannot Be NULL")
+    @ErrorExample(code = "403", name = "group-invalid", message = "Group ID Invalid")
+    @ErrorExample(code = "403", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @PostMapping("/")
     public ResponseEntity<Object> createUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String sessionToken = request.getHeader("Token");
@@ -258,7 +268,11 @@ public class UserController {
     @SuccessExample(value = "{\"userId\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
             + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
-    @NotFoundExample("User Not Found")
+    @ErrorExample(code = "400", name = "invalid-body", message = "Username Cannot Be NULL")
+    @ErrorExample(code = "403", name = "group-invalid", message = "Group ID Invalid")
+    @ErrorExample(code = "403", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "User Not Found")
     @PutMapping("/{userId}")
     public ResponseEntity<Object> editUser(HttpServletRequest request, @RequestBody UserDTO userDTO, @PathVariable String userId) {
         String sessionToken = request.getHeader("Token");

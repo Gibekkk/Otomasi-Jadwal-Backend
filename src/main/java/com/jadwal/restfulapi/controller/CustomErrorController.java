@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jadwal.restfulapi.annotation.NoAuth;
+import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 import org.springframework.http.MediaType;
@@ -17,6 +18,9 @@ public class CustomErrorController implements ErrorController {
 
     private Object data = "";
 
+    @ErrorExample(code = "404", name = "route-not-found", message = "Route Not Found")
+    @ErrorExample(code = "405", name = "method-not-allowed", message = "Method For This Route Is Incorrect")
+    @ErrorExample(code = "500", name = "unexpected", message = "Unknown Error Occurred Outside Main API")
     @RequestMapping("/error")
     public ResponseEntity<Object> handleError(HttpServletRequest request) {
         int statusCode = (Integer) request.getAttribute("jakarta.servlet.error.status_code");

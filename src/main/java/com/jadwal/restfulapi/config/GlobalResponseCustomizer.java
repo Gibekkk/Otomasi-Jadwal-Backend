@@ -1,18 +1,17 @@
 package com.jadwal.restfulapi.config;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.annotation.NoAuth;
-import com.jadwal.restfulapi.annotation.NotFoundExample;
 import com.jadwal.restfulapi.annotation.SuccessExample;
+import com.jadwal.restfulapi.util.HTTPCode;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.examples.Example;
@@ -24,35 +23,43 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 
 /**
- * Jalan otomatis untuk SETIAP endpoint saat Swagger generate dokumentasi
- * (tiap kali aplikasi start / /v3/api-docs dipanggil) -- tidak perlu jalankan
- * apa pun manual saat coding.
+ * Jalan otomatis untuk SETIAP endpoint saat Swagger generate dokumentasi --
+ * tidak perlu dijalankan manual saat coding, cukup tempel anotasi di
+ * controller dan restart aplikasi (atau reload /v3/api-docs).
  *
- * Yang benar-benar OTOMATIS/GLOBAL (sama di semua controller, tidak perlu
- * anotasi apa pun):
+ * OTOMATIS/GLOBAL, tidak perlu anotasi apa pun (berlaku sama persis di semua
+ * controller karena polanya identik di kode):
  *
  * 1. Security requirement "Token" di header, KECUALI method/class ditandai
- * @NoAuth (dipakai di AuthController#login, ImageController#getImage,
- * CustomErrorController).
- * 2. Contoh response 403 (Authentication Failed / Access Denied) untuk semua
- * endpoint yang butuh auth.
- * 3. Contoh response 400 (Bad Request) untuk endpoint yang punya
- * @RequestBody.
- * 4. Contoh response 500 (Internal Server Error) untuk semua endpoint.
+ * @NoAuth.
+ * 2. Contoh 400 "missing-token": kalau header Token tidak dikirim sama
+ * sekali, authService.findSessionBySessionToken(null) memanggil
+ * repository.findById(null) yang otomatis lempar IllegalArgumentException
+ * ("The given id must not be null!") -- ini SELALU jadi salah satu
+ * kemungkinan 400 di endpoint mana pun yang butuh Token, jadi aman
+ * di-generate otomatis.
+ * 3. Contoh 500 generik, HANYA kalau endpoint itu tidak punya @ErrorExample
+ * code 500 sendiri (kalau ada yang lebih spesifik, itu yang dipakai).
  *
- * Yang di-MAPPING MANUAL per controller (beda-beda tiap endpoint, tidak bisa
- * ditebak otomatis):
+ * DI-MAPPING MANUAL per method lewat anotasi (karena beda-beda tiap
+ * controller, bahkan ada endpoint yang pakai kode HTTP berbeda untuk pesan
+ * yang sama persis -- lihat javadoc @ErrorExample):
  *
- * 5. Contoh response 200/201 sukses -- pakai @SuccessExample di method-nya,
- * karena bentuk data beda tiap endpoint.
- * 6. Contoh response 404 -- pakai @NotFoundExample di method-nya, karena
- * pesannya beda tiap resource ("Course Not Found", "User Not Found", dst).
+ * 4. @SuccessExample -> isi response sukses (200/dst).
+ * 5. @ErrorExample (boleh berkali-kali) -> semua skenario error lain: sesi
+ * tidak valid (401 di hampir semua endpoint, TAPI 403 di
+ * UserController#createUser/#editUser), akses ditolak (403), resource tidak
+ * ketemu (404), body tidak valid (400), dan kasus khusus lain (mis. 401 di
+ * AuthController#login, "Group ID Invalid" / "Category Not Permitted").
  *
- * Kalau kamu sudah tulis @ApiResponse manual untuk kode tertentu di endpoint
- * itu, punya kamu tidak akan ditimpa (dicek lewat responses.containsKey).
+ * Kalau nama skenario ("name") sama dipakai lagi untuk code yang sama,
+ * yang belakangan menang (dipakai supaya @ErrorExample eksplisit bisa
+ * menimpa contoh 500 generik di atas kalau perlu).
  */
 @Component
 public class GlobalResponseCustomizer implements OperationCustomizer {
+
+    private static final String GENERIC_500_NAME = "unexpected";
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -69,78 +76,72 @@ public class GlobalResponseCustomizer implements OperationCustomizer {
 
         SuccessExample success = handlerMethod.getMethodAnnotation(SuccessExample.class);
         if (success != null) {
-            addJsonExample(responses, success.code(), success.description(), success.value(), false);
+            addSuccessExample(responses, success.code(), success.value());
         }
 
         if (!noAuth) {
             operation.addSecurityItem(new SecurityRequirement().addList(OpenApiConfig.SECURITY_SCHEME_NAME));
-            addErrorExample(responses, "403", "Authentication Failed / Access Denied",
-                    "Forbidden", "You do not have permission to access this resource",
-                    "Authentication Failed");
+            addHttpCodeExample(responses, "400", "missing-token", "The given id must not be null!");
         }
 
-        NotFoundExample notFound = handlerMethod.getMethodAnnotation(NotFoundExample.class);
-        if (notFound != null) {
-            addErrorExample(responses, "404", "Resource Not Found",
-                    "Not Found", "The requested resource could not be found",
-                    notFound.value());
-        }
+        addHttpCodeExample(responses, "500", GENERIC_500_NAME, "An unexpected error occurred on the server");
 
-        boolean hasBody = Arrays.stream(handlerMethod.getMethodParameters())
-                .anyMatch(p -> p.hasParameterAnnotation(RequestBody.class));
-        if (hasBody) {
-            addErrorExample(responses, "400", "Invalid Request Body",
-                    "Bad Request", "Malformed request syntax",
-                    "Field is Required");
+        for (ErrorExample ex : handlerMethod.getMethod().getAnnotationsByType(ErrorExample.class)) {
+            addHttpCodeExample(responses, ex.code(), ex.name(), ex.message());
         }
-
-        addErrorExample(responses, "500", "Unexpected Server Error",
-                "Internal Server Error", "An unexpected error occurred on the server",
-                "An unexpected error occurred on the server");
 
         return operation;
     }
 
-    private void addErrorExample(ApiResponses responses, String code, String description,
-            String httpMessage, String detail, String message) {
-        if (responses.containsKey(code)) {
+    private void addHttpCodeExample(ApiResponses responses, String code, String name, String message) {
+        HTTPCode httpCode;
+        try {
+            httpCode = HTTPCode.fromCode(Integer.parseInt(code));
+        } catch (Exception e) {
             return;
         }
+
         Map<String, Object> json = new LinkedHashMap<>();
-        json.put("HTTPMessage", httpMessage);
-        json.put("detail", detail);
+        json.put("HTTPMessage", httpCode.getReasonPhrase());
+        json.put("detail", httpCode.getDetailMessage());
         json.put("message", message);
-        addExample(responses, code, description, json, true);
+
+        ApiResponse response = getOrCreateResponse(responses, code, httpCode.getReasonPhrase(), true);
+        putExample(response, name, json);
     }
 
-    private void addJsonExample(ApiResponses responses, String code, String description,
-            String rawJson, boolean useErrorSchema) {
+    private void addSuccessExample(ApiResponses responses, String code, String rawJson) {
         Object parsed;
         try {
             parsed = mapper.readValue(rawJson, Object.class);
         } catch (Exception e) {
             parsed = rawJson;
         }
-        addExample(responses, code, description, parsed, useErrorSchema);
+        ApiResponse response = getOrCreateResponse(responses, code, "Success", false);
+        putExample(response, code + "-example", parsed);
     }
 
-    private void addExample(ApiResponses responses, String code, String description,
-            Object value, boolean useErrorSchema) {
-        Example example = new Example();
-        example.setValue(value);
+    private ApiResponse getOrCreateResponse(ApiResponses responses, String code, String description,
+            boolean useErrorSchema) {
+        ApiResponse response = responses.get(code);
+        if (response != null) {
+            return response;
+        }
 
         Schema<?> schema = useErrorSchema
                 ? new Schema<>().$ref("#/components/schemas/" + OpenApiConfig.ERROR_SCHEMA_NAME)
                 : new Schema<>().type("object");
 
-        MediaType mediaType = new MediaType()
-                .schema(schema)
-                .addExamples(code + "-example", example);
-
+        MediaType mediaType = new MediaType().schema(schema);
         Content content = new Content().addMediaType("application/json", mediaType);
+        response = new ApiResponse().description(description).content(content);
+        responses.addApiResponse(code, response);
+        return response;
+    }
 
-        responses.addApiResponse(code, new ApiResponse()
-                .description(description)
-                .content(content));
+    private void putExample(ApiResponse response, String name, Object value) {
+        Example example = new Example();
+        example.setValue(value);
+        response.getContent().get("application/json").addExamples(name, example);
     }
 }

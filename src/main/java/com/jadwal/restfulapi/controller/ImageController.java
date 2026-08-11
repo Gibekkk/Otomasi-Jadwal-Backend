@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jadwal.restfulapi.annotation.NoAuth;
+import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 
@@ -35,6 +36,8 @@ public class ImageController {
     private String apiEndpoint;
 
     @NoAuth
+    @ErrorExample(code = "404", name = "not-found", message = "Image Not Found")
+    @ErrorExample(code = "400", name = "invalid-path", message = "Illegal base64 character 2d")
     @GetMapping("/**")
     public ResponseEntity<Object> getImage(HttpServletRequest request) throws Exception {
         HTTPCode httpCode = HTTPCode.OK;

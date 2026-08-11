@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PatchMapping;
 
-import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.LecturerService;
@@ -61,9 +61,13 @@ public class LecturerController {
 
     private Object data = "";
 
-    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
-            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
+            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"specializations\":[\"Jaringan Komputer\"],"
+            + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @GetMapping("/")
     public ResponseEntity<Object> getLecturers(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -134,10 +138,14 @@ public class LecturerController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
-            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
-    @NotFoundExample("Lecturer Not Found")
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
+            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"specializations\":[\"Jaringan Komputer\"],"
+            + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Lecturer Not Found")
     @GetMapping("/{lecturerId}")
     public ResponseEntity<Object> getLecturerById(HttpServletRequest request, @PathVariable String lecturerId) {
         String sessionToken = request.getHeader("Token");
@@ -209,7 +217,9 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"message\":\"Lecturer Deleted Successfully\"}")
-    @NotFoundExample("Lecturer Not Found")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Lecturer Not Found")
     @DeleteMapping("/{lecturerId}")
     public ResponseEntity<Object> deleteLecturer(HttpServletRequest request, @PathVariable String lecturerId) {
         String sessionToken = request.getHeader("Token");
@@ -265,9 +275,16 @@ public class LecturerController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"lecturerId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
-            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
+            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"specializations\":[\"Jaringan Komputer\"],"
+            + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "403", name = "category-not-permitted", message = "Category Not Permitted")
+    @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
+    @ErrorExample(code = "400", name = "category-not-found", message = "Category ID Not Found")
     @PostMapping("/")
     public ResponseEntity<Object> createLecturer(HttpServletRequest request, @RequestBody LecturerDTO lecturerDTO) {
         String sessionToken = request.getHeader("Token");
@@ -337,10 +354,15 @@ public class LecturerController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"lecturerId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
-            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
-    @NotFoundExample("Lecturer Not Found")
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
+            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"specializations\":[\"Jaringan Komputer\"],"
+            + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Lecturer Not Found")
+    @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PutMapping("/{lecturerId}")
     public ResponseEntity<Object> editLecturer(HttpServletRequest request, @RequestBody LecturerDTO lecturerDTO,
             @PathVariable String lecturerId) {
@@ -420,10 +442,14 @@ public class LecturerController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"lecturerId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":false,\"isLab\":false,"
-            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
-    @NotFoundExample("Lecturer Not Found")
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
+            + "\"isActive\":false,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"specializations\":[\"Jaringan Komputer\"],"
+            + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Lecturer Not Found")
     @PatchMapping("/toggle/{lecturerId}")
     public ResponseEntity<Object> toggleLecturerActive(HttpServletRequest request, @PathVariable String lecturerId) {
         String sessionToken = request.getHeader("Token");

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.jadwal.restfulapi.annotation.NoAuth;
 import com.jadwal.restfulapi.annotation.SuccessExample;
+import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.dto.LoginDTO;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.util.ErrorMessage;
@@ -35,6 +36,8 @@ public class AuthController {
 
     @NoAuth
     @SuccessExample(value = "{\"userId\":\"uuid-user\",\"token\":\"uuid-session-token\"}")
+    @ErrorExample(code = "401", name = "wrong-credentials", message = "Username or Password is Incorrect")
+    @ErrorExample(code = "400", name = "invalid-body", message = "Username Cannot Be NULL")
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginDTO loginDTO) {
         HTTPCode httpCode = HTTPCode.OK;
@@ -64,6 +67,7 @@ public class AuthController {
     }
 
     @SuccessExample(value = "{\"message\":\"Logout Successful\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @PostMapping("/logout")
     public ResponseEntity<Object> logout(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -94,6 +98,7 @@ public class AuthController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid-user\",\"name\":\"Budi Santoso\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @GetMapping("/check")
     public ResponseEntity<Object> checkToken(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.jadwal.restfulapi.annotation.NotFoundExample;
+import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.RoomService;
@@ -46,6 +46,7 @@ public class RoomController {
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @GetMapping("/")
     public ResponseEntity<Object> getRooms(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
@@ -83,7 +84,8 @@ public class RoomController {
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
-    @NotFoundExample("Room Not Found")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "404", name = "not-found", message = "Room Not Found")
     @GetMapping("/{roomId}")
     public ResponseEntity<Object> getRoomById(HttpServletRequest request, @PathVariable String roomId) {
         String sessionToken = request.getHeader("Token");
@@ -122,7 +124,9 @@ public class RoomController {
     }
 
     @SuccessExample(value = "{\"message\":\"Room Deleted Successfully\"}")
-    @NotFoundExample("Room Not Found")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Room Not Found")
     @DeleteMapping("/{roomId}")
     public ResponseEntity<Object> deleteRoom(HttpServletRequest request, @PathVariable String roomId) {
         String sessionToken = request.getHeader("Token");
@@ -167,6 +171,10 @@ public class RoomController {
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
+    @ErrorExample(code = "400", name = "capacity-invalid", message = "Capacity Must Be Greater Than 5")
     @PostMapping("/")
     public ResponseEntity<Object> createRoom(HttpServletRequest request, @RequestBody RoomDTO roomDTO) {
         String sessionToken = request.getHeader("Token");
@@ -208,7 +216,10 @@ public class RoomController {
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
-    @NotFoundExample("Room Not Found")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Room Not Found")
+    @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PutMapping("/{roomId}")
     public ResponseEntity<Object> editRoom(HttpServletRequest request, @RequestBody RoomDTO roomDTO,
             @PathVariable String roomId) {
