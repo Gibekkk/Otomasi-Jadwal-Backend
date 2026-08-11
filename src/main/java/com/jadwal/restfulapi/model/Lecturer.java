@@ -48,6 +48,9 @@ public class Lecturer {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    @Column(name = "is_interdicipline", nullable = false)
+    private Boolean isInterdicipline;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "religion", nullable = false)
     private Religion religion;
@@ -61,7 +64,7 @@ public class Lecturer {
     private User editedBy;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "category_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_category_id"))
+    @JoinColumn(nullable = false, name = "category_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecturer_category_id"))
     private Category categoryId;
 
     @Column(name = "deleted_at", nullable = true)

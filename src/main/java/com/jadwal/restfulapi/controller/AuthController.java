@@ -47,7 +47,7 @@ public class AuthController {
                         "userId", session.getUserId().getId(),
                         "token", session.getId());
             } else {
-                httpCode = HTTPCode.UNAUTHORIZED;
+                httpCode = HTTPCode.FORBIDDEN;
                 data = new ErrorMessage(httpCode, "Username or Password is Incorrect");
             }
         } catch (IllegalArgumentException e) {
@@ -76,7 +76,7 @@ public class AuthController {
                 data = Map.of(
                         "message", "Logout Successful");
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -106,7 +106,7 @@ public class AuthController {
                         "id", session.getUserId().getId(),
                         "name", session.getUserId().getName());
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {

@@ -68,7 +68,7 @@ public class CategoryController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -112,7 +112,7 @@ public class CategoryController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -156,7 +156,7 @@ public class CategoryController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -197,7 +197,7 @@ public class CategoryController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -247,7 +247,7 @@ public class CategoryController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {

@@ -88,4 +88,7 @@ public class Course {
     @OneToMany(mappedBy = "courseId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CourseSchedule> courseSchedules;
 
+    @OneToMany(mappedBy = "courseId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<CourseSpecialization> courseSpecializations;
+
 }

@@ -9,4 +9,5 @@ import com.jadwal.restfulapi.model.Lecturer;
 
 public interface LecturerSpecializationRepository extends JpaRepository<LecturerSpecialization, String> {
     public List<LecturerSpecialization> findAllByLecturerId(Lecturer lecturerId);
+    public void deleteAllByLecturerId(Lecturer lecturerId);
 }

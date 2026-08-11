@@ -12,4 +12,5 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     public Optional<Course> findByIdAndDeletedAtIsNull(String id);
     public List<Course> findAllByDeletedAtIsNull();
     public List<Course> findAllByCategoryIdAndDeletedAtIsNull(Category category);
+    public List<Course> findAllByDeletedAtIsNullAndCategoryIdOrDeletedAtIsNullAndIsInterdiciplineIsTrue(Category category);
 }

@@ -33,6 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +84,11 @@ public class CourseController {
                                 Map.entry("isLab", course.getIsLab()),
                                 Map.entry("category", course.getCategoryId().getName()),
                                 Map.entry("createdAt", course.getCreatedAt()),
-                                Map.entry("updatedAt", course.getUpdatedAt())));
+                                Map.entry("updatedAt", course.getUpdatedAt()),
+                                Map.entry("specializations", course.getCourseSpecializations().stream()
+                                    .map(cs -> cs.getSpecializationId().getName())
+                                    .collect(Collectors.toList()))
+                            ));
                     }
                     data = courseList;
                 } else {
@@ -91,7 +96,7 @@ public class CourseController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -137,7 +142,11 @@ public class CourseController {
                                 Map.entry("isLab", c.getIsLab()),
                                 Map.entry("category", c.getCategoryId().getName()),
                                 Map.entry("createdAt", c.getCreatedAt()),
-                                Map.entry("updatedAt", c.getUpdatedAt()));
+                                Map.entry("updatedAt", c.getUpdatedAt()),
+                                Map.entry("specializations", c.getCourseSpecializations().stream()
+                                    .map(cs -> cs.getSpecializationId().getName())
+                                    .collect(Collectors.toList()))
+                            );
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -147,7 +156,7 @@ public class CourseController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -191,7 +200,7 @@ public class CourseController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -237,13 +246,16 @@ public class CourseController {
                             Map.entry("isLab", createdCourse.getIsLab()),
                             Map.entry("category", createdCourse.getCategoryId().getName()),
                             Map.entry("createdAt", createdCourse.getCreatedAt()),
-                            Map.entry("updatedAt", createdCourse.getUpdatedAt()));
+                            Map.entry("updatedAt", createdCourse.getUpdatedAt()),
+                            Map.entry("specializations", createdCourse.getCourseSpecializations().stream()
+                                .map(cs -> cs.getSpecializationId().getName())
+                                .collect(Collectors.toList())));
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -294,7 +306,10 @@ public class CourseController {
                                 Map.entry("isLab", editedCourse.getIsLab()),
                                 Map.entry("category", editedCourse.getCategoryId().getName()),
                                 Map.entry("createdAt", editedCourse.getCreatedAt()),
-                                Map.entry("updatedAt", editedCourse.getUpdatedAt()));
+                                Map.entry("updatedAt", editedCourse.getUpdatedAt()),
+                                Map.entry("specializations", editedCourse.getCourseSpecializations().stream()
+                                    .map(cs -> cs.getSpecializationId().getName())
+                                    .collect(Collectors.toList())));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -304,7 +319,7 @@ public class CourseController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
@@ -351,7 +366,10 @@ public class CourseController {
                                 Map.entry("isLab", editedCourse.getIsLab()),
                                 Map.entry("category", editedCourse.getCategoryId().getName()),
                                 Map.entry("createdAt", editedCourse.getCreatedAt()),
-                                Map.entry("updatedAt", editedCourse.getUpdatedAt()));
+                                Map.entry("updatedAt", editedCourse.getUpdatedAt()),
+                                Map.entry("specializations", editedCourse.getCourseSpecializations().stream()
+                                    .map(cs -> cs.getSpecializationId().getName())
+                                    .collect(Collectors.toList())));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -361,7 +379,7 @@ public class CourseController {
                     data = new ErrorMessage(httpCode, "Access Denied");
                 }
             } else {
-                httpCode = HTTPCode.FORBIDDEN;
+                httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");
             }
         } catch (IllegalArgumentException e) {
