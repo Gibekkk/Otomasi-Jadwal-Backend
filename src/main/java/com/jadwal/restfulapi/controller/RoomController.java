@@ -53,7 +53,6 @@ public class RoomController {
         try {
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
-                Session session = sessionOpt.get();
                 List<Room> rooms = roomService.findAllRoom();
                 ArrayList<Map<String, Object>> roomList = new ArrayList<>();
                 for (Room room : rooms) {
@@ -92,8 +91,6 @@ public class RoomController {
         try {
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
-                Session session = sessionOpt.get();
-                User user = session.getUserId();
                 Optional<Room> roomOpt = roomService.findRoomById(roomId);
                 if (roomOpt.isPresent()) {
                     Room room = roomOpt.get();
