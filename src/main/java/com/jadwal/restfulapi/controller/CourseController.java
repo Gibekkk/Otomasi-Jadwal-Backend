@@ -68,8 +68,21 @@ public class CourseController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    List<Course> courses = courseService.findAllCourse();
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    List<Course> courses = new ArrayList<Course>();
+                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                        courses = courseService.findAllCourse();
+                    } else if (authService.isProdiAdmin(user)) {
+                        courses = courseService.findCourseByCategoryAndInterdicipline(user.getProdiId());
+                    } else if (authService.isNtHumAdmin(user)) {
+                        courses = courseService.findAllCourse()
+                                .stream()
+                                .filter(course -> course.getIsInterdicipline() == true
+                                        || course.getCategoryId().getName().equals("Umum")
+                                        || course.getCategoryId().getName().equals("Entrepreneurship"))
+                                .collect(Collectors.toList());
+                    }
                     ArrayList<Map<String, Object>> courseList = new ArrayList<>();
                     for (Course course : courses) {
                         courseList.add(Map.ofEntries(
@@ -86,9 +99,8 @@ public class CourseController {
                                 Map.entry("createdAt", course.getCreatedAt()),
                                 Map.entry("updatedAt", course.getUpdatedAt()),
                                 Map.entry("specializations", course.getCourseSpecializations().stream()
-                                    .map(cs -> cs.getSpecializationId().getName())
-                                    .collect(Collectors.toList()))
-                            ));
+                                        .map(cs -> cs.getSpecializationId().getName())
+                                        .collect(Collectors.toList()))));
                     }
                     data = courseList;
                 } else {
@@ -126,8 +138,20 @@ public class CourseController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Course> courseOpt = courseService.findCourseById(courseId);
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    Optional<Course> courseOpt = Optional.empty();
+                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                        courseOpt = courseService.findCourseById(courseId);
+                    } else if (authService.isProdiAdmin(user)) {
+                        courseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                                user.getProdiId());
+                    } else if (authService.isNtHumAdmin(user)) {
+                        courseOpt = courseService.findCourseById(courseId)
+                                .filter(course -> course.getIsInterdicipline()
+                                        || course.getCategoryId().getName().equals("Umum")
+                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
+                    }
                     if (courseOpt.isPresent()) {
                         Course c = courseOpt.get();
                         data = Map.ofEntries(
@@ -144,9 +168,8 @@ public class CourseController {
                                 Map.entry("createdAt", c.getCreatedAt()),
                                 Map.entry("updatedAt", c.getUpdatedAt()),
                                 Map.entry("specializations", c.getCourseSpecializations().stream()
-                                    .map(cs -> cs.getSpecializationId().getName())
-                                    .collect(Collectors.toList()))
-                            );
+                                        .map(cs -> cs.getSpecializationId().getName())
+                                        .collect(Collectors.toList())));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -184,8 +207,20 @@ public class CourseController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Course> courseOpt = courseService.findCourseById(courseId);
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    Optional<Course> courseOpt = Optional.empty();
+                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                        courseOpt = courseService.findCourseById(courseId);
+                    } else if (authService.isProdiAdmin(user)) {
+                        courseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                                user.getProdiId());
+                    } else if (authService.isNtHumAdmin(user)) {
+                        courseOpt = courseService.findCourseById(courseId)
+                                .filter(course -> course.getIsInterdicipline()
+                                        || course.getCategoryId().getName().equals("Umum")
+                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
+                    }
                     if (courseOpt.isPresent()) {
                         Course c = courseOpt.get();
                         courseService.deleteCourse(c);
@@ -230,9 +265,21 @@ public class CourseController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
                     Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
-                    List<Specialization> specializations = specializationService.findAllSpecializationById(courseDTO.getSpecializations());
+                    if ((authService.isProdiAdmin(user) && !user.getProdiId().equals(category)) ||
+                            (authService.isNtHumAdmin(user) && !(category.getName().equals("Umum")
+                                    || category.getName().equals("Entrepreneurship")))) {
+                        httpCode = HTTPCode.FORBIDDEN;
+                        data = new ErrorMessage(httpCode, "Category Not Permitted");
+                        return ResponseEntity
+                                .status(httpCode.getStatus())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(data);
+                    }
+                    List<Specialization> specializations = specializationService
+                            .findAllSpecializationById(courseDTO.getSpecializations());
                     Course createdCourse = courseService.createCourse(courseDTO, category, user, specializations);
                     data = Map.ofEntries(
                             Map.entry("courseId", createdCourse.getId()),
@@ -248,8 +295,8 @@ public class CourseController {
                             Map.entry("createdAt", createdCourse.getCreatedAt()),
                             Map.entry("updatedAt", createdCourse.getUpdatedAt()),
                             Map.entry("specializations", createdCourse.getCourseSpecializations().stream()
-                                .map(cs -> cs.getSpecializationId().getName())
-                                .collect(Collectors.toList())));
+                                    .map(cs -> cs.getSpecializationId().getName())
+                                    .collect(Collectors.toList())));
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -287,13 +334,27 @@ public class CourseController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Course> editedCourseOpt = courseService.findCourseById(courseId);
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    Optional<Course> editedCourseOpt = Optional.empty();
+                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseById(courseId);
+                    } else if (authService.isProdiAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                                user.getProdiId());
+                    } else if (authService.isNtHumAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseById(courseId)
+                                .filter(course -> course.getIsInterdicipline()
+                                        || course.getCategoryId().getName().equals("Umum")
+                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
+                    }
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
                         Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
-                        List<Specialization> specializations = specializationService.findAllSpecializationById(courseDTO.getSpecializations());
-                        editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user, specializations);
+                        List<Specialization> specializations = specializationService
+                                .findAllSpecializationById(courseDTO.getSpecializations());
+                        editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user,
+                                specializations);
                         data = Map.ofEntries(
                                 Map.entry("courseId", editedCourse.getId()),
                                 Map.entry("name", editedCourse.getName()),
@@ -308,8 +369,8 @@ public class CourseController {
                                 Map.entry("createdAt", editedCourse.getCreatedAt()),
                                 Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                 Map.entry("specializations", editedCourse.getCourseSpecializations().stream()
-                                    .map(cs -> cs.getSpecializationId().getName())
-                                    .collect(Collectors.toList())));
+                                        .map(cs -> cs.getSpecializationId().getName())
+                                        .collect(Collectors.toList())));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -349,8 +410,20 @@ public class CourseController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Course> editedCourseOpt = courseService.findCourseById(courseId);
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    Optional<Course> editedCourseOpt = Optional.empty();
+                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseById(courseId);
+                    } else if (authService.isProdiAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                                user.getProdiId());
+                    } else if (authService.isNtHumAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseById(courseId)
+                                .filter(course -> course.getIsInterdicipline()
+                                        || course.getCategoryId().getName().equals("Umum")
+                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
+                    }
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
                         Boolean isActive = courseService.toggleCourseActive(editedCourse);
@@ -368,8 +441,8 @@ public class CourseController {
                                 Map.entry("createdAt", editedCourse.getCreatedAt()),
                                 Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                 Map.entry("specializations", editedCourse.getCourseSpecializations().stream()
-                                    .map(cs -> cs.getSpecializationId().getName())
-                                    .collect(Collectors.toList())));
+                                        .map(cs -> cs.getSpecializationId().getName())
+                                        .collect(Collectors.toList())));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");

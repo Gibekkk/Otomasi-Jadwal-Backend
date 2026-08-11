@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.model.Course;
 import com.jadwal.restfulapi.model.CourseSpecialization;
+import com.jadwal.restfulapi.model.Lecturer;
 import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Category;
@@ -35,8 +36,25 @@ public class CourseService {
         return courseRepository.findAllByCategoryIdAndDeletedAtIsNull(category);
     }
 
+    public Optional<Course> findCourseByIdAndCategory(String id, Category category) {
+        return courseRepository.findByIdAndDeletedAtIsNull(id)
+                .filter(course -> course.getCategoryId().equals(category));
+    }
+
     public List<Course> findAllCourse() {
         return courseRepository.findAllByDeletedAtIsNull();
+    }
+
+        public Optional<Course> findCourseByIdAndCategoryAndInterdicipline(String id, Category category) {
+        return findCourseByIdAndCategory(id, category)
+                .filter(course -> course.getIsInterdicipline());
+    }
+
+    public List<Course> findCourseByCategoryAndInterdicipline(Category category) {
+        return findAllCourse()
+                .stream()
+                .filter(course -> course.getIsInterdicipline() || course.getCategoryId().equals(category))
+                .toList();
     }
 
     public void deleteCourse(Course course) {

@@ -38,12 +38,12 @@ public class LecturerService {
     }
 
     public Optional<Lecturer> findLecturerByIdAndCategoryAndInterdicipline(String id, Category category) {
-        return lecturerRepository.findByIdAndDeletedAtIsNull(id)
-                .filter(lecturer -> lecturer.getCategoryId().equals(category) || lecturer.getIsInterdicipline());
+        return findLecturerByIdAndCategory(id, category)
+                .filter(lecturer -> lecturer.getIsInterdicipline());
     }
 
     public List<Lecturer> findLecturerByCategoryAndInterdicipline(Category category) {
-        return lecturerRepository.findAllByCategoryIdAndDeletedAtIsNull(category)
+        return findAllLecturer()
                 .stream()
                 .filter(lecturer -> lecturer.getIsInterdicipline() || lecturer.getCategoryId().equals(category))
                 .toList();
@@ -68,7 +68,8 @@ public class LecturerService {
         return lecturer.getIsActive();
     }
 
-    public Lecturer createLecturer(LecturerDTO lecturerDTO, Category category, User admin, List<Specialization> specializations) {
+    public Lecturer createLecturer(LecturerDTO lecturerDTO, Category category, User admin,
+            List<Specialization> specializations) {
         Lecturer lecturer = new Lecturer();
         lecturer.setName(lecturerDTO.getName());
         lecturer.setIsDlb(lecturerDTO.getIsDlb());
@@ -90,7 +91,8 @@ public class LecturerService {
         return savedLecturer;
     }
 
-    public Lecturer editLecturer(Lecturer editedLecturer, LecturerDTO lecturerDTO, Category category, User admin, List<Specialization> specializations) {
+    public Lecturer editLecturer(Lecturer editedLecturer, LecturerDTO lecturerDTO, Category category, User admin,
+            List<Specialization> specializations) {
         editedLecturer.setName(lecturerDTO.getName());
         editedLecturer.setIsDlb(lecturerDTO.getIsDlb());
         editedLecturer.setIsMale(lecturerDTO.getIsMale());
