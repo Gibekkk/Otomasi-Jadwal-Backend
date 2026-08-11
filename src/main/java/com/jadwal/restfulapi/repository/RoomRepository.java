@@ -10,4 +10,6 @@ import com.jadwal.restfulapi.model.Room;
 public interface RoomRepository extends JpaRepository<Room, String> {
     public Optional<Room> findByIdAndDeletedAtIsNull(String id);
     public List<Room> findAllByDeletedAtIsNull();
+    public List<Room> findAllByIdInAndDeletedAtIsNull(List<String> roomIds);
+    public Optional<Room> findByNameAndDeletedAtIsNull(String name);
 }

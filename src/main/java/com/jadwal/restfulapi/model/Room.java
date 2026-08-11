@@ -35,6 +35,9 @@ public class Room {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
+    @Column(name = "capacity", nullable = false)
+    private int capacity;
+
     @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_room_created_by"))
     private User createdBy;
