@@ -94,6 +94,9 @@ public class AuthService {
     }
 
     public Optional<Session> findSessionBySessionToken(String sessionToken) {
+        if (sessionToken == null || sessionToken.isBlank()) {
+            return Optional.empty();
+        }
         Optional<Session> sessionOpt = sessionRepository.findById(sessionToken);
         if (sessionOpt.isPresent())
             updateSessionLastSeen(sessionOpt.get());
