@@ -47,7 +47,7 @@ public class RoomController {
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Jaringan Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getRooms(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
@@ -175,7 +175,7 @@ public class RoomController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @ErrorExample(code = "400", name = "capacity-invalid", message = "Capacity Must Be Greater Than 5")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> createRoom(HttpServletRequest request, @RequestBody RoomDTO roomDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;

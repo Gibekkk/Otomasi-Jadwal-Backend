@@ -59,7 +59,7 @@ public class UserController {
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getUsers(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
@@ -210,7 +210,7 @@ public class UserController {
     @ErrorExample(code = "403", name = "group-invalid", message = "Group ID Invalid")
     @ErrorExample(code = "403", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> createUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;

@@ -47,7 +47,7 @@ public class CategoryController {
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Wajib\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getCategory(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
@@ -184,7 +184,7 @@ public class CategoryController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> createCategory(HttpServletRequest request, @RequestBody NameDTO categoryDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;

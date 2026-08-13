@@ -61,7 +61,7 @@ public class CourseController {
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getCourses(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
@@ -266,7 +266,7 @@ public class CourseController {
     @ErrorExample(code = "403", name = "category-not-permitted", message = "Category Not Permitted")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @ErrorExample(code = "400", name = "category-not-found", message = "Category ID Not Found")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> createCourse(HttpServletRequest request, @RequestBody CourseDTO courseDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;

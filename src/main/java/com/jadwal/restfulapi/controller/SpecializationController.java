@@ -48,7 +48,7 @@ public class SpecializationController {
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getSpecializations(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
@@ -190,7 +190,7 @@ public class SpecializationController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Object> createSpecialization(HttpServletRequest request, @RequestBody NameDTO nameDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
