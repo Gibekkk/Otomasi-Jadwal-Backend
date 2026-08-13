@@ -142,6 +142,19 @@ public class GlobalResponseCustomizer implements OperationCustomizer {
     private void putExample(ApiResponse response, String name, Object value) {
         Example example = new Example();
         example.setValue(value);
-        response.getContent().get("application/json").addExamples(name, example);
+
+        Content content = response.getContent();
+        if (content == null) {
+            content = new Content();
+            response.setContent(content);
+        }
+
+        MediaType mediaType = content.get("application/json");
+        if (mediaType == null) {
+            mediaType = new MediaType();
+            content.addMediaType("application/json", mediaType);
+        }
+
+        mediaType.addExamples(name, example);
     }
 }
