@@ -34,4 +34,8 @@ public class UserGroupService {
         return userGroupRepository.findByIdAndNameNot(id, "Super Admin");
     }
 
+    public List<UserGroup> findAllAndNotSuperAdmin() {
+        return userGroupRepository.findByNameNot("Super Admin");
+    }
+
 }

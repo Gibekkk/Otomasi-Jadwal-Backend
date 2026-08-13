@@ -54,6 +54,49 @@ public class UserController {
 
     private Object data = "";
 
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"BAA Admin\"}]")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @GetMapping
+    public ResponseEntity<Object> getGroups(HttpServletRequest request) {
+        String sessionToken = request.getHeader("Token");
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
+            if (sessionOpt.isPresent()) {
+                Session session = sessionOpt.get();
+                User user = session.getUserId();
+                if (authService.isSuperAdmin(user)) {
+                    ArrayList<Map<String, Object>> groupData = new ArrayList<Map<String, Object>>();
+                    List<UserGroup> groups = userGroupService.findAllAndNotSuperAdmin();
+                    for (UserGroup group : groups) {
+                        groupData.add(Map.of(
+                                "id", group.getId(),
+                                "name", group.getName()
+                            ));
+                    }
+                    data = groupData;
+                } else {
+                    httpCode = HTTPCode.FORBIDDEN;
+                    data = new ErrorMessage(httpCode, "Access Denied");
+                }
+            } else {
+                httpCode = HTTPCode.UNAUTHORIZED;
+                data = new ErrorMessage(httpCode, "Authentication Failed");
+            }
+        } catch (IllegalArgumentException e) {
+            httpCode = HTTPCode.BAD_REQUEST;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
             + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
