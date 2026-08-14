@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.jadwal.restfulapi.dto.CategoryDTO;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
+import com.jadwal.restfulapi.model.Lecturer;
 import com.jadwal.restfulapi.repository.CategoryRepository;
 import com.jadwal.restfulapi.repository.LecturerRepository;
 
