@@ -60,6 +60,7 @@ public class RoomController {
                     roomList.add(Map.ofEntries(
                             Map.entry("id", room.getId()),
                             Map.entry("name", room.getName()),
+                            Map.entry("labType", Optional.ofNullable(room.getLabGroupId()).map(r -> r.getName()).orElse("-")),
                             Map.entry("createdAt", room.getCreatedAt()),
                             Map.entry("updatedAt", room.getUpdatedAt())));
                 }
@@ -99,6 +100,7 @@ public class RoomController {
                     data = Map.ofEntries(
                             Map.entry("id", room.getId()),
                             Map.entry("name", room.getName()),
+                            Map.entry("labType", Optional.ofNullable(room.getLabGroupId()).map(r -> r.getName()).orElse("-")),
                             Map.entry("createdAt", room.getCreatedAt()),
                             Map.entry("updatedAt", room.getUpdatedAt()));
                 } else {
@@ -195,6 +197,7 @@ public class RoomController {
                     data = Map.ofEntries(
                             Map.entry("id", createdRoom.getId()),
                             Map.entry("name", createdRoom.getName()),
+                            Map.entry("labType", Optional.ofNullable(createdRoom.getLabGroupId()).map(r -> r.getName()).orElse("-")),
                             Map.entry("createdAt", createdRoom.getCreatedAt()),
                             Map.entry("updatedAt", createdRoom.getUpdatedAt()));
                 } else {
@@ -249,6 +252,7 @@ public class RoomController {
                         data = Map.ofEntries(
                                 Map.entry("id", editedRoom.getId()),
                                 Map.entry("name", editedRoom.getName()),
+                                Map.entry("labType", Optional.ofNullable(editedRoom.getLabGroupId()).map(r -> r.getName()).orElse("-")),
                                 Map.entry("createdAt", editedRoom.getCreatedAt()),
                                 Map.entry("updatedAt", editedRoom.getUpdatedAt()));
                     } else {
