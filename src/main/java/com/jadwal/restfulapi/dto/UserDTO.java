@@ -4,11 +4,6 @@ import lombok.Setter;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.jadwal.restfulapi.service.CategoryService;
-import com.jadwal.restfulapi.service.UserGroupService;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
