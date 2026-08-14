@@ -78,7 +78,6 @@ public class LecturerService {
             List<Specialization> specializations, List<Schedule> schedules) {
         Lecturer lecturer = new Lecturer();
         lecturer.setName(lecturerDTO.getName());
-        lecturer.setIsDlb(lecturerDTO.getIsDlb());
         lecturer.setIsMale(lecturerDTO.getIsMale());
         lecturer.setIsInterdicipline(lecturerDTO.getIsInterdicipline());
         lecturer.setIsActive(true);
@@ -104,7 +103,6 @@ public class LecturerService {
     public Lecturer editLecturer(Lecturer editedLecturer, LecturerDTO lecturerDTO, Category category, User admin,
             List<Specialization> specializations, List<Schedule> schedules) {
         editedLecturer.setName(lecturerDTO.getName());
-        editedLecturer.setIsDlb(lecturerDTO.getIsDlb());
         editedLecturer.setIsMale(lecturerDTO.getIsMale());
         editedLecturer.setIsInterdicipline(lecturerDTO.getIsInterdicipline());
         editedLecturer.setReligion(Religion.fromString(lecturerDTO.getReligion()));

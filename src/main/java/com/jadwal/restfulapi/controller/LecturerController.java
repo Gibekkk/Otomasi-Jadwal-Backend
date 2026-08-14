@@ -98,7 +98,7 @@ public class LecturerController {
                         lecturerList.add(Map.ofEntries(
                                 Map.entry("id", lecturer.getId()),
                                 Map.entry("name", lecturer.getName()),
-                                Map.entry("isDlb", lecturer.getIsDlb()),
+                                Map.entry("isDlb", lecturer.isDlb()),
                                 Map.entry("isMale", lecturer.getIsMale()),
                                 Map.entry("isActive", lecturer.getIsActive()),
                                 Map.entry("isInterdicipline", lecturer.getIsInterdicipline()),
@@ -174,7 +174,7 @@ public class LecturerController {
                         data = Map.ofEntries(
                                 Map.entry("id", lecturer.getId()),
                                 Map.entry("name", lecturer.getName()),
-                                Map.entry("isDlb", lecturer.getIsDlb()),
+                                Map.entry("isDlb", lecturer.isDlb()),
                                 Map.entry("isMale", lecturer.getIsMale()),
                                 Map.entry("isActive", lecturer.getIsActive()),
                                 Map.entry("isInterdicipline", lecturer.getIsInterdicipline()),
@@ -335,7 +335,7 @@ public class LecturerController {
                     data = Map.ofEntries(
                             Map.entry("id", createdLecturer.getId()),
                             Map.entry("name", createdLecturer.getName()),
-                            Map.entry("isDlb", createdLecturer.getIsDlb()),
+                            Map.entry("isDlb", createdLecturer.isDlb()),
                             Map.entry("isMale", createdLecturer.getIsMale()),
                             Map.entry("isActive", createdLecturer.getIsActive()),
                             Map.entry("isInterdicipline", createdLecturer.getIsInterdicipline()),
@@ -438,7 +438,7 @@ public class LecturerController {
                         data = Map.ofEntries(
                                 Map.entry("id", editedLecturer.getId()),
                                 Map.entry("name", editedLecturer.getName()),
-                                Map.entry("isDlb", editedLecturer.getIsDlb()),
+                                Map.entry("isDlb", editedLecturer.isDlb()),
                                 Map.entry("isMale", editedLecturer.getIsMale()),
                                 Map.entry("isActive", editedLecturer.getIsActive()),
                                 Map.entry("isInterdicipline", editedLecturer.getIsInterdicipline()),
@@ -518,7 +518,7 @@ public class LecturerController {
                         data = Map.ofEntries(
                                 Map.entry("id", editedLecturer.getId()),
                                 Map.entry("name", editedLecturer.getName()),
-                                Map.entry("isDlb", editedLecturer.getIsDlb()),
+                                Map.entry("isDlb", editedLecturer.isDlb()),
                                 Map.entry("isMale", editedLecturer.getIsMale()),
                                 Map.entry("isActive", isActive),
                                 Map.entry("isInterdicipline", editedLecturer.getIsInterdicipline()),

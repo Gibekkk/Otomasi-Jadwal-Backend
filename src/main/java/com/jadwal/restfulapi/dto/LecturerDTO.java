@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 public class LecturerDTO {
 
     private String name;
-    private Boolean isDlb;
     private Boolean isMale;
     private Boolean isInterdicipline;
     private String religion;

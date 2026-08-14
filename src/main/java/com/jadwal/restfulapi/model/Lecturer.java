@@ -39,9 +39,6 @@ public class Lecturer {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "is_dlb", nullable = false)
-    private Boolean isDlb;
-
     @Column(name = "is_male", nullable = false)
     private Boolean isMale;
 
@@ -84,4 +81,8 @@ public class Lecturer {
 
     @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Lecture> lectures;
+
+    public Boolean isDlb() {
+        return this.lecturerSchedules.size() > 0;
+    }
 }
