@@ -109,7 +109,8 @@ public class AuthController {
                 Session session = sessionOpt.get();
                 data = Map.of(
                         "id", session.getUserId().getId(),
-                        "name", session.getUserId().getName());
+                        "name", session.getUserId().getName(),
+                        "group", session.getUserId().getGroupId().getName());
             } else {
                 httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");

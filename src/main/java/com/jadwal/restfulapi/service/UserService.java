@@ -25,11 +25,15 @@ public class UserService {
     private PasswordHasherMatcher passwordMaker;
 
     public Optional<User> findUserById(String id) {
-        return userRepository.findByIdAndDeletedAtIsNull(id);
+        return userRepository.findByIdAndDeletedAtIsNull(id)
+                .filter(user -> user.getGroupId().getName() != "Super Admin");
     }
 
     public List<User> findAllUser() {
-        return userRepository.findAllByDeletedAtIsNull();
+        return userRepository.findAllByDeletedAtIsNull()
+                .stream()
+                .filter(user -> user.getGroupId().getName() != "Super Admin")
+                .toList();
     }
 
     public void deleteUser(User user) {

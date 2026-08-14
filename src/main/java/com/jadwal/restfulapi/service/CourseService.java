@@ -27,7 +27,7 @@ public class CourseService {
     @Autowired
     private CourseSpecializationRepository courseSpecializationRepository;
 
-    private boolean isCategoryActive(Course course) {
+    private Boolean isCategoryActive(Course course) {
         return course.getCategoryId().getDeletedAt() == null;
     }
 
