@@ -57,7 +57,7 @@ public class UserController {
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"BAA Admin\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @GetMapping
+    @GetMapping("/groups")
     public ResponseEntity<Object> getGroups(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
