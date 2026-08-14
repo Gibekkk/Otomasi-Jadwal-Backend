@@ -8,6 +8,5 @@ import com.jadwal.restfulapi.model.FreeTable;
 
 public interface FreeTableRepository extends JpaRepository<FreeTable, String> {
     Optional<FreeTable> findByAcademicYearAndIsOdd(int academicYear, Boolean isOdd);
-
     Optional<FreeTable> findFirstByOrderByIdAsc();
 }

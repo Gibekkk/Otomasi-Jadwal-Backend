@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jadwal.restfulapi.dto.NameDTO;
+import com.jadwal.restfulapi.dto.SpecializationDTO;
 import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.repository.SpecializationRepository;
@@ -19,6 +19,10 @@ public class SpecializationService {
 
     public Optional<Specialization> findSpecializationById(String id) {
         return specializationRepository.findByIdAndDeletedAtIsNull(id);
+    }
+    
+    public Boolean isSpecializationExistByName(String name) {
+        return specializationRepository.existsByNameAndDeletedAtIsNull(name);
     }
 
     public List<Specialization> findAllSpecialization() {
@@ -38,7 +42,7 @@ public class SpecializationService {
         specializationRepository.save(specialization);
     }
 
-    public Specialization createSpecialization(com.jadwal.restfulapi.dto.NameDTO specializationDTO, User user) {
+    public Specialization createSpecialization(com.jadwal.restfulapi.dto.SpecializationDTO specializationDTO, User user) {
         Specialization specialization = new Specialization();
         specialization.setName(specializationDTO.getName());
         specialization.setCreatedBy(user);
@@ -48,7 +52,7 @@ public class SpecializationService {
         return specializationRepository.save(specialization);
     }
 
-    public Specialization editSpecialization(Specialization editedSpecialization, NameDTO specializationDTO,
+    public Specialization editSpecialization(Specialization editedSpecialization, SpecializationDTO specializationDTO,
             User user) {
         editedSpecialization.setName(specializationDTO.getName());
         editedSpecialization.setEditedBy(user);

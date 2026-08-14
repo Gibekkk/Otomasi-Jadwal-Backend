@@ -272,6 +272,19 @@ public class CourseController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             courseDTO.checkDTO();
+            if (courseService.isCourseExistByName(courseDTO.getName()))
+                throw new IllegalArgumentException("Name Already Exist");
+            if (!categoryService.isCategoryExistById(courseDTO.getCategoryId()))
+                throw new IllegalArgumentException("Category ID Not Found");
+            if (courseDTO.getSpecializations() != null && !courseDTO.getSpecializations().isEmpty()) {
+                List<String> nonExistentSpecializations = specializationService
+                        .checkNonExistentSpecializations(courseDTO.getSpecializations());
+                if (!nonExistentSpecializations.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                }
+            }
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
@@ -345,6 +358,19 @@ public class CourseController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             courseDTO.checkDTO();
+            if (courseService.isCourseExistByName(courseDTO.getName()))
+                throw new IllegalArgumentException("Name Already Exist");
+            if (!categoryService.isCategoryExistById(courseDTO.getCategoryId()))
+                throw new IllegalArgumentException("Category ID Not Found");
+            if (courseDTO.getSpecializations() != null && !courseDTO.getSpecializations().isEmpty()) {
+                List<String> nonExistentSpecializations = specializationService
+                        .checkNonExistentSpecializations(courseDTO.getSpecializations());
+                if (!nonExistentSpecializations.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                }
+            }
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();

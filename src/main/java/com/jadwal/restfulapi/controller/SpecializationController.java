@@ -23,7 +23,7 @@ import com.jadwal.restfulapi.util.HTTPCode;
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Specialization;
-import com.jadwal.restfulapi.dto.NameDTO;
+import com.jadwal.restfulapi.dto.SpecializationDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
@@ -96,7 +96,8 @@ public class SpecializationController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "Specialization Not Found")
     @GetMapping("/{specializationId}")
-    public ResponseEntity<Object> getSpecializationById(HttpServletRequest request, @PathVariable String specializationId) {
+    public ResponseEntity<Object> getSpecializationById(HttpServletRequest request,
+            @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -105,7 +106,8 @@ public class SpecializationController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Specialization> specializationOpt = specializationService.findSpecializationById(specializationId);
+                    Optional<Specialization> specializationOpt = specializationService
+                            .findSpecializationById(specializationId);
                     if (specializationOpt.isPresent()) {
                         Specialization specialization = specializationOpt.get();
                         data = Map.ofEntries(
@@ -144,7 +146,8 @@ public class SpecializationController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "Specialization Not Found")
     @DeleteMapping("/{specializationId}")
-    public ResponseEntity<Object> deleteSpecialization(HttpServletRequest request, @PathVariable String specializationId) {
+    public ResponseEntity<Object> deleteSpecialization(HttpServletRequest request,
+            @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -153,7 +156,8 @@ public class SpecializationController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Specialization> specializationOpt = specializationService.findSpecializationById(specializationId);
+                    Optional<Specialization> specializationOpt = specializationService
+                            .findSpecializationById(specializationId);
                     if (specializationOpt.isPresent()) {
                         Specialization specialization = specializationOpt.get();
                         specializationService.deleteSpecialization(specialization);
@@ -191,22 +195,27 @@ public class SpecializationController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PostMapping
-    public ResponseEntity<Object> createSpecialization(HttpServletRequest request, @RequestBody NameDTO nameDTO) {
+    public ResponseEntity<Object> createSpecialization(HttpServletRequest request,
+            @RequestBody SpecializationDTO specializationDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            nameDTO.checkDTO();
+            specializationDTO.checkDTO();
+            if (specializationService.isSpecializationExistByName(specializationDTO.getName()))
+                throw new IllegalArgumentException("Name Already Exist");
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Specialization createdSpecialization = specializationService.createSpecialization(nameDTO, user);
+                    Specialization createdSpecialization = specializationService.createSpecialization(specializationDTO,
+                            user);
                     data = Map.ofEntries(
-                                Map.entry("id", createdSpecialization.getId()),
-                                Map.entry("name", createdSpecialization.getName()),
-                                Map.entry("createdAt", createdSpecialization.getCreatedAt()),
-                                Map.entry("updatedAt", createdSpecialization.getUpdatedAt()));
+                            Map.entry("id", createdSpecialization.getId()),
+                            Map.entry("name", createdSpecialization.getName()),
+                            Map.entry("createdAt", createdSpecialization.getCreatedAt()),
+                            Map.entry("updatedAt", createdSpecialization.getUpdatedAt()));
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -236,21 +245,28 @@ public class SpecializationController {
     @ErrorExample(code = "404", name = "not-found", message = "Specialization Not Found")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PutMapping("/{specializationId}")
-    public ResponseEntity<Object> editSpecialization(HttpServletRequest request, @RequestBody NameDTO nameDTO,
+    public ResponseEntity<Object> editSpecialization(HttpServletRequest request,
+            @RequestBody SpecializationDTO specializationDTO,
             @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            nameDTO.checkDTO();
+            specializationDTO.checkDTO();
+            if (specializationService.isSpecializationExistByName(specializationDTO.getName()))
+                throw new IllegalArgumentException("Name Already Exist");
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Specialization> editedSpecializationOpt = specializationService.findSpecializationById(specializationId);
+                    Optional<Specialization> editedSpecializationOpt = specializationService
+                            .findSpecializationById(specializationId);
                     if (editedSpecializationOpt.isPresent()) {
                         Specialization editedSpecialization = editedSpecializationOpt.get();
-                        editedSpecialization = specializationService.editSpecialization(editedSpecialization, nameDTO, user);
+                        editedSpecialization = specializationService.editSpecialization(editedSpecialization,
+                                specializationDTO,
+                                user);
                         data = Map.ofEntries(
                                 Map.entry("id", editedSpecialization.getId()),
                                 Map.entry("name", editedSpecialization.getName()),

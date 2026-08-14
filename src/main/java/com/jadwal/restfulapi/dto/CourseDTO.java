@@ -5,11 +5,6 @@ import lombok.Setter;
 import java.util.Optional;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.jadwal.restfulapi.service.CategoryService;
-import com.jadwal.restfulapi.service.SpecializationService;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,12 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseDTO {
-
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private SpecializationService specializationService;
 
     private String name;
     private int sksCount;
@@ -50,14 +39,6 @@ public class CourseDTO {
             throw new IllegalArgumentException("Lecturer Count Cannot Be 0");
         if (this.capacity < 5 || this.capacity > 300)
             throw new IllegalArgumentException("Capacity Must Be Between 5 And 300");
-        if (!categoryService.isCategoryExistById(this.categoryId))
-            throw new IllegalArgumentException("Category ID Not Found");
-        if (this.specializations != null && !this.specializations.isEmpty()) {
-            List<String> nonExistentSpecializations = specializationService.checkNonExistentSpecializations(this.specializations);
-            if (!nonExistentSpecializations.isEmpty()) {
-                throw new IllegalArgumentException("Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
-            }
-        }
     }
 
     public void checkLength() {

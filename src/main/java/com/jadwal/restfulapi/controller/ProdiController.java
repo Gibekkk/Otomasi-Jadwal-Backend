@@ -23,7 +23,7 @@ import com.jadwal.restfulapi.util.HTTPCode;
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
-import com.jadwal.restfulapi.dto.NameDTO;
+import com.jadwal.restfulapi.dto.CategoryDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
@@ -62,7 +62,9 @@ public class ProdiController {
                     for (Category category : categories) {
                         categoryList.add(Map.of(
                                 "id", category.getId(),
-                                "name", category.getName()));
+                                "name", category.getName(),
+                                "createdAt", category.getCreatedAt(),
+                                "updatedAt", category.getUpdatedAt()));
                     }
                     data = categoryList;
                 } else {
@@ -106,7 +108,9 @@ public class ProdiController {
                         Category c = categoryOpt.get();
                         data = Map.of(
                                 "id", c.getId(),
-                                "name", c.getName());
+                                "name", c.getName(),
+                                "createdAt", c.getCreatedAt(),
+                                "updatedAt", c.getUpdatedAt());
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Category Not Found");
@@ -185,7 +189,7 @@ public class ProdiController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PostMapping
-    public ResponseEntity<Object> createProdi(HttpServletRequest request, @RequestBody NameDTO categoryDTO) {
+    public ResponseEntity<Object> createProdi(HttpServletRequest request, @RequestBody CategoryDTO categoryDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -230,7 +234,7 @@ public class ProdiController {
     @ErrorExample(code = "404", name = "not-found", message = "Prodi Not Found")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PutMapping("/{prodiId}")
-    public ResponseEntity<Object> editProdi(HttpServletRequest request, @RequestBody NameDTO categoryDTO,
+    public ResponseEntity<Object> editProdi(HttpServletRequest request, @RequestBody CategoryDTO categoryDTO,
             @PathVariable String prodiId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;

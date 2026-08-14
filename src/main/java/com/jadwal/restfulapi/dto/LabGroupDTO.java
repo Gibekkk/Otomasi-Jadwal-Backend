@@ -3,6 +3,7 @@ package com.jadwal.restfulapi.dto;
 import lombok.Setter;
 
 import java.util.Optional;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +13,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NameDTO {
+public class LabGroupDTO {
+
     private String name;
+    private List<String> specializations;
+
     public void checkDTO() {
         trim();
         checkLength();

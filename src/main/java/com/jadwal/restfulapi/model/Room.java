@@ -39,6 +39,10 @@ public class Room {
     private int capacity;
 
     @ManyToOne
+    @JoinColumn(nullable = true, name = "lab_group_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_room_lab_group_id"))
+    private LabGroup labGroupId;
+
+    @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_room_created_by"))
     private User createdBy;
 

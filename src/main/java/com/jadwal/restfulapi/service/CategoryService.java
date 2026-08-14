@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jadwal.restfulapi.dto.NameDTO;
+import com.jadwal.restfulapi.dto.CategoryDTO;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.repository.CategoryRepository;
@@ -23,6 +23,10 @@ public class CategoryService {
 
     public Boolean isCategoryExistById(String categoryId) {
         return findCategoryById(categoryId).isPresent();
+    }
+
+    public Boolean isCategoryExistByName(String name) {
+        return categoryRepository.existsByNameAndDeletedAtIsNull(name);
     }
 
     public Optional<Category> findCategoryById(String id) {
@@ -46,7 +50,7 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    public Category createCategory(NameDTO categoryDTO, User user) {
+    public Category createCategory(CategoryDTO categoryDTO, User user) {
         Category category = new Category();
         category.setName(categoryDTO.getName());
         category.setIsProdi(false);
@@ -57,7 +61,7 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public Category editCategory(Category editedCategory, NameDTO categoryDTO, User user) {
+    public Category editCategory(Category editedCategory, CategoryDTO categoryDTO, User user) {
         editedCategory.setName(categoryDTO.getName());
         editedCategory.setIsProdi(false);
         editedCategory.setCreatedBy(user);
@@ -67,7 +71,7 @@ public class CategoryService {
         return categoryRepository.save(editedCategory);
     }
 
-    public Category createProdi(NameDTO categoryDTO, User user) {
+    public Category createProdi(CategoryDTO categoryDTO, User user) {
         Category prodi = new Category();
         prodi.setName(categoryDTO.getName());
         prodi.setIsProdi(true);
@@ -78,7 +82,7 @@ public class CategoryService {
         return categoryRepository.save(prodi);
     }
 
-    public Category editProdi(Category editedProdi, NameDTO categoryDTO, User user) {
+    public Category editProdi(Category editedProdi, CategoryDTO categoryDTO, User user) {
         editedProdi.setName(categoryDTO.getName());
         editedProdi.setIsProdi(true);
         editedProdi.setCreatedBy(user);

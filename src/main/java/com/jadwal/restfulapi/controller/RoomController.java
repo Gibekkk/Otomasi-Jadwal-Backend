@@ -181,6 +181,11 @@ public class RoomController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             roomDTO.checkDTO();
+            if (roomService.isRoomExistByName(roomDTO.getName()))
+                throw new IllegalArgumentException("Name Already Exist");
+            if (roomDTO.getLabGroupId() != null && !roomService.isLabGroupExistById(roomDTO.getLabGroupId()))
+                throw new IllegalArgumentException("Lab Group ID Not Found");
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
@@ -227,6 +232,11 @@ public class RoomController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             roomDTO.checkDTO();
+            if (roomService.isRoomExistByName(roomDTO.getName()))
+                throw new IllegalArgumentException("Name Already Exist");
+            if (roomDTO.getLabGroupId() != null && !roomService.isLabGroupExistById(roomDTO.getLabGroupId()))
+                throw new IllegalArgumentException("Lab Group ID Not Found");
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();

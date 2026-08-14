@@ -16,39 +16,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.annotation.SuccessExample;
 import com.jadwal.restfulapi.service.AuthService;
-import com.jadwal.restfulapi.service.CategoryService;
+import com.jadwal.restfulapi.service.RoomService;
+import com.jadwal.restfulapi.service.SpecializationService;
 import com.jadwal.restfulapi.util.ErrorMessage;
 import com.jadwal.restfulapi.util.HTTPCode;
 
 import com.jadwal.restfulapi.model.Session;
-import com.jadwal.restfulapi.model.Category;
+import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.model.User;
-import com.jadwal.restfulapi.dto.CategoryDTO;
+import com.jadwal.restfulapi.model.LabGroup;
+import com.jadwal.restfulapi.dto.LabGroupDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "${storage.api-prefix}/category")
-public class CategoryController {
+@RequestMapping(value = "${storage.api-prefix}/lab")
+public class LabController {
 
     @Autowired
     private AuthService authService;
 
     @Autowired
-    private CategoryService categoryService;
+    private RoomService roomService;
+
+    @Autowired
+    private SpecializationService specializationService;
 
     private Object data = "";
 
-    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Wajib\"}]")
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Lab Komputer\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @GetMapping
-    public ResponseEntity<Object> getCategory(HttpServletRequest request) {
+    public ResponseEntity<Object> getLabGroups(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -56,15 +63,20 @@ public class CategoryController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    List<Category> categories = categoryService.findAllCategory();
-                    ArrayList<Map<String, Object>> categoryList = new ArrayList<>();
-                    for (Category category : categories) {
-                        categoryList.add(Map.of(
-                                "id", category.getId(),
-                                "name", category.getName()));
+                if (authService.isSuperAdmin(user) || authService.isPmAdmin(user)) {
+                    List<LabGroup> labGroups = roomService.findAllLabGroup();
+                    ArrayList<Map<String, Object>> labGroupList = new ArrayList<>();
+                    for (LabGroup labGroup : labGroups) {
+                        labGroupList.add(Map.ofEntries(
+                                Map.entry("id", labGroup.getId()),
+                                Map.entry("name", labGroup.getName()),
+                                Map.entry("specializations", labGroup.getLabSpecializations().stream()
+                                        .map(ls -> ls.getSpecializationId().getName())
+                                        .collect(Collectors.toList())),
+                                Map.entry("createdAt", labGroup.getCreatedAt()),
+                                Map.entry("updatedAt", labGroup.getUpdatedAt())));
                     }
-                    data = categoryList;
+                    data = labGroupList;
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -87,12 +99,13 @@ public class CategoryController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Wajib\"}")
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Lab Komputer\","
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @ErrorExample(code = "404", name = "not-found", message = "Category Not Found")
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<Object> getCategoryById(HttpServletRequest request, @PathVariable String categoryId) {
+    @ErrorExample(code = "404", name = "not-found", message = "LabGroup Not Found")
+    @GetMapping("/{labGroupId}")
+    public ResponseEntity<Object> getLabGroupById(HttpServletRequest request, @PathVariable String labGroupId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -101,15 +114,20 @@ public class CategoryController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> categoryOpt = categoryService.findCategoryById(categoryId);
-                    if (categoryOpt.isPresent()) {
-                        Category c = categoryOpt.get();
-                        data = Map.of(
-                                "id", c.getId(),
-                                "name", c.getName());
+                    Optional<LabGroup> labGroupOpt = roomService.findLabGroupById(labGroupId);
+                    if (labGroupOpt.isPresent()) {
+                        LabGroup labGroup = labGroupOpt.get();
+                        data = Map.ofEntries(
+                                Map.entry("id", labGroup.getId()),
+                                Map.entry("name", labGroup.getName()),
+                                Map.entry("specializations", labGroup.getLabSpecializations().stream()
+                                        .map(ls -> ls.getSpecializationId().getName())
+                                        .collect(Collectors.toList())),
+                                Map.entry("createdAt", labGroup.getCreatedAt()),
+                                Map.entry("updatedAt", labGroup.getUpdatedAt()));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Category Not Found");
+                        data = new ErrorMessage(httpCode, "Lab Group Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
@@ -133,12 +151,12 @@ public class CategoryController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"message\":\"Category Deleted Successfully\"}")
+    @SuccessExample(value = "{\"message\":\"Lab Group Deleted Successfully\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @ErrorExample(code = "404", name = "not-found", message = "Category Not Found")
-    @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Object> deleteCategory(HttpServletRequest request, @PathVariable String categoryId) {
+    @ErrorExample(code = "404", name = "not-found", message = "LabGroup Not Found")
+    @DeleteMapping("/{labGroupId}")
+    public ResponseEntity<Object> deleteLabGroup(HttpServletRequest request, @PathVariable String labGroupId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -147,15 +165,15 @@ public class CategoryController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> categoryOpt = categoryService.findCategoryById(categoryId);
-                    if (categoryOpt.isPresent()) {
-                        Category c = categoryOpt.get();
-                        categoryService.deleteCategory(c);
-                        data = Map.of(
-                                "message", "Category Deleted Successfully");
+                    Optional<LabGroup> labGroupOpt = roomService.findLabGroupById(labGroupId);
+                    if (labGroupOpt.isPresent()) {
+                        LabGroup labGroup = labGroupOpt.get();
+                        roomService.deleteLabGroup(labGroup);
+                        data = Map.ofEntries(
+                                Map.entry("message", "Lab Group Deleted Successfully"));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Category Not Found");
+                        data = new ErrorMessage(httpCode, "Lab Group Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
@@ -179,31 +197,44 @@ public class CategoryController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\","
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Lab Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PostMapping
-    public ResponseEntity<Object> createCategory(HttpServletRequest request, @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<Object> createLabGroup(HttpServletRequest request, @RequestBody LabGroupDTO labGroupDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            categoryDTO.checkDTO();
-            if (categoryService.isCategoryExistByName(categoryDTO.getName()))
+            labGroupDTO.checkDTO();
+            if (roomService.isLabGroupExistByName(labGroupDTO.getName()))
                 throw new IllegalArgumentException("Name Already Exist");
+            if (labGroupDTO.getSpecializations() != null && !labGroupDTO.getSpecializations().isEmpty()) {
+                List<String> nonExistentSpecializations = specializationService
+                        .checkNonExistentSpecializations(labGroupDTO.getSpecializations());
+                if (!nonExistentSpecializations.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                }
+            }
 
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Category category = categoryService.createCategory(categoryDTO, user);
-                    data = Map.of(
-                            "categoryId", category.getId(),
-                            "name", category.getName(),
-                            "createdAt", category.getCreatedAt(),
-                            "updatedAt", category.getUpdatedAt());
+                    List<Specialization> specializations = specializationService
+                            .findAllSpecializationById(labGroupDTO.getSpecializations());
+                    LabGroup createdLabGroup = roomService.createLabGroup(labGroupDTO, user, specializations);
+                    data = Map.ofEntries(
+                            Map.entry("id", createdLabGroup.getId()),
+                            Map.entry("name", createdLabGroup.getName()),
+                            Map.entry("specializations", createdLabGroup.getLabSpecializations().stream()
+                                    .map(ls -> ls.getSpecializationId().getName())
+                                    .collect(Collectors.toList())),
+                            Map.entry("createdAt", createdLabGroup.getCreatedAt()),
+                            Map.entry("updatedAt", createdLabGroup.getUpdatedAt()));
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -226,39 +257,52 @@ public class CategoryController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\","
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Lab Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @ErrorExample(code = "404", name = "not-found", message = "Category Not Found")
+    @ErrorExample(code = "404", name = "not-found", message = "LabGroup Not Found")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
-    @PutMapping("/{categoryId}")
-    public ResponseEntity<Object> editCategory(HttpServletRequest request, @RequestBody CategoryDTO categoryDTO,
-            @PathVariable String categoryId) {
+    @PutMapping("/{specializationId}")
+    public ResponseEntity<Object> editLabGroup(HttpServletRequest request, @RequestBody LabGroupDTO labGroupDTO,
+            @PathVariable String specializationId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            categoryDTO.checkDTO();
-            if (categoryService.isCategoryExistByName(categoryDTO.getName()))
+            labGroupDTO.checkDTO();
+            if (roomService.isLabGroupExistByName(labGroupDTO.getName()))
                 throw new IllegalArgumentException("Name Already Exist");
+            if (labGroupDTO.getSpecializations() != null && !labGroupDTO.getSpecializations().isEmpty()) {
+                List<String> nonExistentSpecializations = specializationService
+                        .checkNonExistentSpecializations(labGroupDTO.getSpecializations());
+                if (!nonExistentSpecializations.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                }
+            }
 
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> editedCategoryOpt = categoryService.findCategoryById(categoryId);
-                    if (editedCategoryOpt.isPresent()) {
-                        Category editedCategory = editedCategoryOpt.get();
-                        editedCategory = categoryService.editCategory(editedCategory, categoryDTO, user);
-                        data = Map.of(
-                                "categoryId", editedCategory.getId(),
-                                "name", editedCategory.getName(),
-                                "createdAt", editedCategory.getCreatedAt(),
-                                "updatedAt", editedCategory.getUpdatedAt());
+                    Optional<LabGroup> editedLabGroupOpt = roomService.findLabGroupById(specializationId);
+                    if (editedLabGroupOpt.isPresent()) {
+                        LabGroup editedLabGroup = editedLabGroupOpt.get();
+                        List<Specialization> specializations = specializationService
+                                .findAllSpecializationById(labGroupDTO.getSpecializations());
+                        editedLabGroup = roomService.editLabGroup(editedLabGroup, labGroupDTO, user, specializations);
+                        data = Map.ofEntries(
+                                Map.entry("id", editedLabGroup.getId()),
+                                Map.entry("name", editedLabGroup.getName()),
+                                Map.entry("specializations", editedLabGroup.getLabSpecializations().stream()
+                                        .map(ls -> ls.getSpecializationId().getName())
+                                        .collect(Collectors.toList())),
+                                Map.entry("createdAt", editedLabGroup.getCreatedAt()),
+                                Map.entry("updatedAt", editedLabGroup.getUpdatedAt()));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Category Not Found");
+                        data = new ErrorMessage(httpCode, "LabGroup Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;

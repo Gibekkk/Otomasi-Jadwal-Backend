@@ -291,6 +291,25 @@ public class LecturerController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             lecturerDTO.checkDTO();
+            if (!categoryService.isCategoryExistById(lecturerDTO.getCategoryId()))
+                throw new IllegalArgumentException("Category ID Not Found");
+            if (lecturerDTO.getSpecializations() != null && !lecturerDTO.getSpecializations().isEmpty()) {
+                List<String> nonExistentSpecializations = specializationService
+                        .checkNonExistentSpecializations(lecturerDTO.getSpecializations());
+                if (!nonExistentSpecializations.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                }
+            }
+            if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
+                List<String> nonExistentSchedules = scheduleService
+                        .checkNonExistentSchedules(lecturerDTO.getSchedules());
+                if (!nonExistentSchedules.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                }
+            }
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
@@ -370,6 +389,25 @@ public class LecturerController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             lecturerDTO.checkDTO();
+            if (!categoryService.isCategoryExistById(lecturerDTO.getCategoryId()))
+                throw new IllegalArgumentException("Category ID Not Found");
+            if (lecturerDTO.getSpecializations() != null && !lecturerDTO.getSpecializations().isEmpty()) {
+                List<String> nonExistentSpecializations = specializationService
+                        .checkNonExistentSpecializations(lecturerDTO.getSpecializations());
+                if (!nonExistentSpecializations.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                }
+            }
+            if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
+                List<String> nonExistentSchedules = scheduleService
+                        .checkNonExistentSchedules(lecturerDTO.getSchedules());
+                if (!nonExistentSchedules.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                }
+            }
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();

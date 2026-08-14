@@ -12,4 +12,5 @@ public interface RoomRepository extends JpaRepository<Room, String> {
     public List<Room> findAllByDeletedAtIsNull();
     public List<Room> findAllByIdInAndDeletedAtIsNull(List<String> roomIds);
     public Optional<Room> findByNameAndDeletedAtIsNull(String name);
+    public Boolean existsByNameAndDeletedAtIsNull(String name);
 }

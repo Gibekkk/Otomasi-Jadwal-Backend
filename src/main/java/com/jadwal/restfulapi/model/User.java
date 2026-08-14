@@ -97,4 +97,10 @@ public class User {
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Specialization> userSpecializationEditedBy;
 
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<LabGroup> userLabGroupCreatedBy;
+
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<LabGroup> userLabGroupEditedBy;
+
 }

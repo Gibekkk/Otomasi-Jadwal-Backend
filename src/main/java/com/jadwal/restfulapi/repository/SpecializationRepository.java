@@ -12,4 +12,5 @@ public interface SpecializationRepository extends JpaRepository<Specialization, 
     public List<Specialization> findAllByDeletedAtIsNull();
     public Optional<Specialization> findByNameAndDeletedAtIsNull(String name);
     public List<Specialization> findAllByIdInAndDeletedAtIsNull(List<String> specializationIds);
+    public Boolean existsByNameAndDeletedAtIsNull(String name);
 }

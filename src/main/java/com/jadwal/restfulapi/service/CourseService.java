@@ -27,6 +27,14 @@ public class CourseService {
     @Autowired
     private CourseSpecializationRepository courseSpecializationRepository;
 
+    public Boolean isCourseExistByName(String name) {
+        return courseRepository.existsByNameAndDeletedAtIsNull(name);
+    }
+
+    public Boolean isCourseExistById(String id) {
+        return courseRepository.existsByIdAndDeletedAtIsNull(id);
+    }
+
     public Optional<Course> findCourseById(String id) {
         return courseRepository.findByIdAndDeletedAtIsNull(id);
     }
