@@ -40,6 +40,7 @@ public class UserService {
     public User createUser(UserDTO userDTO, UserGroup userGroup, Category prodi) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
+        user.setName(userDTO.getName());
         user.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
         user.setGroupId(userGroup);
         user.setProdiId(prodi);
@@ -51,6 +52,7 @@ public class UserService {
     public User createUser(UserDTO userDTO, UserGroup userGroup) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
+        user.setName(userDTO.getName());
         user.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
         user.setGroupId(userGroup);
         user.setProdiId(null);
@@ -62,6 +64,7 @@ public class UserService {
     public User editUser(User editedUser, UserDTO userDTO, UserGroup userGroup, Category prodi) {
         editedUser.setId(UUID.randomUUID().toString());
         editedUser.setUsername(userDTO.getUsername());
+        editedUser.setName(userDTO.getName());
         editedUser.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
         editedUser.setGroupId(userGroup);
         editedUser.setProdiId(prodi);
@@ -72,6 +75,7 @@ public class UserService {
     public User editUser(User editedUser, UserDTO userDTO, UserGroup userGroup) {
         editedUser.setId(UUID.randomUUID().toString());
         editedUser.setUsername(userDTO.getUsername());
+        editedUser.setName(userDTO.getName());
         editedUser.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
         editedUser.setGroupId(userGroup);
         editedUser.setProdiId(null);
