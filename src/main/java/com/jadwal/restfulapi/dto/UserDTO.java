@@ -35,14 +35,14 @@ public class UserDTO {
 
     public void checkLength() {
         boolean username = Optional.ofNullable(this.username)
-                .map(s -> s.length() <= 50)
+                .map(s -> s.length() <= 15 && s.length() >= 3)
                 .orElse(true);
         boolean name = Optional.ofNullable(this.name)
                 .map(s -> s.length() <= 50)
                 .orElse(true);
 
         if (!username)
-            throw new IllegalArgumentException("Username Exceeded Max Length");
+            throw new IllegalArgumentException("Username Must Be Between 3 To 15 Characters");
 
         if (!name)
             throw new IllegalArgumentException("Name Exceeded Max Length");
