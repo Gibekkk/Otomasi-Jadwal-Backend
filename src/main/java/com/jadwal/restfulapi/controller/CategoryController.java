@@ -62,7 +62,9 @@ public class CategoryController {
                     for (Category category : categories) {
                         categoryList.add(Map.of(
                                 "id", category.getId(),
-                                "name", category.getName()));
+                                "name", category.getName(),
+                                "createdAt", category.getCreatedAt(),
+                                "updatedAt", category.getUpdatedAt()));
                     }
                     data = categoryList;
                 } else {
@@ -106,7 +108,9 @@ public class CategoryController {
                         Category c = categoryOpt.get();
                         data = Map.of(
                                 "id", c.getId(),
-                                "name", c.getName());
+                                "name", c.getName(),
+                                "createdAt", c.getCreatedAt(),
+                                "updatedAt", c.getUpdatedAt());
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Category Not Found");
