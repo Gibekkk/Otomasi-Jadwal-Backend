@@ -263,9 +263,9 @@ public class LabController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "LabGroup Not Found")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
-    @PutMapping("/{specializationId}")
+    @PutMapping("/{labGroupId}")
     public ResponseEntity<Object> editLabGroup(HttpServletRequest request, @RequestBody LabGroupDTO labGroupDTO,
-            @PathVariable String specializationId) {
+            @PathVariable String labGroupId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -286,7 +286,7 @@ public class LabController {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<LabGroup> editedLabGroupOpt = roomService.findLabGroupById(specializationId);
+                    Optional<LabGroup> editedLabGroupOpt = roomService.findLabGroupById(labGroupId);
                     if (editedLabGroupOpt.isPresent()) {
                         LabGroup editedLabGroup = editedLabGroupOpt.get();
                         List<Specialization> specializations = specializationService
