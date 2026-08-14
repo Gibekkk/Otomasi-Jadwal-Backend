@@ -26,11 +26,11 @@ public class LoginDTO {
 
     public void checkLength() {
         boolean username = Optional.ofNullable(this.username)
-                .map(s -> s.length() <= 50)
+                .map(s -> s.length() <= 15 && s.length() >= 3)
                 .orElse(true);
 
         if (!username)
-            throw new IllegalArgumentException("Username Exceeded Max Length");
+            throw new IllegalArgumentException("Username Must Be Between 3 To 15 Characters");
     }
 
     public void trim() {
