@@ -27,37 +27,56 @@ public class CourseService {
     @Autowired
     private CourseSpecializationRepository courseSpecializationRepository;
 
+    private boolean isCategoryActive(Course course) {
+        return course.getCategoryId().getDeletedAt() == null;
+    }
+
     public Boolean isCourseExistByName(String name) {
-        return courseRepository.existsByNameAndDeletedAtIsNull(name);
+        return findCourseByName(name).isPresent();
     }
 
     public Boolean isCourseExistById(String id) {
-        return courseRepository.existsByIdAndDeletedAtIsNull(id);
+        return findCourseById(id).isPresent();
     }
 
     public Optional<Course> findCourseById(String id) {
-        return courseRepository.findByIdAndDeletedAtIsNull(id);
+        return courseRepository.findByIdAndDeletedAtIsNull(id)
+                .filter(this::isCategoryActive);
+    }
+
+    public Optional<Course> findCourseByName(String name) {
+        return courseRepository.findByNameAndDeletedAtIsNull(name)
+                .filter(this::isCategoryActive);
     }
 
     public List<Course> findCourseByCategory(Category category) {
-        return courseRepository.findAllByCategoryIdAndDeletedAtIsNull(category);
+        return courseRepository.findAllByCategoryIdAndDeletedAtIsNull(category)
+                .stream()
+                .filter(this::isCategoryActive)
+                .toList();
     }
 
     public Optional<Course> findCourseByIdAndCategory(String id, Category category) {
         return courseRepository.findByIdAndDeletedAtIsNull(id)
-                .filter(course -> course.getCategoryId().equals(category));
+                .filter(course -> course.getCategoryId().equals(category))
+                .filter(this::isCategoryActive);
     }
 
     public List<Course> findAllCourse() {
-        return courseRepository.findAllByDeletedAtIsNull();
+        return courseRepository.findAllByDeletedAtIsNull()
+                .stream()
+                .filter(this::isCategoryActive)
+                .toList();
     }
 
-        public Optional<Course> findCourseByIdAndCategoryAndInterdicipline(String id, Category category) {
+    public Optional<Course> findCourseByIdAndCategoryAndInterdicipline(String id, Category category) {
+        // Otomatis terfilter karena memanggil findCourseByIdAndCategory yang sudah kita update
         return findCourseByIdAndCategory(id, category)
                 .filter(course -> course.getIsInterdicipline());
     }
 
     public List<Course> findCourseByCategoryAndInterdicipline(Category category) {
+        // Otomatis terfilter karena memanggil findAllCourse yang sudah kita update
         return findAllCourse()
                 .stream()
                 .filter(course -> course.getIsInterdicipline() || course.getCategoryId().equals(category))

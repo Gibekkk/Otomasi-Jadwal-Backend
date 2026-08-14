@@ -10,12 +10,16 @@ import com.jadwal.restfulapi.dto.CategoryDTO;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.repository.CategoryRepository;
+import com.jadwal.restfulapi.repository.LecturerRepository;
 
 @Service
 public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private LecturerRepository lecturerRepository;
 
     public Boolean isProdiExistById(String prodiId) {
         return findProdiById(prodiId).isPresent();
@@ -47,7 +51,12 @@ public class CategoryService {
 
     public void deleteCategory(Category category) {
         category.setDeletedAt(LocalDateTime.now());
-        categoryRepository.save(category);
+        Category deletedCategory = categoryRepository.save(category);
+
+        for(Lecturer lecturer : deletedCategory.getCategoryLecturers()) {
+            lecturer.setDeletedAt(LocalDateTime.now());
+            lecturerRepository.save(lecturer);
+        }
     }
 
     public Category createCategory(CategoryDTO categoryDTO, User user) {
