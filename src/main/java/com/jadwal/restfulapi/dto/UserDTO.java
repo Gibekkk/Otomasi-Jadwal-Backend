@@ -18,18 +18,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private UserGroupService userGroupService;
    
     private String name;
     private String groupId;
     private String prodiId;
     private String username;
     private String password;
+    private UserGroupService userGroupService;
+    private CategoryService categoryService;
 
     public void checkDTO() {
         trim();
@@ -52,9 +48,15 @@ public class UserDTO {
         boolean username = Optional.ofNullable(this.username)
                 .map(s -> s.length() <= 50)
                 .orElse(true);
+        boolean name = Optional.ofNullable(this.name)
+                .map(s -> s.length() <= 50)
+                .orElse(true);
 
         if (!username)
             throw new IllegalArgumentException("Username Exceeded Max Length");
+
+        if (!name)
+            throw new IllegalArgumentException("Name Exceeded Max Length");
     }
 
     public void trim() {
