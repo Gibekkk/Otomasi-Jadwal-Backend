@@ -33,7 +33,7 @@ public class Specialization {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "name", nullable = false, length = 255)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     @ManyToOne
