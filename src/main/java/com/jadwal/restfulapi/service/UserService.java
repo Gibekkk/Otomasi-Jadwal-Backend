@@ -26,13 +26,13 @@ public class UserService {
 
     public Optional<User> findUserById(String id) {
         return userRepository.findByIdAndDeletedAtIsNull(id)
-                .filter(user -> user.getGroupId().getName() != "Super Admin");
+                .filter(user -> !user.getGroupId().getName().equals("Super Admin"));
     }
 
     public List<User> findAllUser() {
         return userRepository.findAllByDeletedAtIsNull()
                 .stream()
-                .filter(user -> user.getGroupId().getName() != "Super Admin")
+                .filter(user -> !user.getGroupId().getName().equals("Super Admin"))
                 .toList();
     }
 
