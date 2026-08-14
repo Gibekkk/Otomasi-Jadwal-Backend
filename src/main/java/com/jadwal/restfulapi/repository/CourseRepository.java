@@ -10,6 +10,7 @@ import com.jadwal.restfulapi.model.Category;
 
 public interface CourseRepository extends JpaRepository<Course, String> {
     public Optional<Course> findByIdAndDeletedAtIsNull(String id);
+    public Optional<Course> findByNameAndDeletedAtIsNull(String name);
     public List<Course> findAllByDeletedAtIsNull();
     public List<Course> findAllByCategoryIdAndDeletedAtIsNull(Category category);
 }
