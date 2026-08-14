@@ -24,8 +24,6 @@ public class UserDTO {
     private String prodiId;
     private String username;
     private String password;
-    private UserGroupService userGroupService;
-    private CategoryService categoryService;
 
     public void checkDTO() {
         trim();
@@ -38,10 +36,6 @@ public class UserDTO {
             throw new IllegalArgumentException("Group ID Cannot Be NULL");
         if (this.password == null)
             throw new IllegalArgumentException("Password Cannot Be NULL");
-        if (this.prodiId != null && !categoryService.isProdiExistById(this.prodiId))
-            throw new IllegalArgumentException("Prodi ID Not Found");
-        if (!userGroupService.isProdiExistById(this.groupId))
-            throw new IllegalArgumentException("Group ID Not Found");
     }
 
     public void checkLength() {

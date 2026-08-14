@@ -72,8 +72,7 @@ public class UserController {
                     for (UserGroup group : groups) {
                         groupData.add(Map.of(
                                 "id", group.getId(),
-                                "name", group.getName()
-                            ));
+                                "name", group.getName()));
                     }
                     data = groupData;
                 } else {
@@ -97,6 +96,7 @@ public class UserController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(data);
     }
+
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Santoso\",\"username\":\"budi\","
             + "\"group\":\"Baa Admin\",\"prodi\":\"Teknik Informatika\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
@@ -259,6 +259,11 @@ public class UserController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             userDTO.checkDTO();
+            if (userDTO.getProdiId() != null && !categoryService.isProdiExistById(userDTO.getProdiId()))
+                throw new IllegalArgumentException("Prodi ID Not Found");
+            if (!userGroupService.isProdiExistById(userDTO.getGroupId()))
+                throw new IllegalArgumentException("Group ID Not Found");
+
             Optional<UserGroup> userGroupOpt = userGroupService.findUserGroupByIdAndNotSuperAdmin(userDTO.getGroupId());
             if (userGroupOpt.isPresent()) {
                 UserGroup userGroup = userGroupOpt.get();
@@ -279,7 +284,8 @@ public class UserController {
                                 "name", createdUser.getName(),
                                 "username", createdUser.getUsername(),
                                 "group", createdUser.getGroupId().getName(),
-                                "prodi", Optional.ofNullable(createdUser.getProdiId()).map(prodi -> prodi.getName()).orElse("-"),
+                                "prodi",
+                                Optional.ofNullable(createdUser.getProdiId()).map(prodi -> prodi.getName()).orElse("-"),
                                 "createdAt", createdUser.getCreatedAt(),
                                 "updatedAt", createdUser.getUpdatedAt());
                     } else {
@@ -317,11 +323,17 @@ public class UserController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "User Not Found")
     @PutMapping("/{userId}")
-    public ResponseEntity<Object> editUser(HttpServletRequest request, @RequestBody UserDTO userDTO, @PathVariable String userId) {
+    public ResponseEntity<Object> editUser(HttpServletRequest request, @RequestBody UserDTO userDTO,
+            @PathVariable String userId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
             userDTO.checkDTO();
+            if (userDTO.getProdiId() != null && !categoryService.isProdiExistById(userDTO.getProdiId()))
+                throw new IllegalArgumentException("Prodi ID Not Found");
+            if (!userGroupService.isProdiExistById(userDTO.getGroupId()))
+                throw new IllegalArgumentException("Group ID Not Found");
+
             Optional<UserGroup> userGroupOpt = userGroupService.findUserGroupByIdAndNotSuperAdmin(userDTO.getGroupId());
             if (userGroupOpt.isPresent()) {
                 UserGroup userGroup = userGroupOpt.get();
@@ -340,13 +352,15 @@ public class UserController {
                                 editedUser = userService.editUser(editedUser, userDTO, userGroup, prodi);
                             }
                             data = Map.of(
-                                "userId", editedUser.getId(),
-                                "name", editedUser.getName(),
-                                "username", editedUser.getUsername(),
-                                "group", editedUser.getGroupId().getName(),
-                                "prodi", Optional.ofNullable(editedUser.getProdiId()).map(prodi -> prodi.getName()).orElse("-"),
-                                "createdAt", editedUser.getCreatedAt(),
-                                "updatedAt", editedUser.getUpdatedAt());
+                                    "userId", editedUser.getId(),
+                                    "name", editedUser.getName(),
+                                    "username", editedUser.getUsername(),
+                                    "group", editedUser.getGroupId().getName(),
+                                    "prodi",
+                                    Optional.ofNullable(editedUser.getProdiId()).map(prodi -> prodi.getName())
+                                            .orElse("-"),
+                                    "createdAt", editedUser.getCreatedAt(),
+                                    "updatedAt", editedUser.getUpdatedAt());
                         } else {
                             httpCode = HTTPCode.NOT_FOUND;
                             data = new ErrorMessage(httpCode, "User Not Found");
