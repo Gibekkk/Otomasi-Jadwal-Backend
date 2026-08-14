@@ -110,6 +110,7 @@ public class AuthController {
                 data = Map.of(
                         "id", session.getUserId().getId(),
                         "name", session.getUserId().getName(),
+                        "username", session.getUserId().getUsername(),
                         "group", session.getUserId().getGroupId().getName());
             } else {
                 httpCode = HTTPCode.UNAUTHORIZED;
