@@ -52,8 +52,8 @@ public class Course {
     @Column(name = "capacity", nullable = false, length = 3)
     private int capacity;
 
-    @Column(name = "is_interdicipline", nullable = false)
-    private Boolean isInterdicipline;
+    @Column(name = "is_interdiscipline", nullable = false)
+    private Boolean isInterdiscipline;
 
     @Column(name = "is_odd", nullable = false)
     private Boolean isOdd;

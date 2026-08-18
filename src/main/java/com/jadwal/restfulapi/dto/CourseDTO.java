@@ -19,7 +19,7 @@ public class CourseDTO {
     private int sksCount;
     private int lecturerCount;
     private int capacity;
-    private Boolean isInterdicipline;
+    private Boolean isInterdiscipline;
     private Boolean isOdd;
     private Boolean isActive;
     private Boolean isLab;

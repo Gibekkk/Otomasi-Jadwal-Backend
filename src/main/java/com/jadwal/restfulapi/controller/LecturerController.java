@@ -83,7 +83,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
@@ -105,11 +105,11 @@ public class LecturerController {
                         lecturers = lecturerService.findAllLecturer();
                     } else if (authService.isProdiAdmin(user)) {
                         Category category = user.getProdiId();
-                        lecturers = lecturerService.findLecturerByCategoryAndInterdicipline(category);
+                        lecturers = lecturerService.findLecturerByCategoryAndInterdiscipline(category);
                     } else if (authService.isNtHumAdmin(user)) {
                         lecturers = lecturerService.findAllLecturer()
                                 .stream()
-                                .filter(lecturer -> lecturer.getIsInterdicipline()
+                                .filter(lecturer -> lecturer.getIsInterdiscipline()
                                         || lecturer.getCategoryId().getName().equals("Umum")
                                         || lecturer.getCategoryId().getName().equals("Entrepreneurship"))
                                 .toList();
@@ -122,7 +122,7 @@ public class LecturerController {
                                 Map.entry("isDlb", lecturer.isDlb()),
                                 Map.entry("isMale", lecturer.getIsMale()),
                                 Map.entry("isActive", lecturer.getIsActive()),
-                                Map.entry("isInterdicipline", lecturer.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", lecturer.getIsInterdiscipline()),
                                 Map.entry("religion", lecturer.getReligion().toString()),
                                 Map.entry("category", lecturer.getCategoryId().getName()),
                                 Map.entry("specializations", mapSpecializations(lecturer)),
@@ -154,7 +154,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
@@ -176,11 +176,11 @@ public class LecturerController {
                         lecturerOpt = lecturerService.findLecturerById(lecturerId);
                     } else if (authService.isProdiAdmin(user)) {
                         Category category = user.getProdiId();
-                        lecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdicipline(lecturerId,
+                        lecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
                                 category);
                     } else if (authService.isNtHumAdmin(user)) {
                         lecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdicipline()
+                                .filter(lecturer -> lecturer.getIsInterdiscipline()
                                         || lecturer.getCategoryId().getName().equals("Umum")
                                         || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -192,7 +192,7 @@ public class LecturerController {
                                 Map.entry("isDlb", lecturer.isDlb()),
                                 Map.entry("isMale", lecturer.getIsMale()),
                                 Map.entry("isActive", lecturer.getIsActive()),
-                                Map.entry("isInterdicipline", lecturer.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", lecturer.getIsInterdiscipline()),
                                 Map.entry("religion", lecturer.getReligion().toString()),
                                 Map.entry("category", lecturer.getCategoryId().getName()),
                                 Map.entry("specializations", mapSpecializations(lecturer)),
@@ -245,11 +245,11 @@ public class LecturerController {
                         lecturerOpt = lecturerService.findLecturerById(lecturerId);
                     } else if (authService.isProdiAdmin(user)) {
                         Category category = user.getProdiId();
-                        lecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdicipline(lecturerId,
+                        lecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
                                 category);
                     } else if (authService.isNtHumAdmin(user)) {
                         lecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdicipline()
+                                .filter(lecturer -> lecturer.getIsInterdiscipline()
                                         || lecturer.getCategoryId().getName().equals("Umum")
                                         || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -285,7 +285,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
@@ -347,7 +347,7 @@ public class LecturerController {
                             Map.entry("isDlb", createdLecturer.isDlb()),
                             Map.entry("isMale", createdLecturer.getIsMale()),
                             Map.entry("isActive", createdLecturer.getIsActive()),
-                            Map.entry("isInterdicipline", createdLecturer.getIsInterdicipline()),
+                            Map.entry("isInterdiscipline", createdLecturer.getIsInterdiscipline()),
                             Map.entry("religion", createdLecturer.getReligion().toString()),
                             Map.entry("category", createdLecturer.getCategoryId().getName()),
                             Map.entry("specializations", mapSpecializations(createdLecturer)),
@@ -377,7 +377,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
@@ -422,11 +422,11 @@ public class LecturerController {
                         editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
                     } else if (authService.isProdiAdmin(user)) {
                         Category category = user.getProdiId();
-                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdicipline(lecturerId,
+                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
                                 category);
                     } else if (authService.isNtHumAdmin(user)) {
                         editedLecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdicipline()
+                                .filter(lecturer -> lecturer.getIsInterdiscipline()
                                         || lecturer.getCategoryId().getName().equals("Umum")
                                         || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -444,7 +444,7 @@ public class LecturerController {
                                 Map.entry("isDlb", editedLecturer.isDlb()),
                                 Map.entry("isMale", editedLecturer.getIsMale()),
                                 Map.entry("isActive", editedLecturer.getIsActive()),
-                                Map.entry("isInterdicipline", editedLecturer.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
                                 Map.entry("religion", editedLecturer.getReligion().toString()),
                                 Map.entry("category", editedLecturer.getCategoryId().getName()),
                                 Map.entry("specializations", mapSpecializations(editedLecturer)),
@@ -478,7 +478,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":false,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":false,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
@@ -501,11 +501,11 @@ public class LecturerController {
                         editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
                     } else if (authService.isProdiAdmin(user)) {
                         Category category = user.getProdiId();
-                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdicipline(lecturerId,
+                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
                                 category);
                     } else if (authService.isNtHumAdmin(user)) {
                         editedLecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdicipline()
+                                .filter(lecturer -> lecturer.getIsInterdiscipline()
                                         || lecturer.getCategoryId().getName().equals("Umum")
                                         || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -518,7 +518,7 @@ public class LecturerController {
                                 Map.entry("isDlb", editedLecturer.isDlb()),
                                 Map.entry("isMale", editedLecturer.getIsMale()),
                                 Map.entry("isActive", isActive),
-                                Map.entry("isInterdicipline", editedLecturer.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
                                 Map.entry("religion", editedLecturer.getReligion().toString()),
                                 Map.entry("category", editedLecturer.getCategoryId().getName()),
                                 Map.entry("specializations", mapSpecializations(editedLecturer)),

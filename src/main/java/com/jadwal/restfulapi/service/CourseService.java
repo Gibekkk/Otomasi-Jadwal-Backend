@@ -71,17 +71,17 @@ public class CourseService {
                 .toList();
     }
 
-    public Optional<Course> findCourseByIdAndCategoryAndInterdicipline(String id, Category category) {
+    public Optional<Course> findCourseByIdAndCategoryAndInterdiscipline(String id, Category category) {
         // Otomatis terfilter karena memanggil findCourseByIdAndCategory yang sudah kita update
         return findCourseByIdAndCategory(id, category)
-                .filter(course -> course.getIsInterdicipline());
+                .filter(course -> course.getIsInterdiscipline());
     }
 
-    public List<Course> findCourseByCategoryAndInterdicipline(Category category) {
+    public List<Course> findCourseByCategoryAndInterdiscipline(Category category) {
         // Otomatis terfilter karena memanggil findAllCourse yang sudah kita update
         return findAllCourse()
                 .stream()
-                .filter(course -> course.getIsInterdicipline() || course.getCategoryId().equals(category))
+                .filter(course -> course.getIsInterdiscipline() || course.getCategoryId().equals(category))
                 .toList();
     }
 
@@ -102,7 +102,7 @@ public class CourseService {
         course.setSksCount(courseDTO.getSksCount());
         course.setLecturerCount(courseDTO.getLecturerCount());
         course.setCapacity(courseDTO.getCapacity());
-        course.setIsInterdicipline(courseDTO.getIsInterdicipline());
+        course.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         course.setIsOdd(courseDTO.getIsOdd());
         course.setIsActive(courseDTO.getIsActive());
         course.setIsLab(courseDTO.getIsLab());
@@ -125,7 +125,7 @@ public class CourseService {
         editedCourse.setSksCount(courseDTO.getSksCount());
         editedCourse.setLecturerCount(courseDTO.getLecturerCount());
         editedCourse.setCapacity(courseDTO.getCapacity());
-        editedCourse.setIsInterdicipline(courseDTO.getIsInterdicipline());
+        editedCourse.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         editedCourse.setIsOdd(courseDTO.getIsOdd());
         editedCourse.setIsActive(courseDTO.getIsActive());
         editedCourse.setIsLab(courseDTO.getIsLab());

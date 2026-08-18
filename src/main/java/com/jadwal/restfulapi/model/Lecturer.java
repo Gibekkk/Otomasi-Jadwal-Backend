@@ -45,8 +45,8 @@ public class Lecturer {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "is_interdicipline", nullable = false)
-    private Boolean isInterdicipline;
+    @Column(name = "is_interdiscipline", nullable = false)
+    private Boolean isInterdiscipline;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "religion", nullable = false)

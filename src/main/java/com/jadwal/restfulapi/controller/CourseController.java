@@ -67,7 +67,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -86,11 +86,11 @@ public class CourseController {
                     if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
                         courses = courseService.findAllCourse();
                     } else if (authService.isProdiAdmin(user)) {
-                        courses = courseService.findCourseByCategoryAndInterdicipline(user.getProdiId());
+                        courses = courseService.findCourseByCategoryAndInterdiscipline(user.getProdiId());
                     } else if (authService.isNtHumAdmin(user)) {
                         courses = courseService.findAllCourse()
                                 .stream()
-                                .filter(course -> course.getIsInterdicipline() == true
+                                .filter(course -> course.getIsInterdiscipline() == true
                                         || course.getCategoryId().getName().equals("Umum")
                                         || course.getCategoryId().getName().equals("Entrepreneurship"))
                                 .collect(Collectors.toList());
@@ -103,7 +103,7 @@ public class CourseController {
                                 Map.entry("sksCount", course.getSksCount()),
                                 Map.entry("lecturerCount", course.getLecturerCount()),
                                 Map.entry("capacity", course.getCapacity()),
-                                Map.entry("isInterdicipline", course.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", course.getIsInterdiscipline()),
                                 Map.entry("isOdd", course.getIsOdd()),
                                 Map.entry("isActive", course.getIsActive()),
                                 Map.entry("isLab", course.getIsLab()),
@@ -136,7 +136,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -156,11 +156,11 @@ public class CourseController {
                     if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
                         courseOpt = courseService.findCourseById(courseId);
                     } else if (authService.isProdiAdmin(user)) {
-                        courseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                        courseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
                                 user.getProdiId());
                     } else if (authService.isNtHumAdmin(user)) {
                         courseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdicipline()
+                                .filter(course -> course.getIsInterdiscipline()
                                         || course.getCategoryId().getName().equals("Umum")
                                         || course.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -172,7 +172,7 @@ public class CourseController {
                                 Map.entry("sksCount", c.getSksCount()),
                                 Map.entry("lecturerCount", c.getLecturerCount()),
                                 Map.entry("capacity", c.getCapacity()),
-                                Map.entry("isInterdicipline", c.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", c.getIsInterdiscipline()),
                                 Map.entry("isOdd", c.getIsOdd()),
                                 Map.entry("isActive", c.getIsActive()),
                                 Map.entry("isLab", c.getIsLab()),
@@ -225,11 +225,11 @@ public class CourseController {
                     if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
                         courseOpt = courseService.findCourseById(courseId);
                     } else if (authService.isProdiAdmin(user)) {
-                        courseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                        courseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
                                 user.getProdiId());
                     } else if (authService.isNtHumAdmin(user)) {
                         courseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdicipline()
+                                .filter(course -> course.getIsInterdiscipline()
                                         || course.getCategoryId().getName().equals("Umum")
                                         || course.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -265,7 +265,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -317,7 +317,7 @@ public class CourseController {
                             Map.entry("sksCount", createdCourse.getSksCount()),
                             Map.entry("lecturerCount", createdCourse.getLecturerCount()),
                             Map.entry("capacity", createdCourse.getCapacity()),
-                            Map.entry("isInterdicipline", createdCourse.getIsInterdicipline()),
+                            Map.entry("isInterdiscipline", createdCourse.getIsInterdiscipline()),
                             Map.entry("isOdd", createdCourse.getIsOdd()),
                             Map.entry("isActive", createdCourse.getIsActive()),
                             Map.entry("isLab", createdCourse.getIsLab()),
@@ -348,7 +348,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -383,11 +383,11 @@ public class CourseController {
                     if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
                         editedCourseOpt = courseService.findCourseById(courseId);
                     } else if (authService.isProdiAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
                                 user.getProdiId());
                     } else if (authService.isNtHumAdmin(user)) {
                         editedCourseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdicipline()
+                                .filter(course -> course.getIsInterdiscipline()
                                         || course.getCategoryId().getName().equals("Umum")
                                         || course.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -407,7 +407,7 @@ public class CourseController {
                                 Map.entry("sksCount", editedCourse.getSksCount()),
                                 Map.entry("lecturerCount", editedCourse.getLecturerCount()),
                                 Map.entry("capacity", editedCourse.getCapacity()),
-                                Map.entry("isInterdicipline", editedCourse.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
                                 Map.entry("isOdd", editedCourse.getIsOdd()),
                                 Map.entry("isActive", editedCourse.getIsActive()),
                                 Map.entry("isLab", editedCourse.getIsLab()),
@@ -442,7 +442,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":false,\"isLab\":false,"
+            + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":false,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -462,11 +462,11 @@ public class CourseController {
                     if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
                         editedCourseOpt = courseService.findCourseById(courseId);
                     } else if (authService.isProdiAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdicipline(courseId,
+                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
                                 user.getProdiId());
                     } else if (authService.isNtHumAdmin(user)) {
                         editedCourseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdicipline()
+                                .filter(course -> course.getIsInterdiscipline()
                                         || course.getCategoryId().getName().equals("Umum")
                                         || course.getCategoryId().getName().equals("Entrepreneurship"));
                     }
@@ -479,7 +479,7 @@ public class CourseController {
                                 Map.entry("sksCount", editedCourse.getSksCount()),
                                 Map.entry("lecturerCount", editedCourse.getLecturerCount()),
                                 Map.entry("capacity", editedCourse.getCapacity()),
-                                Map.entry("isInterdicipline", editedCourse.getIsInterdicipline()),
+                                Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
                                 Map.entry("isOdd", editedCourse.getIsOdd()),
                                 Map.entry("isActive", isActive),
                                 Map.entry("isLab", editedCourse.getIsLab()),

@@ -41,15 +41,15 @@ public class LecturerService {
                 .filter(lecturer -> lecturer.getCategoryId().equals(category));
     }
 
-    public Optional<Lecturer> findLecturerByIdAndCategoryAndInterdicipline(String id, Category category) {
+    public Optional<Lecturer> findLecturerByIdAndCategoryAndInterdiscipline(String id, Category category) {
         return findLecturerByIdAndCategory(id, category)
-                .filter(lecturer -> lecturer.getIsInterdicipline());
+                .filter(lecturer -> lecturer.getIsInterdiscipline());
     }
 
-    public List<Lecturer> findLecturerByCategoryAndInterdicipline(Category category) {
+    public List<Lecturer> findLecturerByCategoryAndInterdiscipline(Category category) {
         return findAllLecturer()
                 .stream()
-                .filter(lecturer -> lecturer.getIsInterdicipline() || lecturer.getCategoryId().equals(category))
+                .filter(lecturer -> lecturer.getIsInterdiscipline() || lecturer.getCategoryId().equals(category))
                 .toList();
     }
 
@@ -77,7 +77,7 @@ public class LecturerService {
         Lecturer lecturer = new Lecturer();
         lecturer.setName(lecturerDTO.getName());
         lecturer.setIsMale(lecturerDTO.getIsMale());
-        lecturer.setIsInterdicipline(lecturerDTO.getIsInterdicipline());
+        lecturer.setIsInterdiscipline(lecturerDTO.getIsInterdiscipline());
         lecturer.setIsActive(true);
         lecturer.setReligion(Religion.fromString(lecturerDTO.getReligion()));
         lecturer.setCategoryId(category);
@@ -102,7 +102,7 @@ public class LecturerService {
             List<Specialization> specializations, List<Schedule> schedules) {
         editedLecturer.setName(lecturerDTO.getName());
         editedLecturer.setIsMale(lecturerDTO.getIsMale());
-        editedLecturer.setIsInterdicipline(lecturerDTO.getIsInterdicipline());
+        editedLecturer.setIsInterdiscipline(lecturerDTO.getIsInterdiscipline());
         editedLecturer.setReligion(Religion.fromString(lecturerDTO.getReligion()));
         editedLecturer.setCategoryId(category);
         editedLecturer.setEditedBy(admin);

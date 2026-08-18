@@ -18,7 +18,7 @@ public class LecturerDTO {
 
     private String name;
     private Boolean isMale;
-    private Boolean isInterdicipline;
+    private Boolean isInterdiscipline;
     private String religion;
     private String categoryId;
     private List<String> specializations;
