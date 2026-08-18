@@ -66,8 +66,10 @@ public class LecturerService {
         lecturerRepository.save(lecturer);
     }
 
-    public Boolean toggleLecturerActive(Lecturer lecturer) {
+    public Boolean toggleLecturerActive(Lecturer lecturer, User admin) {
         lecturer.setIsActive(!lecturer.getIsActive());
+        lecturer.setEditedBy(admin);
+        lecturer.setUpdatedAt(LocalDateTime.now());
         lecturerRepository.save(lecturer);
         return lecturer.getIsActive();
     }

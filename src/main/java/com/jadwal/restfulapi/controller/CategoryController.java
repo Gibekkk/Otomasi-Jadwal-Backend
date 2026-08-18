@@ -44,7 +44,8 @@ public class CategoryController {
 
     private Object data = "";
 
-    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Wajib\"}]")
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Wajib\",\"isProdi\":false,"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @GetMapping
@@ -63,6 +64,7 @@ public class CategoryController {
                         categoryList.add(Map.of(
                                 "id", category.getId(),
                                 "name", category.getName(),
+                                "isProdi", category.getIsProdi(),
                                 "createdAt", category.getCreatedAt(),
                                 "updatedAt", category.getUpdatedAt()));
                     }
@@ -89,7 +91,8 @@ public class CategoryController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Wajib\"}")
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Wajib\",\"isProdi\":false,"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "Category Not Found")
@@ -109,6 +112,7 @@ public class CategoryController {
                         data = Map.of(
                                 "id", c.getId(),
                                 "name", c.getName(),
+                                "isProdi", c.getIsProdi(),
                                 "createdAt", c.getCreatedAt(),
                                 "updatedAt", c.getUpdatedAt());
                     } else {
@@ -183,7 +187,7 @@ public class CategoryController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\","
+    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\",\"isProdi\":false,"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -206,6 +210,7 @@ public class CategoryController {
                     data = Map.of(
                             "categoryId", category.getId(),
                             "name", category.getName(),
+                            "isProdi", category.getIsProdi(),
                             "createdAt", category.getCreatedAt(),
                             "updatedAt", category.getUpdatedAt());
                 } else {
@@ -230,7 +235,7 @@ public class CategoryController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\","
+    @SuccessExample(value = "{\"categoryId\":\"uuid\",\"name\":\"Wajib\",\"isProdi\":false,"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -259,6 +264,7 @@ public class CategoryController {
                         data = Map.of(
                                 "categoryId", editedCategory.getId(),
                                 "name", editedCategory.getName(),
+                                "isProdi", editedCategory.getIsProdi(),
                                 "createdAt", editedCategory.getCreatedAt(),
                                 "updatedAt", editedCategory.getUpdatedAt());
                     } else {

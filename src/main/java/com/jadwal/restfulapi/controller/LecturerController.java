@@ -511,7 +511,7 @@ public class LecturerController {
                     }
                     if (editedLecturerOpt.isPresent()) {
                         Lecturer editedLecturer = editedLecturerOpt.get();
-                        Boolean isActive = lecturerService.toggleLecturerActive(editedLecturer);
+                        Boolean isActive = lecturerService.toggleLecturerActive(editedLecturer, user);
                         data = Map.ofEntries(
                                 Map.entry("id", editedLecturer.getId()),
                                 Map.entry("name", editedLecturer.getName()),

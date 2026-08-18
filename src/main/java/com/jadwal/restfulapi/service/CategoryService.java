@@ -78,9 +78,7 @@ public class CategoryService {
     public Category editCategory(Category editedCategory, CategoryDTO categoryDTO, User user) {
         editedCategory.setName(categoryDTO.getName());
         editedCategory.setIsProdi(false);
-        editedCategory.setCreatedBy(user);
         editedCategory.setEditedBy(user);
-        editedCategory.setCreatedAt(LocalDateTime.now());
         editedCategory.setUpdatedAt(LocalDateTime.now());
         return categoryRepository.save(editedCategory);
     }
@@ -99,9 +97,7 @@ public class CategoryService {
     public Category editProdi(Category editedProdi, CategoryDTO categoryDTO, User user) {
         editedProdi.setName(categoryDTO.getName());
         editedProdi.setIsProdi(true);
-        editedProdi.setCreatedBy(user);
         editedProdi.setEditedBy(user);
-        editedProdi.setCreatedAt(LocalDateTime.now());
         editedProdi.setUpdatedAt(LocalDateTime.now());
         return categoryRepository.save(editedProdi);
     }
