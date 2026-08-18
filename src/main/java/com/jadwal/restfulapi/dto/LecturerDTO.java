@@ -33,9 +33,10 @@ public class LecturerDTO {
             throw new IllegalArgumentException("Category ID Cannot Be NULL");
         if (this.religion == null)
             throw new IllegalArgumentException("Religion Cannot Be NULL");
-        if (this.religion != null && !Religion.checkExist(this.religion)) {
+        if (this.religion != null && !Religion.checkExist(this.religion))
             throw new IllegalArgumentException("Invalid Religion: " + this.religion);
-        }
+        if (this.specializations.isEmpty())
+            throw new IllegalArgumentException("Specializations Cannot Be Empty");
     }
 
     public void checkLength() {

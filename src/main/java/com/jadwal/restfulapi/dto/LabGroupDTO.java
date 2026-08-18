@@ -23,6 +23,8 @@ public class LabGroupDTO {
         checkLength();
         if (this.name == null)
             throw new IllegalArgumentException("Name Cannot Be NULL");
+        if (this.specializations.isEmpty())
+            throw new IllegalArgumentException("Specializations Cannot Be Empty");
     }
 
     public void checkLength() {
