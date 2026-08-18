@@ -28,12 +28,12 @@ public class RoomDTO {
         boolean name = Optional.ofNullable(this.name)
                 .map(s -> s.length() <= 50)
                 .orElse(true);
-        boolean capacity = this.capacity > 5;
+        boolean capacity = this.capacity >= 5;
 
         if (!name)
             throw new IllegalArgumentException("Name Exceeded Max Length");
         if (!capacity)
-            throw new IllegalArgumentException("Capacity Must Be Greater Than 5");
+            throw new IllegalArgumentException("Capacity Must Be At Least 5");
     }
 
     public void trim() {
