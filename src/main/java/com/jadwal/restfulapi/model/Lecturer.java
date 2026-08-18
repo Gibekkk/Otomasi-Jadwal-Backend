@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 import com.jadwal.restfulapi.model.enums.Religion;
@@ -83,6 +84,6 @@ public class Lecturer {
     private Set<Lecture> lectures;
 
     public Boolean isDlb() {
-        return this.lecturerSchedules.size() > 0;
+        return Optional.ofNullable(this.lecturerSchedules).map(s -> s.size() > 0).orElse(false);
     }
 }
