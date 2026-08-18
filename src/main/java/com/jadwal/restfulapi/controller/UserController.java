@@ -214,6 +214,8 @@ public class UserController {
             userDTO.checkDTO();
             if (userDTO.getProdiId() != null && !categoryService.isProdiExistById(userDTO.getProdiId()))
                 throw new IllegalArgumentException("Prodi ID Not Found");
+            if (authService.isExistByUsername(userDTO.getUsername()))
+                throw new IllegalArgumentException("Username Already Exist");
 
             Role role = Role.fromString(userDTO.getRole());
             if (role.equals(Role.SUPERADMIN))
@@ -292,6 +294,9 @@ public class UserController {
                     Optional<User> editedUserOpt = userService.findUserById(userId);
                     if (editedUserOpt.isPresent()) {
                         User editedUser = editedUserOpt.get();
+                        if (authService.isExistByUsernameAndIdIsNot(editedUser.getUsername(), editedUser.getId()))
+                            throw new IllegalArgumentException("Username Already Exist");
+
                         if (userDTO.getProdiId() == null) {
                             editedUser = userService.editUser(editedUser, userDTO, role);
                         } else {

@@ -9,6 +9,7 @@ import com.jadwal.restfulapi.model.LabGroup;
 
 public interface LabGroupRepository extends JpaRepository<LabGroup, String> {
     public Boolean existsByNameAndDeletedAtIsNull(String name);
+    public Boolean existsByNameAndDeletedAtIsNullAndIdIsNot(String name, String id);
     public Optional<LabGroup> findByIdAndDeletedAtIsNull(String id);
     public Boolean existsByIdAndDeletedAtIsNull(String id);
     public List<LabGroup> findByDeletedAtIsNull();

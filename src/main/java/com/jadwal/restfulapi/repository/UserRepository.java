@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, String> {
     public Optional<User> findByUsernameAndDeletedAtIsNull(String username);
+    public Optional<User> findByUsernameAndDeletedAtIsNullAndIdIsNot(String username, String id);
     public Optional<User> findByIdAndDeletedAtIsNull(String id);
     public List<User> findAllByDeletedAtIsNull();
 }

@@ -362,8 +362,6 @@ public class CourseController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             courseDTO.checkDTO();
-            if (courseService.isCourseExistByName(courseDTO.getName()))
-                throw new IllegalArgumentException("Name Already Exist");
             if (!categoryService.isCategoryExistById(courseDTO.getCategoryId()))
                 throw new IllegalArgumentException("Category ID Not Found");
             if (courseDTO.getSpecializations() != null && !courseDTO.getSpecializations().isEmpty()) {
@@ -395,6 +393,9 @@ public class CourseController {
                     }
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
+                        if (courseService.isCourseExistByNameAndIdIsNot(courseDTO.getName(), editedCourse.getId()))
+                            throw new IllegalArgumentException("Name Already Exist");
+                        
                         Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
                         List<Specialization> specializations = specializationService
                                 .findAllSpecializationById(courseDTO.getSpecializations());

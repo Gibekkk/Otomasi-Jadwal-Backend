@@ -67,13 +67,20 @@ public class AuthService {
         return user.getRole().equals(Role.PM);
     }
 
-    public boolean isUsernameAvailable(String email) {
-        Optional<User> userOpt = userRepository.findByUsernameAndDeletedAtIsNull(email);
-        return userOpt.isEmpty();
+    public boolean isExistByUsernameAndIdIsNot(String username, String id) {
+        return findUserByUsernameAndIdIsNot(username, id).isPresent();
     }
 
-    public Optional<User> findUserByUsername(String email) {
-        return userRepository.findByUsernameAndDeletedAtIsNull(email);
+    public Optional<User> findUserByUsernameAndIdIsNot(String username, String id) {
+        return userRepository.findByUsernameAndDeletedAtIsNullAndIdIsNot(username, id);
+    }
+
+    public boolean isExistByUsername(String username) {
+        return findUserByUsername(username).isPresent();
+    }
+
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsernameAndDeletedAtIsNull(username);
     }
 
     public Optional<User> findUserById(String userId) {

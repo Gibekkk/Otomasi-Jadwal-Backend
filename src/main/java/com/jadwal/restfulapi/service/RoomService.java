@@ -35,6 +35,10 @@ public class RoomService {
         return roomRepository.findByIdAndDeletedAtIsNull(id);
     }
 
+    public Boolean isRoomExistByNameAndIdIsNot(String name, String id) {
+        return roomRepository.existsByNameAndDeletedAtIsNullAndIdIsNot(name, id);
+    }
+
     public Boolean isRoomExistByName(String name) {
         return roomRepository.existsByNameAndDeletedAtIsNull(name);
     }
@@ -61,6 +65,10 @@ public class RoomService {
 
     public Boolean isLabGroupExistByName(String name) {
         return labGroupRepository.existsByNameAndDeletedAtIsNull(name);
+    }
+
+    public Boolean isLabGroupExistByNameAndIdIsNot(String name, String id) {
+        return labGroupRepository.existsByNameAndDeletedAtIsNullAndIdIsNot(name, id);
     }
 
     public List<LabGroup> findAllLabGroup() {

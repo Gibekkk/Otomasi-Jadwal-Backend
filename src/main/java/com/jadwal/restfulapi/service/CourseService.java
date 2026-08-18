@@ -35,6 +35,10 @@ public class CourseService {
         return findCourseByName(name).isPresent();
     }
 
+    public Boolean isCourseExistByNameAndIdIsNot(String name, String id) {
+        return findCourseByName(name).filter(c -> !c.getId().equals(id)).isPresent();
+    }
+
     public Boolean isCourseExistById(String id) {
         return findCourseById(id).isPresent();
     }

@@ -243,8 +243,6 @@ public class CategoryController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             categoryDTO.checkDTO();
-            if (categoryService.isCategoryExistByName(categoryDTO.getName()))
-                throw new IllegalArgumentException("Name Already Exist");
 
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
@@ -254,6 +252,9 @@ public class CategoryController {
                     Optional<Category> editedCategoryOpt = categoryService.findCategoryById(categoryId);
                     if (editedCategoryOpt.isPresent()) {
                         Category editedCategory = editedCategoryOpt.get();
+                        if (categoryService.isCategoryExistByNameAndIdIsNot(categoryDTO.getName(), editedCategory.getId()))
+                            throw new IllegalArgumentException("Name Already Exist");
+
                         editedCategory = categoryService.editCategory(editedCategory, categoryDTO, user);
                         data = Map.of(
                                 "categoryId", editedCategory.getId(),

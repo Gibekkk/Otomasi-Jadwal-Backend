@@ -194,6 +194,9 @@ public class ProdiController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             categoryDTO.checkDTO();
+            if (categoryService.isCategoryExistByName(categoryDTO.getName()))
+                throw new IllegalArgumentException("Name Already Exist");
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
@@ -248,6 +251,10 @@ public class ProdiController {
                     Optional<Category> editedProdiOpt = categoryService.findProdiById(prodiId);
                     if (editedProdiOpt.isPresent()) {
                         Category editedProdi = editedProdiOpt.get();
+                        if (categoryService.isCategoryExistByNameAndIdIsNot(categoryDTO.getName(),
+                                editedProdi.getId()))
+                            throw new IllegalArgumentException("Name Already Exist");
+
                         editedProdi = categoryService.editProdi(editedProdi, categoryDTO, user);
                         data = Map.of(
                                 "categoryId", editedProdi.getId(),

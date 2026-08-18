@@ -274,8 +274,6 @@ public class LabController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             labGroupDTO.checkDTO();
-            if (roomService.isLabGroupExistByName(labGroupDTO.getName()))
-                throw new IllegalArgumentException("Name Already Exist");
             if (labGroupDTO.getSpecializations() != null && !labGroupDTO.getSpecializations().isEmpty()) {
                 List<String> nonExistentSpecializations = specializationService
                         .checkNonExistentSpecializations(labGroupDTO.getSpecializations());
@@ -293,6 +291,9 @@ public class LabController {
                     Optional<LabGroup> editedLabGroupOpt = roomService.findLabGroupById(labGroupId);
                     if (editedLabGroupOpt.isPresent()) {
                         LabGroup editedLabGroup = editedLabGroupOpt.get();
+                        if (roomService.isLabGroupExistByNameAndIdIsNot(labGroupDTO.getName(), editedLabGroup.getId()))
+                            throw new IllegalArgumentException("Name Already Exist");
+                        
                         List<Specialization> specializations = specializationService
                                 .findAllSpecializationById(labGroupDTO.getSpecializations());
                         editedLabGroup = roomService.editLabGroup(editedLabGroup, labGroupDTO, user, specializations);

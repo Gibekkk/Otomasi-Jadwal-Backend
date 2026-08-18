@@ -252,8 +252,6 @@ public class SpecializationController {
         HTTPCode httpCode = HTTPCode.OK;
         try {
             specializationDTO.checkDTO();
-            if (specializationService.isSpecializationExistByName(specializationDTO.getName()))
-                throw new IllegalArgumentException("Name Already Exist");
 
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
@@ -264,6 +262,10 @@ public class SpecializationController {
                             .findSpecializationById(specializationId);
                     if (editedSpecializationOpt.isPresent()) {
                         Specialization editedSpecialization = editedSpecializationOpt.get();
+                        if (specializationService.isSpecializationExistByNameAndIdIsNot(specializationDTO.getName(),
+                                editedSpecialization.getId()))
+                            throw new IllegalArgumentException("Name Already Exist");
+
                         editedSpecialization = specializationService.editSpecialization(editedSpecialization,
                                 specializationDTO,
                                 user);

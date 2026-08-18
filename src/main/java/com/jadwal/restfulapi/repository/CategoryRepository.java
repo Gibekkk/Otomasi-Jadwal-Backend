@@ -15,4 +15,5 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     public Optional<Category> findByIdAndIsProdiTrueAndDeletedAtIsNull(String id);
     public Optional<Category> findByIdAndIsProdiFalseAndDeletedAtIsNull(String id);
     public Boolean existsByNameAndDeletedAtIsNull(String name);
+    public Boolean existsByNameAndDeletedAtIsNullAndIdIsNot(String name, String id);
 }

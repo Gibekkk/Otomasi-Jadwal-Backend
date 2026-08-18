@@ -38,6 +38,10 @@ public class SpecializationService {
     public Boolean isSpecializationExistByName(String name) {
         return specializationRepository.existsByNameAndDeletedAtIsNull(name);
     }
+    
+    public Boolean isSpecializationExistByNameAndIdIsNot(String name, String id) {
+        return specializationRepository.existsByNameAndDeletedAtIsNullAndIdIsNot(name, id);
+    }
 
     public List<Specialization> findAllSpecialization() {
         return specializationRepository.findAllByDeletedAtIsNull();

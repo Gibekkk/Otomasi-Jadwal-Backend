@@ -34,6 +34,10 @@ public class CategoryService {
         return categoryRepository.existsByNameAndDeletedAtIsNull(name);
     }
 
+    public Boolean isCategoryExistByNameAndIdIsNot(String name, String id) {
+        return categoryRepository.existsByNameAndDeletedAtIsNullAndIdIsNot(name, id);
+    }
+
     public Optional<Category> findCategoryById(String id) {
         return categoryRepository.findByIdAndIsProdiFalseAndDeletedAtIsNull(id);
     }
