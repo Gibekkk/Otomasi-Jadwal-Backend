@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -49,6 +50,15 @@ public class LabController {
     private SpecializationService specializationService;
 
     private Object data = "";
+
+    private List<String> mapSpecializations(LabGroup labGroup) {
+        return Optional.ofNullable(labGroup.getLabSpecializations())
+                .filter(s -> !s.isEmpty())
+                .map(specs -> specs.stream()
+                        .map(ls -> ls.getSpecializationId().getName())
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Lab Komputer\","
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
@@ -70,9 +80,7 @@ public class LabController {
                         labGroupList.add(Map.ofEntries(
                                 Map.entry("id", labGroup.getId()),
                                 Map.entry("name", labGroup.getName()),
-                                Map.entry("specializations", labGroup.getLabSpecializations().stream()
-                                        .map(ls -> ls.getSpecializationId().getName())
-                                        .collect(Collectors.toList())),
+                                Map.entry("specializations", mapSpecializations(labGroup)),
                                 Map.entry("createdAt", labGroup.getCreatedAt()),
                                 Map.entry("updatedAt", labGroup.getUpdatedAt())));
                     }
@@ -120,9 +128,7 @@ public class LabController {
                         data = Map.ofEntries(
                                 Map.entry("id", labGroup.getId()),
                                 Map.entry("name", labGroup.getName()),
-                                Map.entry("specializations", labGroup.getLabSpecializations().stream()
-                                        .map(ls -> ls.getSpecializationId().getName())
-                                        .collect(Collectors.toList())),
+                                Map.entry("specializations", mapSpecializations(labGroup)),
                                 Map.entry("createdAt", labGroup.getCreatedAt()),
                                 Map.entry("updatedAt", labGroup.getUpdatedAt()));
                     } else {
@@ -230,9 +236,7 @@ public class LabController {
                     data = Map.ofEntries(
                             Map.entry("id", createdLabGroup.getId()),
                             Map.entry("name", createdLabGroup.getName()),
-                            Map.entry("specializations", createdLabGroup.getLabSpecializations().stream()
-                                    .map(ls -> ls.getSpecializationId().getName())
-                                    .collect(Collectors.toList())),
+                            Map.entry("specializations", mapSpecializations(createdLabGroup)),
                             Map.entry("createdAt", createdLabGroup.getCreatedAt()),
                             Map.entry("updatedAt", createdLabGroup.getUpdatedAt()));
                 } else {
@@ -295,9 +299,8 @@ public class LabController {
                         data = Map.ofEntries(
                                 Map.entry("id", editedLabGroup.getId()),
                                 Map.entry("name", editedLabGroup.getName()),
-                                Map.entry("specializations", editedLabGroup.getLabSpecializations().stream()
-                                        .map(ls -> ls.getSpecializationId().getName())
-                                        .collect(Collectors.toList())),
+                                Map.entry("specializations",
+                                        mapSpecializations(editedLabGroup)),
                                 Map.entry("createdAt", editedLabGroup.getCreatedAt()),
                                 Map.entry("updatedAt", editedLabGroup.getUpdatedAt()));
                     } else {

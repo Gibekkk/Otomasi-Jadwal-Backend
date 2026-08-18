@@ -31,6 +31,7 @@ import com.jadwal.restfulapi.model.Course;
 import com.jadwal.restfulapi.dto.CourseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,6 +56,15 @@ public class CourseController {
     private SpecializationService specializationService;
 
     private Object data = "";
+
+    private List<String> mapSpecializations(Course course) {
+        return Optional.ofNullable(course.getCourseSpecializations())
+                .filter(s -> !s.isEmpty())
+                .map(specs -> specs.stream()
+                        .map(cs -> cs.getSpecializationId().getName())
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
             + "\"capacity\":40,\"isInterdicipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
@@ -100,9 +110,7 @@ public class CourseController {
                                 Map.entry("category", course.getCategoryId().getName()),
                                 Map.entry("createdAt", course.getCreatedAt()),
                                 Map.entry("updatedAt", course.getUpdatedAt()),
-                                Map.entry("specializations", course.getCourseSpecializations().stream()
-                                        .map(cs -> cs.getSpecializationId().getName())
-                                        .collect(Collectors.toList()))));
+                                Map.entry("specializations", mapSpecializations(course))));
                     }
                     data = courseList;
                 } else {
@@ -171,9 +179,7 @@ public class CourseController {
                                 Map.entry("category", c.getCategoryId().getName()),
                                 Map.entry("createdAt", c.getCreatedAt()),
                                 Map.entry("updatedAt", c.getUpdatedAt()),
-                                Map.entry("specializations", c.getCourseSpecializations().stream()
-                                        .map(cs -> cs.getSpecializationId().getName())
-                                        .collect(Collectors.toList())));
+                                Map.entry("specializations", mapSpecializations(c)));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -318,9 +324,7 @@ public class CourseController {
                             Map.entry("category", createdCourse.getCategoryId().getName()),
                             Map.entry("createdAt", createdCourse.getCreatedAt()),
                             Map.entry("updatedAt", createdCourse.getUpdatedAt()),
-                            Map.entry("specializations", createdCourse.getCourseSpecializations().stream()
-                                    .map(cs -> cs.getSpecializationId().getName())
-                                    .collect(Collectors.toList())));
+                            Map.entry("specializations", mapSpecializations(createdCourse)));
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -409,9 +413,7 @@ public class CourseController {
                                 Map.entry("category", editedCourse.getCategoryId().getName()),
                                 Map.entry("createdAt", editedCourse.getCreatedAt()),
                                 Map.entry("updatedAt", editedCourse.getUpdatedAt()),
-                                Map.entry("specializations", editedCourse.getCourseSpecializations().stream()
-                                        .map(cs -> cs.getSpecializationId().getName())
-                                        .collect(Collectors.toList())));
+                                Map.entry("specializations", mapSpecializations(editedCourse)));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -483,9 +485,7 @@ public class CourseController {
                                 Map.entry("category", editedCourse.getCategoryId().getName()),
                                 Map.entry("createdAt", editedCourse.getCreatedAt()),
                                 Map.entry("updatedAt", editedCourse.getUpdatedAt()),
-                                Map.entry("specializations", editedCourse.getCourseSpecializations().stream()
-                                        .map(cs -> cs.getSpecializationId().getName())
-                                        .collect(Collectors.toList())));
+                                Map.entry("specializations", mapSpecializations(editedCourse)));
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");

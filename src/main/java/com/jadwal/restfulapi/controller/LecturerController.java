@@ -33,6 +33,7 @@ import com.jadwal.restfulapi.model.Lecturer;
 import com.jadwal.restfulapi.dto.LecturerDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,6 +61,26 @@ public class LecturerController {
     private ScheduleService scheduleService;
 
     private Object data = "";
+
+    private List<String> mapSpecializations(Lecturer lecturer) {
+        return Optional.ofNullable(lecturer.getLecturerSpecializations())
+                .filter(s -> !s.isEmpty())
+                .map(specs -> specs.stream()
+                        .map(ls -> ls.getSpecializationId().getName())
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
+
+    private List<Map<String, Object>> mapSchedules(Lecturer lecturer) {
+        return Optional.ofNullable(lecturer.getLecturerSchedules())
+                .filter(s -> !s.isEmpty())
+                .map(scheds -> scheds.stream()
+                        .map(ls -> Map.<String, Object>of(
+                                "timeStart", ls.getScheduleId().getTimeStart(),
+                                "timeEnd", ls.getScheduleId().getTimeEnd()))
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
             + "\"isActive\":true,\"isInterdicipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
@@ -104,14 +125,8 @@ public class LecturerController {
                                 Map.entry("isInterdicipline", lecturer.getIsInterdicipline()),
                                 Map.entry("religion", lecturer.getReligion().toString()),
                                 Map.entry("category", lecturer.getCategoryId().getName()),
-                                Map.entry("specializations", lecturer.getLecturerSpecializations().stream()
-                                        .map(ls -> ls.getSpecializationId().getName())
-                                        .collect(Collectors.toList())),
-                                Map.entry("schedules", lecturer.getLecturerSchedules().stream()
-                                        .map(ls -> Map.of(
-                                                "timeStart", ls.getScheduleId().getTimeStart(),
-                                                "timeEnd", ls.getScheduleId().getTimeEnd()))
-                                        .collect(Collectors.toList())),
+                                Map.entry("specializations", mapSpecializations(lecturer)),
+                                Map.entry("schedules", mapSchedules(lecturer)),
                                 Map.entry("createdAt", lecturer.getCreatedAt()),
                                 Map.entry("updatedAt", lecturer.getUpdatedAt())));
                     }
@@ -180,14 +195,8 @@ public class LecturerController {
                                 Map.entry("isInterdicipline", lecturer.getIsInterdicipline()),
                                 Map.entry("religion", lecturer.getReligion().toString()),
                                 Map.entry("category", lecturer.getCategoryId().getName()),
-                                Map.entry("specializations", lecturer.getLecturerSpecializations().stream()
-                                        .map(ls -> ls.getSpecializationId().getName())
-                                        .collect(Collectors.toList())),
-                                Map.entry("schedules", lecturer.getLecturerSchedules().stream()
-                                        .map(ls -> Map.of(
-                                                "timeStart", ls.getScheduleId().getTimeStart(),
-                                                "timeEnd", ls.getScheduleId().getTimeEnd()))
-                                        .collect(Collectors.toList())),
+                                Map.entry("specializations", mapSpecializations(lecturer)),
+                                Map.entry("schedules", mapSchedules(lecturer)),
                                 Map.entry("createdAt", lecturer.getCreatedAt()),
                                 Map.entry("updatedAt", lecturer.getUpdatedAt()));
                     } else {
@@ -341,14 +350,8 @@ public class LecturerController {
                             Map.entry("isInterdicipline", createdLecturer.getIsInterdicipline()),
                             Map.entry("religion", createdLecturer.getReligion().toString()),
                             Map.entry("category", createdLecturer.getCategoryId().getName()),
-                            Map.entry("specializations", createdLecturer.getLecturerSpecializations().stream()
-                                    .map(ls -> ls.getSpecializationId().getName())
-                                    .collect(Collectors.toList())),
-                            Map.entry("schedules", createdLecturer.getLecturerSchedules().stream()
-                                    .map(ls -> Map.of(
-                                            "timeStart", ls.getScheduleId().getTimeStart(),
-                                            "timeEnd", ls.getScheduleId().getTimeEnd()))
-                                    .collect(Collectors.toList())),
+                            Map.entry("specializations", mapSpecializations(createdLecturer)),
+                            Map.entry("schedules", mapSchedules(createdLecturer)),
                             Map.entry("createdAt", createdLecturer.getCreatedAt()),
                             Map.entry("updatedAt", createdLecturer.getUpdatedAt()));
                 } else {
@@ -444,14 +447,8 @@ public class LecturerController {
                                 Map.entry("isInterdicipline", editedLecturer.getIsInterdicipline()),
                                 Map.entry("religion", editedLecturer.getReligion().toString()),
                                 Map.entry("category", editedLecturer.getCategoryId().getName()),
-                                Map.entry("specializations", editedLecturer.getLecturerSpecializations().stream()
-                                        .map(ls -> ls.getSpecializationId().getName())
-                                        .collect(Collectors.toList())),
-                                Map.entry("schedules", editedLecturer.getLecturerSchedules().stream()
-                                        .map(ls -> Map.of(
-                                                "timeStart", ls.getScheduleId().getTimeStart(),
-                                                "timeEnd", ls.getScheduleId().getTimeEnd()))
-                                        .collect(Collectors.toList())),
+                                Map.entry("specializations", mapSpecializations(editedLecturer)),
+                                Map.entry("schedules", mapSchedules(editedLecturer)),
                                 Map.entry("createdAt", editedLecturer.getCreatedAt()),
                                 Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
                     } else {
@@ -524,14 +521,8 @@ public class LecturerController {
                                 Map.entry("isInterdicipline", editedLecturer.getIsInterdicipline()),
                                 Map.entry("religion", editedLecturer.getReligion().toString()),
                                 Map.entry("category", editedLecturer.getCategoryId().getName()),
-                                Map.entry("specializations", editedLecturer.getLecturerSpecializations().stream()
-                                        .map(ls -> ls.getSpecializationId().getName())
-                                        .collect(Collectors.toList())),
-                                Map.entry("schedules", editedLecturer.getLecturerSchedules().stream()
-                                        .map(ls -> Map.of(
-                                                "timeStart", ls.getScheduleId().getTimeStart(),
-                                                "timeEnd", ls.getScheduleId().getTimeEnd()))
-                                        .collect(Collectors.toList())),
+                                Map.entry("specializations", mapSpecializations(editedLecturer)),
+                                Map.entry("schedules", mapSchedules(editedLecturer)),
                                 Map.entry("createdAt", editedLecturer.getCreatedAt()),
                                 Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
                     } else {
