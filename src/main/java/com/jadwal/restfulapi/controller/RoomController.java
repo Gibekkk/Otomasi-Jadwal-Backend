@@ -60,6 +60,7 @@ public class RoomController {
                     roomList.add(Map.ofEntries(
                             Map.entry("id", room.getId()),
                             Map.entry("name", room.getName()),
+                            Map.entry("capacity", room.getCapacity()),
                             Map.entry("labType",
                                     Optional.ofNullable(room.getLabGroupId()).map(r -> r.getName()).orElse("-")),
                             Map.entry("createdAt", room.getCreatedAt()),
@@ -101,6 +102,7 @@ public class RoomController {
                     data = Map.ofEntries(
                             Map.entry("id", room.getId()),
                             Map.entry("name", room.getName()),
+                            Map.entry("capacity", room.getCapacity()),
                             Map.entry("labType",
                                     Optional.ofNullable(room.getLabGroupId()).map(r -> r.getName()).orElse("-")),
                             Map.entry("createdAt", room.getCreatedAt()),
@@ -199,6 +201,7 @@ public class RoomController {
                     data = Map.ofEntries(
                             Map.entry("id", createdRoom.getId()),
                             Map.entry("name", createdRoom.getName()),
+                            Map.entry("capacity", createdRoom.getCapacity()),
                             Map.entry("labType",
                                     Optional.ofNullable(createdRoom.getLabGroupId()).map(r -> r.getName()).orElse("-")),
                             Map.entry("createdAt", createdRoom.getCreatedAt()),
@@ -256,6 +259,7 @@ public class RoomController {
                         data = Map.ofEntries(
                                 Map.entry("id", editedRoom.getId()),
                                 Map.entry("name", editedRoom.getName()),
+                                Map.entry("capacity", editedRoom.getCapacity()),
                                 Map.entry("labType",
                                         Optional.ofNullable(editedRoom.getLabGroupId()).map(r -> r.getName())
                                                 .orElse("-")),
