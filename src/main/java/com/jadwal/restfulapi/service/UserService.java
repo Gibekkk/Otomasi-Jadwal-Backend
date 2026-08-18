@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.model.User;
-import com.jadwal.restfulapi.model.UserGroup;
+import com.jadwal.restfulapi.model.enums.Role;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.dto.UserDTO;
 import com.jadwal.restfulapi.repository.UserRepository;
@@ -26,13 +26,13 @@ public class UserService {
 
     public Optional<User> findUserById(String id) {
         return userRepository.findByIdAndDeletedAtIsNull(id)
-                .filter(user -> !user.getGroupId().getName().equals("Super Admin"));
+                .filter(user -> !user.getRole().equals(Role.SUPERADMIN));
     }
 
     public List<User> findAllUser() {
         return userRepository.findAllByDeletedAtIsNull()
                 .stream()
-                .filter(user -> !user.getGroupId().getName().equals("Super Admin"))
+                .filter(user -> !user.getRole().equals(Role.SUPERADMIN))
                 .toList();
     }
 
@@ -41,47 +41,47 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User createUser(UserDTO userDTO, UserGroup userGroup, Category prodi) {
+    public User createUser(UserDTO userDTO, Role role, Category prodi) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setName(userDTO.getName());
         user.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
-        user.setGroupId(userGroup);
+        user.setRole(role);
         user.setProdiId(prodi);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
 
-    public User createUser(UserDTO userDTO, UserGroup userGroup) {
+    public User createUser(UserDTO userDTO, Role role) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setName(userDTO.getName());
         user.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
-        user.setGroupId(userGroup);
+        user.setRole(role);
         user.setProdiId(null);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
 
-    public User editUser(User editedUser, UserDTO userDTO, UserGroup userGroup, Category prodi) {
+    public User editUser(User editedUser, UserDTO userDTO, Role role, Category prodi) {
         editedUser.setId(UUID.randomUUID().toString());
         editedUser.setUsername(userDTO.getUsername());
         editedUser.setName(userDTO.getName());
         editedUser.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
-        editedUser.setGroupId(userGroup);
+        editedUser.setRole(role);
         editedUser.setProdiId(prodi);
         editedUser.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(editedUser);
     }
 
-    public User editUser(User editedUser, UserDTO userDTO, UserGroup userGroup) {
+    public User editUser(User editedUser, UserDTO userDTO, Role role) {
         editedUser.setId(UUID.randomUUID().toString());
         editedUser.setUsername(userDTO.getUsername());
         editedUser.setName(userDTO.getName());
         editedUser.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
-        editedUser.setGroupId(userGroup);
+        editedUser.setRole(role);
         editedUser.setProdiId(null);
         editedUser.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(editedUser);

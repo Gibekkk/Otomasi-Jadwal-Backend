@@ -97,7 +97,7 @@ public class AuthController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"id\":\"uuid-user\",\"name\":\"Budi Santoso\"}")
+    @SuccessExample(value = "{\"id\":\"uuid-user\",\"name\":\"Budi Santoso\", \"username\": \"user-username\", \"role\": \"BAA Admin\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @GetMapping("/check")
     public ResponseEntity<Object> checkToken(HttpServletRequest request) {
@@ -111,7 +111,7 @@ public class AuthController {
                         "id", session.getUserId().getId(),
                         "name", session.getUserId().getName(),
                         "username", session.getUserId().getUsername(),
-                        "group", session.getUserId().getGroupId().getName());
+                        "role", session.getUserId().getRole().toString());
             } else {
                 httpCode = HTTPCode.UNAUTHORIZED;
                 data = new ErrorMessage(httpCode, "Authentication Failed");

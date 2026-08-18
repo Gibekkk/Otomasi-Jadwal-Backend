@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.model.User;
+import com.jadwal.restfulapi.model.enums.Role;
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.repository.SessionRepository;
 import com.jadwal.restfulapi.repository.UserRepository;
@@ -47,23 +48,23 @@ public class AuthService {
     }
 
     public Boolean isSuperAdmin(User user) {
-        return user.getGroupId().getName().equals("Super Admin");
+        return user.getRole().equals(Role.SUPERADMIN);
     }
 
     public Boolean isProdiAdmin(User user) {
-        return user.getGroupId().getName().equals("Prodi Admin");
+        return user.getRole().equals(Role.PRODI);
     }
 
     public Boolean isBaaAdmin(User user) {
-        return user.getGroupId().getName().equals("BAA Admin");
+        return user.getRole().equals(Role.BAA);
     }
 
     public Boolean isNtHumAdmin(User user) {
-        return user.getGroupId().getName().equals("NTHUM Admin");
+        return user.getRole().equals(Role.NTHUM);
     }
 
     public Boolean isPmAdmin(User user) {
-        return user.getGroupId().getName().equals("PM Admin");
+        return user.getRole().equals(Role.PM);
     }
 
     public boolean isUsernameAvailable(String email) {

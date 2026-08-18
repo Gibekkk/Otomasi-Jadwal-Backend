@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
    
     private String name;
-    private String groupId;
+    private String role;
     private String prodiId;
     private String username;
     private String password;
@@ -27,8 +27,8 @@ public class UserDTO {
             throw new IllegalArgumentException("Username Cannot Be NULL");
         if (this.name == null)
             throw new IllegalArgumentException("Name Cannot Be NULL");
-        if (this.groupId == null)
-            throw new IllegalArgumentException("Group ID Cannot Be NULL");
+        if (this.role == null)
+            throw new IllegalArgumentException("Role Cannot Be NULL");
         if (this.password == null)
             throw new IllegalArgumentException("Password Cannot Be NULL");
     }
@@ -50,7 +50,7 @@ public class UserDTO {
 
     public void trim() {
         this.name = Optional.ofNullable(this.name).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
-        this.groupId = Optional.ofNullable(this.groupId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
+        this.role = Optional.ofNullable(this.role).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
         this.prodiId = Optional.ofNullable(this.prodiId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
         this.username = Optional.ofNullable(this.username).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
         this.password = Optional.ofNullable(this.password).map(String::trim).filter(s -> !s.isBlank()).orElse(null);

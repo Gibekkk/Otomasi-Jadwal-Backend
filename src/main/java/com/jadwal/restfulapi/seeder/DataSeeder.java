@@ -10,10 +10,8 @@ import org.springframework.stereotype.Component;
 
 import com.jadwal.restfulapi.model.FreeTable;
 import com.jadwal.restfulapi.model.Schedule;
-import com.jadwal.restfulapi.model.UserGroup;
 import com.jadwal.restfulapi.repository.FreeTableRepository;
 import com.jadwal.restfulapi.repository.ScheduleRepository;
-import com.jadwal.restfulapi.repository.UserGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,19 +21,11 @@ import lombok.RequiredArgsConstructor;
 public class DataSeeder implements CommandLineRunner {
 
     private final ScheduleRepository scheduleRepository;
-    private final UserGroupRepository userGroupRepository;
     private final FreeTableRepository freeTableRepository;
 
     private static final LocalTime SCHEDULE_START = LocalTime.of(7, 30);
     private static final LocalTime SCHEDULE_END = LocalTime.of(16, 40);
     private static final int SCHEDULE_INTERVAL_MINUTES = 50;
-
-    private static final List<String> USER_GROUP_NAMES = List.of(
-            "Super Admin",
-            "Prodi Admin",
-            "BAA Admin",
-            "NTHUM Admin",
-            "PM Admin");
 
     private static final int FREE_TABLE_YEAR = 2026;
     private static final boolean FREE_TABLE_IS_ODD = true;
@@ -44,7 +34,6 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         seedSchedules();
-        seedUserGroups();
         seedFreeTable();
     }
 
@@ -77,21 +66,6 @@ public class DataSeeder implements CommandLineRunner {
             current = next;
         }
         return slots;
-    }
-
-    private void seedUserGroups() {
-        int inserted = 0;
-        for (String name : USER_GROUP_NAMES) {
-            if (userGroupRepository.findByName(name).isEmpty()) {
-                UserGroup group = new UserGroup();
-                group.setName(name);
-                userGroupRepository.save(group);
-                inserted++;
-            }
-        }
-        if (inserted > 0) {
-            System.out.println("UserGroup seeder: " + inserted + " grup ditambahkan.");
-        }
     }
 
     private void seedFreeTable() {

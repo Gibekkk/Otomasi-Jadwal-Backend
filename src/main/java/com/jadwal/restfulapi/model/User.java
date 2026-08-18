@@ -3,6 +3,8 @@ package com.jadwal.restfulapi.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import com.jadwal.restfulapi.model.enums.Role;
 
 @Getter
 @Setter
@@ -50,9 +54,9 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(nullable = true, name = "group_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_user_group_id"))
-    private UserGroup groupId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
 
     @ManyToOne
     @JoinColumn(nullable = true, name = "prodi_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_user_prodi_id"))
