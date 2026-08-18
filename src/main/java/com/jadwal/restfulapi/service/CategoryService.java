@@ -39,7 +39,7 @@ public class CategoryService {
     }
 
     public Optional<Category> findCategoryById(String id) {
-        return categoryRepository.findByIdAndIsProdiFalseAndDeletedAtIsNull(id);
+        return categoryRepository.findByIdAndDeletedAtIsNull(id);
     }
 
     public Optional<Category> findProdiById(String id) {
@@ -47,7 +47,7 @@ public class CategoryService {
     }
 
     public List<Category> findAllCategory() {
-        return categoryRepository.findAllByIsProdiFalseAndDeletedAtIsNull();
+        return categoryRepository.findAllByDeletedAtIsNull();
     }
 
     public List<Category> findAllProdi() {
