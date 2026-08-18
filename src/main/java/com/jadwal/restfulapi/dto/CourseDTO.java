@@ -39,8 +39,6 @@ public class CourseDTO {
             throw new IllegalArgumentException("Lecturer Count Cannot Be 0");
         if (this.capacity < 5 || this.capacity > 300)
             throw new IllegalArgumentException("Capacity Must Be Between 5 And 300");
-        if (this.specializations.isEmpty())
-            throw new IllegalArgumentException("Specializations Cannot Be Empty");
     }
 
     public void checkLength() {

@@ -4,8 +4,6 @@ import lombok.Setter;
 
 import java.util.Optional;
 
-import com.jadwal.restfulapi.model.enums.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,8 +31,6 @@ public class UserDTO {
             throw new IllegalArgumentException("Role Cannot Be NULL");
         if (this.password == null)
             throw new IllegalArgumentException("Password Cannot Be NULL");
-        if (this.role != null && !Role.checkExist(this.role))
-            throw new IllegalArgumentException("Invalid Role: " + this.role);
     }
 
     public void checkLength() {
