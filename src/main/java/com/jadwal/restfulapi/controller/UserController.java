@@ -216,6 +216,9 @@ public class UserController {
                 throw new IllegalArgumentException("Prodi ID Not Found");
 
             Role role = Role.fromString(userDTO.getRole());
+            if (role.equals(Role.SUPERADMIN))
+                throw new IllegalArgumentException("Role Invalid");
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
@@ -278,6 +281,9 @@ public class UserController {
                 throw new IllegalArgumentException("Prodi ID Not Found");
 
             Role role = Role.fromString(userDTO.getRole());
+            if (role.equals(Role.SUPERADMIN))
+                throw new IllegalArgumentException("Role Invalid");
+
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
