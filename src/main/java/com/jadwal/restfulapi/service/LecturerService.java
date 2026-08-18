@@ -20,8 +20,6 @@ import com.jadwal.restfulapi.repository.LecturerRepository;
 import com.jadwal.restfulapi.repository.LecturerSpecializationRepository;
 import com.jadwal.restfulapi.repository.LecturerScheduleRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class LecturerService {
 
@@ -124,12 +122,10 @@ public class LecturerService {
         return savedLecturer;
     }
 
-    @Transactional
     public void deleteLecturerSpecializationsByLecturer(Lecturer lecturer) {
         lecturerSpecializationRepository.deleteAllByLecturerId(lecturer);
     }
 
-    @Transactional
     public void deleteLecturerSchedulesByLecturer(Lecturer lecturer) {
         lecturerScheduleRepository.deleteAllByLecturerId(lecturer);
     }

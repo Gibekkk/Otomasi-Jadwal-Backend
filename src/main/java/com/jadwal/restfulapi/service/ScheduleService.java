@@ -2,6 +2,7 @@ package com.jadwal.restfulapi.service;
 
 import java.util.Optional;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,11 @@ public class ScheduleService {
 
     public List<String> checkNonExistentSchedules(List<String> scheduleIds) {
         List<Schedule> existingSchedules = findAllScheduleById(scheduleIds);
-        scheduleIds.removeIf(id -> existingSchedules.stream().anyMatch(s -> s.getId().equals(id)));
-        return scheduleIds;
+
+        // Buat list baru yang berisi elemen dari list utama
+        List<String> schedulesToCheck = new ArrayList<>(scheduleIds);
+
+        schedulesToCheck.removeIf(id -> existingSchedules.stream().anyMatch(s -> s.getId().equals(id)));
+        return schedulesToCheck;
     }
 }

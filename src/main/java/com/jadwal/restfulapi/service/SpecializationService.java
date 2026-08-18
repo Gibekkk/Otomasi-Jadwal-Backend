@@ -2,6 +2,7 @@ package com.jadwal.restfulapi.service;
 
 import java.util.Optional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,6 @@ import com.jadwal.restfulapi.repository.CourseSpecializationRepository;
 import com.jadwal.restfulapi.repository.LabSpecializationRepository;
 import com.jadwal.restfulapi.repository.LecturerSpecializationRepository;
 import com.jadwal.restfulapi.repository.SpecializationRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class SpecializationService {
@@ -34,11 +33,11 @@ public class SpecializationService {
     public Optional<Specialization> findSpecializationById(String id) {
         return specializationRepository.findByIdAndDeletedAtIsNull(id);
     }
-    
+
     public Boolean isSpecializationExistByName(String name) {
         return specializationRepository.existsByNameAndDeletedAtIsNull(name);
     }
-    
+
     public Boolean isSpecializationExistByNameAndIdIsNot(String name, String id) {
         return specializationRepository.existsByNameAndDeletedAtIsNullAndIdIsNot(name, id);
     }
@@ -61,7 +60,8 @@ public class SpecializationService {
         cleanSpecializationRepos(deletedSpecialization);
     }
 
-    public Specialization createSpecialization(com.jadwal.restfulapi.dto.SpecializationDTO specializationDTO, User user) {
+    public Specialization createSpecialization(com.jadwal.restfulapi.dto.SpecializationDTO specializationDTO,
+            User user) {
         Specialization specialization = new Specialization();
         specialization.setName(specializationDTO.getName());
         specialization.setCreatedBy(user);
@@ -81,11 +81,14 @@ public class SpecializationService {
 
     public List<String> checkNonExistentSpecializations(List<String> specializationIds) {
         List<Specialization> existingSpecializations = findAllSpecializationById(specializationIds);
-        specializationIds.removeIf(id -> existingSpecializations.stream().anyMatch(s -> s.getId().equals(id)));
-        return specializationIds;
+
+        // Buat list baru yang berisi elemen dari list utama
+        List<String> specializationsToCheck = new ArrayList<>(specializationIds);
+
+        specializationsToCheck.removeIf(id -> existingSpecializations.stream().anyMatch(s -> s.getId().equals(id)));
+        return specializationsToCheck;
     }
 
-    @Transactional
     public void cleanSpecializationRepos(Specialization specialization) {
         lecturerSpecializationRepository.deleteAllBySpecializationId(specialization);
         labSpecializationRepository.deleteAllBySpecializationId(specialization);

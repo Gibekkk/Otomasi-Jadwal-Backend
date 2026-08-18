@@ -16,8 +16,6 @@ import com.jadwal.restfulapi.dto.CourseDTO;
 import com.jadwal.restfulapi.repository.CourseRepository;
 import com.jadwal.restfulapi.repository.CourseSpecializationRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class CourseService {
 
@@ -144,7 +142,6 @@ public class CourseService {
         return savedCourse;
     }
 
-    @Transactional
     public void deleteCourseSpecializationsByCourse(Course course) {
         courseSpecializationRepository.deleteAllByCourseId(course);
     }

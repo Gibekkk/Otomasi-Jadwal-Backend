@@ -17,8 +17,6 @@ import com.jadwal.restfulapi.repository.LabGroupRepository;
 import com.jadwal.restfulapi.repository.LabSpecializationRepository;
 import com.jadwal.restfulapi.repository.RoomRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class RoomService {
 
@@ -151,7 +149,6 @@ public class RoomService {
         return roomRepository.save(editedRoom);
     }
 
-    @Transactional
     public void deleteLabSpecializationsByLab(LabGroup labGroup) {
         labSpecializationRepository.deleteAllByLabGroupId(labGroup);
     }
