@@ -111,6 +111,7 @@ public class AuthController {
                         "id", session.getUserId().getId(),
                         "name", session.getUserId().getName(),
                         "username", session.getUserId().getUsername(),
+                        "prodiId", Optional.ofNullable(session.getUserId().getProdiId()).map(p -> p.getId()).orElse(""),
                         "role", session.getUserId().getRole().toString());
             } else {
                 httpCode = HTTPCode.UNAUTHORIZED;
