@@ -32,4 +32,7 @@ public class FreeTable {
     @Column(name = "academic_year", nullable = false, length = 4)
     private int academicYear;
 
+    @Column(name = "secret_key", nullable = true, length = 255)
+    private String secretKey;
+
 }
