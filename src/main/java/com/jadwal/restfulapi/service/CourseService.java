@@ -90,8 +90,14 @@ public class CourseService {
         courseRepository.save(course);
     }
 
-    public Boolean toggleCourseActive(Course course) {
-        course.setIsActive(!course.getIsActive());
+    public Boolean makeCourseActive(Course course) {
+        course.setIsActive(true);
+        courseRepository.save(course);
+        return course.getIsActive();
+    }
+
+    public Boolean makeCourseInactive(Course course) {
+        course.setIsActive(false);
         courseRepository.save(course);
         return course.getIsActive();
     }

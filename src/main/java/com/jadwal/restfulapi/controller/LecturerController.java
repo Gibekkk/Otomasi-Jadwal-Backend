@@ -485,8 +485,8 @@ public class LecturerController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "Lecturer Not Found")
-    @PatchMapping("/toggle/{lecturerId}")
-    public ResponseEntity<Object> toggleLecturerActive(HttpServletRequest request, @PathVariable String lecturerId) {
+    @PatchMapping("/toggle/{lecturerId}/true")
+    public ResponseEntity<Object> makeLecturerActive(HttpServletRequest request, @PathVariable String lecturerId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -511,7 +511,81 @@ public class LecturerController {
                     }
                     if (editedLecturerOpt.isPresent()) {
                         Lecturer editedLecturer = editedLecturerOpt.get();
-                        Boolean isActive = lecturerService.toggleLecturerActive(editedLecturer, user);
+                        Boolean isActive = lecturerService.makeLecturerActive(editedLecturer, user);
+                        data = Map.ofEntries(
+                                Map.entry("id", editedLecturer.getId()),
+                                Map.entry("name", editedLecturer.getName()),
+                                Map.entry("isDlb", editedLecturer.isDlb()),
+                                Map.entry("isMale", editedLecturer.getIsMale()),
+                                Map.entry("isActive", isActive),
+                                Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
+                                Map.entry("religion", editedLecturer.getReligion().toString()),
+                                Map.entry("category", editedLecturer.getCategoryId().getName()),
+                                Map.entry("specializations", mapSpecializations(editedLecturer)),
+                                Map.entry("schedules", mapSchedules(editedLecturer)),
+                                Map.entry("createdAt", editedLecturer.getCreatedAt()),
+                                Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
+                    } else {
+                        httpCode = HTTPCode.NOT_FOUND;
+                        data = new ErrorMessage(httpCode, "Lecturer Not Found");
+                    }
+                } else {
+                    httpCode = HTTPCode.FORBIDDEN;
+                    data = new ErrorMessage(httpCode, "Access Denied");
+                }
+            } else {
+                httpCode = HTTPCode.UNAUTHORIZED;
+                data = new ErrorMessage(httpCode, "Authentication Failed");
+            }
+        } catch (IllegalArgumentException e) {
+            httpCode = HTTPCode.BAD_REQUEST;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
+
+    @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
+            + "\"isActive\":false,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"specializations\":[\"Jaringan Komputer\"],"
+            + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Lecturer Not Found")
+    @PatchMapping("/toggle/{lecturerId}/false")
+    public ResponseEntity<Object> makeLecturerInactive(HttpServletRequest request, @PathVariable String lecturerId) {
+        String sessionToken = request.getHeader("Token");
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
+            if (sessionOpt.isPresent()) {
+                Session session = sessionOpt.get();
+                User user = session.getUserId();
+                if (authService.isSuperAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    Optional<Lecturer> editedLecturerOpt = Optional.empty();
+                    if (authService.isSuperAdmin(user)) {
+                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
+                    } else if (authService.isProdiAdmin(user)) {
+                        Category category = user.getProdiId();
+                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
+                                category);
+                    } else if (authService.isNtHumAdmin(user)) {
+                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId)
+                                .filter(lecturer -> lecturer.getIsInterdiscipline()
+                                        || lecturer.getCategoryId().getName().equals("Umum")
+                                        || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
+                    }
+                    if (editedLecturerOpt.isPresent()) {
+                        Lecturer editedLecturer = editedLecturerOpt.get();
+                        Boolean isActive = lecturerService.makeLecturerInactive(editedLecturer, user);
                         data = Map.ofEntries(
                                 Map.entry("id", editedLecturer.getId()),
                                 Map.entry("name", editedLecturer.getName()),

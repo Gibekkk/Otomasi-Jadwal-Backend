@@ -447,8 +447,8 @@ public class CourseController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "Course Not Found")
-    @PatchMapping("/toggle/{courseId}")
-    public ResponseEntity<Object> toggleCourseActive(HttpServletRequest request, @PathVariable String courseId) {
+    @PatchMapping("/toggle/{courseId}/true")
+    public ResponseEntity<Object> makeCourseActive(HttpServletRequest request, @PathVariable String courseId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -472,7 +472,79 @@ public class CourseController {
                     }
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
-                        Boolean isActive = courseService.toggleCourseActive(editedCourse);
+                        Boolean isActive = courseService.makeCourseActive(editedCourse);
+                        data = Map.ofEntries(
+                                Map.entry("courseId", editedCourse.getId()),
+                                Map.entry("name", editedCourse.getName()),
+                                Map.entry("sksCount", editedCourse.getSksCount()),
+                                Map.entry("lecturerCount", editedCourse.getLecturerCount()),
+                                Map.entry("capacity", editedCourse.getCapacity()),
+                                Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
+                                Map.entry("isOdd", editedCourse.getIsOdd()),
+                                Map.entry("isActive", isActive),
+                                Map.entry("isLab", editedCourse.getIsLab()),
+                                Map.entry("category", editedCourse.getCategoryId().getName()),
+                                Map.entry("createdAt", editedCourse.getCreatedAt()),
+                                Map.entry("updatedAt", editedCourse.getUpdatedAt()),
+                                Map.entry("specializations", mapSpecializations(editedCourse)));
+                    } else {
+                        httpCode = HTTPCode.NOT_FOUND;
+                        data = new ErrorMessage(httpCode, "Course Not Found");
+                    }
+                } else {
+                    httpCode = HTTPCode.FORBIDDEN;
+                    data = new ErrorMessage(httpCode, "Access Denied");
+                }
+            } else {
+                httpCode = HTTPCode.UNAUTHORIZED;
+                data = new ErrorMessage(httpCode, "Authentication Failed");
+            }
+        } catch (IllegalArgumentException e) {
+            httpCode = HTTPCode.BAD_REQUEST;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
+
+    @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
+            + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":false,\"isLab\":false,"
+            + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "not-found", message = "Course Not Found")
+    @PatchMapping("/toggle/{courseId}/false")
+    public ResponseEntity<Object> makeCourseInactive(HttpServletRequest request, @PathVariable String courseId) {
+        String sessionToken = request.getHeader("Token");
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
+            if (sessionOpt.isPresent()) {
+                Session session = sessionOpt.get();
+                User user = session.getUserId();
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    Optional<Course> editedCourseOpt = Optional.empty();
+                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseById(courseId);
+                    } else if (authService.isProdiAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
+                                user.getProdiId());
+                    } else if (authService.isNtHumAdmin(user)) {
+                        editedCourseOpt = courseService.findCourseById(courseId)
+                                .filter(course -> course.getIsInterdiscipline()
+                                        || course.getCategoryId().getName().equals("Umum")
+                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
+                    }
+                    if (editedCourseOpt.isPresent()) {
+                        Course editedCourse = editedCourseOpt.get();
+                        Boolean isActive = courseService.makeCourseInactive(editedCourse);
                         data = Map.ofEntries(
                                 Map.entry("courseId", editedCourse.getId()),
                                 Map.entry("name", editedCourse.getName()),
