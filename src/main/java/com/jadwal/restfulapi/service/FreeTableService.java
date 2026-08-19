@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jadwal.restfulapi.dto.GenerateDTO;
 import com.jadwal.restfulapi.model.FreeTable;
 import com.jadwal.restfulapi.repository.FreeTableRepository;
 import com.jadwal.restfulapi.util.PasswordHasherMatcher;
@@ -26,9 +27,11 @@ public class FreeTableService {
         return freeTableRepository.findFirstByOrderByIdAsc();
     }
 
-    public FreeTable startGenerating(FreeTable freeTable) {
+    public FreeTable startGenerating(FreeTable freeTable, GenerateDTO generateDTO) {
         String secretKey = generateSecretKey();
         freeTable.setIsGenerating(true);
+        freeTable.setAcademicYear(generateDTO.getAcademicYear());
+        freeTable.setIsOdd(generateDTO.getIsOdd());
         freeTable.setSecretKey(secretKey);
         FreeTable updatedFreeTable = freeTableRepository.save(freeTable);
         algorithmService.triggerStartGenerate(secretKey);
@@ -45,5 +48,13 @@ public class FreeTableService {
         String randomUUID = UUID.randomUUID().toString();
         String secretKey = passwordMaker.hashPassword(randomUUID);
         return secretKey;
+    }
+
+
+
+    // Only for testing, delete ASAP
+    public FreeTable toggleGenerating(FreeTable freeTable) {
+        freeTable.setIsGenerating(!freeTable.getIsGenerating());
+        return freeTableRepository.save(freeTable);
     }
 }
