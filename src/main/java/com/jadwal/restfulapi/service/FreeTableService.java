@@ -17,6 +17,9 @@ public class FreeTableService {
     private FreeTableRepository freeTableRepository;
 
     @Autowired
+    private AlgorithmService algorithmService;
+
+    @Autowired
     private PasswordHasherMatcher passwordMaker;
 
     public Optional<FreeTable> findStatus() {
@@ -24,9 +27,12 @@ public class FreeTableService {
     }
 
     public FreeTable startGenerating(FreeTable freeTable) {
+        String secretKey = generateSecretKey();
         freeTable.setIsGenerating(true);
-        freeTable.setSecretKey(generateSecretKey());
-        return freeTableRepository.save(freeTable);
+        freeTable.setSecretKey(secretKey);
+        FreeTable updatedFreeTable = freeTableRepository.save(freeTable);
+        algorithmService.triggerStartGenerate(secretKey);
+        return updatedFreeTable;
     }
 
     public FreeTable stopGenerating(FreeTable freeTable) {
