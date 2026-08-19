@@ -159,45 +159,31 @@ public class TimelineController {
     @SuccessExample(value = "{\"isGenerating\":true,\"isOdd\":true,\"academicYear\":2026}")
     @ErrorExample(code = "404", name = "not-found", message = "Status Not Found")
     @PostMapping("/generateComplete")
-    public ResponseEntity<Object> generateComplete(HttpServletRequest request, @RequestBody String secretKey) {
-        String sessionToken = request.getHeader("Token");
+    public ResponseEntity<Object> generateComplete(@RequestBody String secretKey) {
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
-            if (sessionOpt.isPresent()) {
-                Session session = sessionOpt.get();
-                User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)) {
-                    Optional<FreeTable> freeTableOpt = freeTableService.findStatus();
-                    if (freeTableOpt.isPresent()) {
-                        if (freeTableOpt.get().getIsGenerating()) {
-                            if (freeTableOpt.get().getSecretKey().equals(secretKey)) {
-                                FreeTable freeTable = freeTableService.stopGenerating(freeTableOpt.get());
-                                Map<String, Object> statusPayload = Map.ofEntries(
-                                        Map.entry("isGenerating", freeTable.getIsGenerating()),
-                                        Map.entry("isOdd", freeTable.getIsOdd()),
-                                        Map.entry("academicYear", freeTable.getAcademicYear()));
-                                statusHandler.broadcast(objectMapper.writeValueAsString(statusPayload));
-                                data = statusPayload;
-                            } else {
-                                httpCode = HTTPCode.UNAUTHORIZED;
-                                data = new ErrorMessage(httpCode, "Key Invalid");
-                            }
-                        } else {
-                            httpCode = HTTPCode.FORBIDDEN;
-                            data = new ErrorMessage(httpCode, "Generation Is Not Running");
-                        }
+            Optional<FreeTable> freeTableOpt = freeTableService.findStatus();
+            if (freeTableOpt.isPresent()) {
+                if (freeTableOpt.get().getIsGenerating()) {
+                    if (freeTableOpt.get().getSecretKey().equals(secretKey)) {
+                        FreeTable freeTable = freeTableService.stopGenerating(freeTableOpt.get());
+                        Map<String, Object> statusPayload = Map.ofEntries(
+                                Map.entry("isGenerating", freeTable.getIsGenerating()),
+                                Map.entry("isOdd", freeTable.getIsOdd()),
+                                Map.entry("academicYear", freeTable.getAcademicYear()));
+                        statusHandler.broadcast(objectMapper.writeValueAsString(statusPayload));
+                        data = statusPayload;
                     } else {
-                        httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Status Not Found");
+                        httpCode = HTTPCode.UNAUTHORIZED;
+                        data = new ErrorMessage(httpCode, "Key Invalid");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
-                    data = new ErrorMessage(httpCode, "Access Denied");
+                    data = new ErrorMessage(httpCode, "Generation Is Not Running");
                 }
             } else {
-                httpCode = HTTPCode.UNAUTHORIZED;
-                data = new ErrorMessage(httpCode, "Authentication Failed");
+                httpCode = HTTPCode.NOT_FOUND;
+                data = new ErrorMessage(httpCode, "Status Not Found");
             }
         } catch (Exception e) {
             httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
