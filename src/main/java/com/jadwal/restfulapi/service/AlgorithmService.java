@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AlgorithmService {
 
-    private final String startGenerateUrl = "http://localhost:8082/startGenerate";
+    private final String startGenerateUrl = "http://startgenerate-service:8082/startGenerate";
 
     private final RestTemplate restTemplate = new RestTemplate();
 
