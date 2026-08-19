@@ -83,7 +83,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
@@ -125,6 +125,7 @@ public class LecturerController {
                                 Map.entry("isInterdiscipline", lecturer.getIsInterdiscipline()),
                                 Map.entry("religion", lecturer.getReligion().toString()),
                                 Map.entry("category", lecturer.getCategoryId().getName()),
+                                Map.entry("categoryId", lecturer.getCategoryId().getId()),
                                 Map.entry("specializations", mapSpecializations(lecturer)),
                                 Map.entry("schedules", mapSchedules(lecturer)),
                                 Map.entry("createdAt", lecturer.getCreatedAt()),
@@ -154,7 +155,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
@@ -195,6 +196,7 @@ public class LecturerController {
                                 Map.entry("isInterdiscipline", lecturer.getIsInterdiscipline()),
                                 Map.entry("religion", lecturer.getReligion().toString()),
                                 Map.entry("category", lecturer.getCategoryId().getName()),
+                                Map.entry("categoryId", lecturer.getCategoryId().getId()),
                                 Map.entry("specializations", mapSpecializations(lecturer)),
                                 Map.entry("schedules", mapSchedules(lecturer)),
                                 Map.entry("createdAt", lecturer.getCreatedAt()),
@@ -285,7 +287,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
@@ -350,6 +352,7 @@ public class LecturerController {
                             Map.entry("isInterdiscipline", createdLecturer.getIsInterdiscipline()),
                             Map.entry("religion", createdLecturer.getReligion().toString()),
                             Map.entry("category", createdLecturer.getCategoryId().getName()),
+                            Map.entry("categoryId", createdLecturer.getCategoryId().getId()),
                             Map.entry("specializations", mapSpecializations(createdLecturer)),
                             Map.entry("schedules", mapSchedules(createdLecturer)),
                             Map.entry("createdAt", createdLecturer.getCreatedAt()),
@@ -377,7 +380,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
@@ -447,6 +450,7 @@ public class LecturerController {
                                 Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
                                 Map.entry("religion", editedLecturer.getReligion().toString()),
                                 Map.entry("category", editedLecturer.getCategoryId().getName()),
+                            Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
                                 Map.entry("specializations", mapSpecializations(editedLecturer)),
                                 Map.entry("schedules", mapSchedules(editedLecturer)),
                                 Map.entry("createdAt", editedLecturer.getCreatedAt()),
@@ -478,7 +482,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":false,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":false,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
@@ -521,6 +525,7 @@ public class LecturerController {
                                 Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
                                 Map.entry("religion", editedLecturer.getReligion().toString()),
                                 Map.entry("category", editedLecturer.getCategoryId().getName()),
+                            Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
                                 Map.entry("specializations", mapSpecializations(editedLecturer)),
                                 Map.entry("schedules", mapSchedules(editedLecturer)),
                                 Map.entry("createdAt", editedLecturer.getCreatedAt()),
@@ -552,7 +557,7 @@ public class LecturerController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
-            + "\"isActive\":false,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\","
+            + "\"isActive\":false,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
             + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
@@ -595,6 +600,7 @@ public class LecturerController {
                                 Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
                                 Map.entry("religion", editedLecturer.getReligion().toString()),
                                 Map.entry("category", editedLecturer.getCategoryId().getName()),
+                            Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
                                 Map.entry("specializations", mapSpecializations(editedLecturer)),
                                 Map.entry("schedules", mapSchedules(editedLecturer)),
                                 Map.entry("createdAt", editedLecturer.getCreatedAt()),
