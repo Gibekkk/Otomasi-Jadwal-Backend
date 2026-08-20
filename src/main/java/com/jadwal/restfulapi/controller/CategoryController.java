@@ -57,8 +57,14 @@ public class CategoryController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
                     List<Category> categories = categoryService.findAllCategory();
+                    if (authService.isProdiAdmin(user))
+                        categories.stream().filter(category -> category.equals(user.getProdiId())).toList();
+                    if (authService.isNtHumAdmin(user))
+                        categories.stream().filter(category -> category.getName().equals("Umum")
+                                || category.getName().equals("Entrepreneurship")).toList();
                     ArrayList<Map<String, Object>> categoryList = new ArrayList<>();
                     for (Category category : categories) {
                         categoryList.add(Map.of(
@@ -105,16 +111,29 @@ public class CategoryController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
                     Optional<Category> categoryOpt = categoryService.findCategoryById(categoryId);
                     if (categoryOpt.isPresent()) {
                         Category c = categoryOpt.get();
-                        data = Map.of(
-                                "id", c.getId(),
-                                "name", c.getName(),
-                                "isProdi", c.getIsProdi(),
-                                "createdAt", c.getCreatedAt(),
-                                "updatedAt", c.getUpdatedAt());
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = c.equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = c.getName().equals("Umum") || c.getName().equals("Entrepreneurship");
+
+                        if (accessGranted) {
+                            data = Map.of(
+                                    "id", c.getId(),
+                                    "name", c.getName(),
+                                    "isProdi", c.getIsProdi(),
+                                    "createdAt", c.getCreatedAt(),
+                                    "updatedAt", c.getUpdatedAt());
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Category Not Found");
@@ -257,7 +276,8 @@ public class CategoryController {
                     Optional<Category> editedCategoryOpt = categoryService.findCategoryById(categoryId);
                     if (editedCategoryOpt.isPresent()) {
                         Category editedCategory = editedCategoryOpt.get();
-                        if (categoryService.isCategoryExistByNameAndIdIsNot(categoryDTO.getName(), editedCategory.getId()))
+                        if (categoryService.isCategoryExistByNameAndIdIsNot(categoryDTO.getName(),
+                                editedCategory.getId()))
                             throw new IllegalArgumentException("Name Already Exist");
 
                         editedCategory = categoryService.editCategory(editedCategory, categoryDTO, user);
