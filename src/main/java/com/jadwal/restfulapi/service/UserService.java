@@ -66,7 +66,6 @@ public class UserService {
     }
 
     public User editUser(User editedUser, UserDTO userDTO, Role role, Category prodi) {
-        editedUser.setId(UUID.randomUUID().toString());
         editedUser.setUsername(userDTO.getUsername());
         editedUser.setName(userDTO.getName());
         editedUser.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
@@ -77,7 +76,6 @@ public class UserService {
     }
 
     public User editUser(User editedUser, UserDTO userDTO, Role role) {
-        editedUser.setId(UUID.randomUUID().toString());
         editedUser.setUsername(userDTO.getUsername());
         editedUser.setName(userDTO.getName());
         editedUser.setRole(role);
