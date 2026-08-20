@@ -223,23 +223,25 @@ public class CourseController {
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Course> courseOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                        courseOpt = courseService.findCourseById(courseId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        courseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
-                                user.getProdiId());
-                    } else if (authService.isNtHumAdmin(user)) {
-                        courseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdiscipline()
-                                        || course.getCategoryId().getName().equals("Umum")
-                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
-                    }
+                    Optional<Course> courseOpt = courseService.findCourseById(courseId);
                     if (courseOpt.isPresent()) {
                         Course c = courseOpt.get();
-                        courseService.deleteCourse(c);
-                        data = Map.ofEntries(
-                                Map.entry("message", "Course Deleted Successfully"));
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = c.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = c.getCategoryId().getName().equals("Umum")
+                                    || c.getCategoryId().getName().equals("Entrepreneurship");
+
+                        if (accessGranted) {
+                            courseService.deleteCourse(c);
+                            data = Map.ofEntries(
+                                    Map.entry("message", "Course Deleted Successfully"));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -279,30 +281,32 @@ public class CourseController {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            courseDTO.checkDTO();
-            if (courseService.isCourseExistByName(courseDTO.getName()))
-                throw new IllegalArgumentException("Name Already Exist");
-            if (!categoryService.isCategoryExistById(courseDTO.getCategoryId()))
-                throw new IllegalArgumentException("Category ID Not Found");
-            if (courseDTO.getSpecializations() != null && !courseDTO.getSpecializations().isEmpty()) {
-                List<String> nonExistentSpecializations = specializationService
-                        .checkNonExistentSpecializations(courseDTO.getSpecializations());
-                if (!nonExistentSpecializations.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
-                }
-            }
-
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
-                    if ((authService.isProdiAdmin(user) && !user.getProdiId().equals(category)) ||
-                            (authService.isNtHumAdmin(user) && !(category.getName().equals("Umum")
-                                    || category.getName().equals("Entrepreneurship")))) {
+
+                    courseDTO.checkDTO(authService.isProdiAdmin(user));
+                    if (courseService.isCourseExistByName(courseDTO.getName()))
+                        throw new IllegalArgumentException("Name Already Exist");
+                    if (courseDTO.getSpecializations() != null && !courseDTO.getSpecializations().isEmpty()) {
+                        List<String> nonExistentSpecializations = specializationService
+                                .checkNonExistentSpecializations(courseDTO.getSpecializations());
+                        if (!nonExistentSpecializations.isEmpty()) {
+                            throw new IllegalArgumentException(
+                                    "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                        }
+                    }
+                    if (!categoryService.isCategoryExistById(courseDTO.getCategoryId())
+                            && !authService.isProdiAdmin(user))
+                        throw new IllegalArgumentException("Category ID Not Found");
+
+                    Category category = authService.isProdiAdmin(user) ? user.getProdiId()
+                            : categoryService.findCategoryById(courseDTO.getCategoryId()).get();
+                    if ((authService.isNtHumAdmin(user) && !(category.getName().equals("Umum")
+                            || category.getName().equals("Entrepreneurship")))) {
                         httpCode = HTTPCode.FORBIDDEN;
                         data = new ErrorMessage(httpCode, "Category Not Permitted");
                         return ResponseEntity
@@ -364,61 +368,68 @@ public class CourseController {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            courseDTO.checkDTO();
-            if (!categoryService.isCategoryExistById(courseDTO.getCategoryId()))
-                throw new IllegalArgumentException("Category ID Not Found");
-            if (courseDTO.getSpecializations() != null && !courseDTO.getSpecializations().isEmpty()) {
-                List<String> nonExistentSpecializations = specializationService
-                        .checkNonExistentSpecializations(courseDTO.getSpecializations());
-                if (!nonExistentSpecializations.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
-                }
-            }
-
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Course> editedCourseOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseById(courseId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
-                                user.getProdiId());
-                    } else if (authService.isNtHumAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdiscipline()
-                                        || course.getCategoryId().getName().equals("Umum")
-                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
+
+                    courseDTO.checkDTO(authService.isProdiAdmin(user));
+                    if (courseDTO.getSpecializations() != null && !courseDTO.getSpecializations().isEmpty()) {
+                        List<String> nonExistentSpecializations = specializationService
+                                .checkNonExistentSpecializations(courseDTO.getSpecializations());
+                        if (!nonExistentSpecializations.isEmpty()) {
+                            throw new IllegalArgumentException(
+                                    "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                        }
                     }
+                    if (!categoryService.isCategoryExistById(courseDTO.getCategoryId())
+                            && !authService.isProdiAdmin(user))
+                        throw new IllegalArgumentException("Category ID Not Found");
+
+                    Optional<Course> editedCourseOpt = courseService.findCourseById(courseId);
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
                         if (courseService.isCourseExistByNameAndIdIsNot(courseDTO.getName(), editedCourse.getId()))
                             throw new IllegalArgumentException("Name Already Exist");
-                        
-                        Category category = categoryService.findCategoryById(courseDTO.getCategoryId()).get();
-                        List<Specialization> specializations = specializationService
-                                .findAllSpecializationById(courseDTO.getSpecializations());
-                        editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user,
-                                specializations);
-                        data = Map.ofEntries(
-                                Map.entry("courseId", editedCourse.getId()),
-                                Map.entry("name", editedCourse.getName()),
-                                Map.entry("sksCount", editedCourse.getSksCount()),
-                                Map.entry("lecturerCount", editedCourse.getLecturerCount()),
-                                Map.entry("capacity", editedCourse.getCapacity()),
-                                Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
-                                Map.entry("isOdd", editedCourse.getIsOdd()),
-                                Map.entry("isActive", editedCourse.getIsActive()),
-                                Map.entry("isLab", editedCourse.getIsLab()),
-                                Map.entry("category", editedCourse.getCategoryId().getName()),
-                                Map.entry("categoryId", editedCourse.getCategoryId().getId()),
-                                Map.entry("createdAt", editedCourse.getCreatedAt()),
-                                Map.entry("updatedAt", editedCourse.getUpdatedAt()),
-                                Map.entry("specializations", mapSpecializations(editedCourse)));
+
+                        Boolean accessGranted = true;
+                        Category category = authService.isProdiAdmin(user) ? user.getProdiId()
+                                : categoryService.findCategoryById(courseDTO.getCategoryId()).get();
+
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = editedCourse.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = (editedCourse.getCategoryId().getName().equals("Umum")
+                                    || editedCourse.getCategoryId().getName().equals("Entrepreneurship"))
+                                    && (category.getName().equals("Umum")
+                                            || category.getName().equals("Entrepreneurship"));
+
+                        if (accessGranted) {
+                            List<Specialization> specializations = specializationService
+                                    .findAllSpecializationById(courseDTO.getSpecializations());
+                            editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user,
+                                    specializations);
+                            data = Map.ofEntries(
+                                    Map.entry("courseId", editedCourse.getId()),
+                                    Map.entry("name", editedCourse.getName()),
+                                    Map.entry("sksCount", editedCourse.getSksCount()),
+                                    Map.entry("lecturerCount", editedCourse.getLecturerCount()),
+                                    Map.entry("capacity", editedCourse.getCapacity()),
+                                    Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
+                                    Map.entry("isOdd", editedCourse.getIsOdd()),
+                                    Map.entry("isActive", editedCourse.getIsActive()),
+                                    Map.entry("isLab", editedCourse.getIsLab()),
+                                    Map.entry("category", editedCourse.getCategoryId().getName()),
+                                    Map.entry("categoryId", editedCourse.getCategoryId().getId()),
+                                    Map.entry("createdAt", editedCourse.getCreatedAt()),
+                                    Map.entry("updatedAt", editedCourse.getUpdatedAt()),
+                                    Map.entry("specializations", mapSpecializations(editedCourse)));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -462,36 +473,38 @@ public class CourseController {
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Course> editedCourseOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseById(courseId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
-                                user.getProdiId());
-                    } else if (authService.isNtHumAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdiscipline()
-                                        || course.getCategoryId().getName().equals("Umum")
-                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
-                    }
+                    Optional<Course> editedCourseOpt = courseService.findCourseById(courseId);
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
-                        Boolean isActive = courseService.makeCourseActive(editedCourse);
-                        data = Map.ofEntries(
-                                Map.entry("courseId", editedCourse.getId()),
-                                Map.entry("name", editedCourse.getName()),
-                                Map.entry("sksCount", editedCourse.getSksCount()),
-                                Map.entry("lecturerCount", editedCourse.getLecturerCount()),
-                                Map.entry("capacity", editedCourse.getCapacity()),
-                                Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
-                                Map.entry("isOdd", editedCourse.getIsOdd()),
-                                Map.entry("isActive", isActive),
-                                Map.entry("isLab", editedCourse.getIsLab()),
-                                Map.entry("category", editedCourse.getCategoryId().getName()),
-                                Map.entry("categoryId", editedCourse.getCategoryId().getId()),
-                                Map.entry("createdAt", editedCourse.getCreatedAt()),
-                                Map.entry("updatedAt", editedCourse.getUpdatedAt()),
-                                Map.entry("specializations", mapSpecializations(editedCourse)));
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = editedCourse.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = editedCourse.getCategoryId().getName().equals("Umum")
+                                    || editedCourse.getCategoryId().getName().equals("Entrepreneurship");
+
+                        if (accessGranted) {
+                            Boolean isActive = courseService.makeCourseActive(editedCourse);
+                            data = Map.ofEntries(
+                                    Map.entry("courseId", editedCourse.getId()),
+                                    Map.entry("name", editedCourse.getName()),
+                                    Map.entry("sksCount", editedCourse.getSksCount()),
+                                    Map.entry("lecturerCount", editedCourse.getLecturerCount()),
+                                    Map.entry("capacity", editedCourse.getCapacity()),
+                                    Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
+                                    Map.entry("isOdd", editedCourse.getIsOdd()),
+                                    Map.entry("isActive", isActive),
+                                    Map.entry("isLab", editedCourse.getIsLab()),
+                                    Map.entry("category", editedCourse.getCategoryId().getName()),
+                                    Map.entry("categoryId", editedCourse.getCategoryId().getId()),
+                                    Map.entry("createdAt", editedCourse.getCreatedAt()),
+                                    Map.entry("updatedAt", editedCourse.getUpdatedAt()),
+                                    Map.entry("specializations", mapSpecializations(editedCourse)));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");
@@ -535,36 +548,38 @@ public class CourseController {
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Course> editedCourseOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseById(courseId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseByIdAndCategoryAndInterdiscipline(courseId,
-                                user.getProdiId());
-                    } else if (authService.isNtHumAdmin(user)) {
-                        editedCourseOpt = courseService.findCourseById(courseId)
-                                .filter(course -> course.getIsInterdiscipline()
-                                        || course.getCategoryId().getName().equals("Umum")
-                                        || course.getCategoryId().getName().equals("Entrepreneurship"));
-                    }
+                    Optional<Course> editedCourseOpt = courseService.findCourseById(courseId);
                     if (editedCourseOpt.isPresent()) {
                         Course editedCourse = editedCourseOpt.get();
-                        Boolean isActive = courseService.makeCourseInactive(editedCourse);
-                        data = Map.ofEntries(
-                                Map.entry("courseId", editedCourse.getId()),
-                                Map.entry("name", editedCourse.getName()),
-                                Map.entry("sksCount", editedCourse.getSksCount()),
-                                Map.entry("lecturerCount", editedCourse.getLecturerCount()),
-                                Map.entry("capacity", editedCourse.getCapacity()),
-                                Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
-                                Map.entry("isOdd", editedCourse.getIsOdd()),
-                                Map.entry("isActive", isActive),
-                                Map.entry("isLab", editedCourse.getIsLab()),
-                                Map.entry("category", editedCourse.getCategoryId().getName()),
-                                Map.entry("categoryId", editedCourse.getCategoryId().getId()),
-                                Map.entry("createdAt", editedCourse.getCreatedAt()),
-                                Map.entry("updatedAt", editedCourse.getUpdatedAt()),
-                                Map.entry("specializations", mapSpecializations(editedCourse)));
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = editedCourse.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = editedCourse.getCategoryId().getName().equals("Umum")
+                                    || editedCourse.getCategoryId().getName().equals("Entrepreneurship");
+
+                        if (accessGranted) {
+                            Boolean isActive = courseService.makeCourseInactive(editedCourse);
+                            data = Map.ofEntries(
+                                    Map.entry("courseId", editedCourse.getId()),
+                                    Map.entry("name", editedCourse.getName()),
+                                    Map.entry("sksCount", editedCourse.getSksCount()),
+                                    Map.entry("lecturerCount", editedCourse.getLecturerCount()),
+                                    Map.entry("capacity", editedCourse.getCapacity()),
+                                    Map.entry("isInterdiscipline", editedCourse.getIsInterdiscipline()),
+                                    Map.entry("isOdd", editedCourse.getIsOdd()),
+                                    Map.entry("isActive", isActive),
+                                    Map.entry("isLab", editedCourse.getIsLab()),
+                                    Map.entry("category", editedCourse.getCategoryId().getName()),
+                                    Map.entry("categoryId", editedCourse.getCategoryId().getId()),
+                                    Map.entry("createdAt", editedCourse.getCreatedAt()),
+                                    Map.entry("updatedAt", editedCourse.getUpdatedAt()),
+                                    Map.entry("specializations", mapSpecializations(editedCourse)));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Course Not Found");

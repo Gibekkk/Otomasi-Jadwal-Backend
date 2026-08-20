@@ -26,12 +26,12 @@ public class CourseDTO {
     private String categoryId;
     private List<String> specializations;
 
-    public void checkDTO() {
+    public void checkDTO(Boolean isProdiAdmin) {
         trim();
         checkLength();
         if (this.name == null)
             throw new IllegalArgumentException("Name Cannot Be NULL");
-        if (this.categoryId == null)
+        if (this.categoryId == null && !isProdiAdmin)
             throw new IllegalArgumentException("Category ID Cannot Be NULL");
         if (this.sksCount == 0)
             throw new IllegalArgumentException("SKS Count Cannot Be 0");
