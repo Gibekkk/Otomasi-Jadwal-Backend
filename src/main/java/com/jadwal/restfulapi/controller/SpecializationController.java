@@ -57,7 +57,7 @@ public class SpecializationController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user) || authService.isNtHumAdmin(user)) {
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user) || authService.isPmAdmin(user) || authService.isNtHumAdmin(user)) {
                     List<Specialization> specializations = specializationService.findAllSpecialization();
                     ArrayList<Map<String, Object>> specializationList = new ArrayList<>();
                     for (Specialization specialization : specializations) {
@@ -105,7 +105,7 @@ public class SpecializationController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user) || authService.isNtHumAdmin(user)) {
+                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user) || authService.isProdiAdmin(user) || authService.isPmAdmin(user) || authService.isNtHumAdmin(user)) {
                     Optional<Specialization> specializationOpt = specializationService
                             .findSpecializationById(specializationId);
                     if (specializationOpt.isPresent()) {
