@@ -80,10 +80,12 @@ public class UserService {
         editedUser.setId(UUID.randomUUID().toString());
         editedUser.setUsername(userDTO.getUsername());
         editedUser.setName(userDTO.getName());
-        editedUser.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
         editedUser.setRole(role);
         editedUser.setProdiId(null);
         editedUser.setUpdatedAt(LocalDateTime.now());
+
+        if (userDTO.getPassword() != null)
+            editedUser.setPassword(passwordMaker.hashPassword(userDTO.getPassword()));
         return userRepository.save(editedUser);
     }
 }

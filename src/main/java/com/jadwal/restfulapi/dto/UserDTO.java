@@ -22,7 +22,7 @@ public class UserDTO {
     private String username;
     private String password;
 
-    public void checkDTO() {
+    public void checkDTO(Boolean isRegistration) {
         trim();
         checkLength();
         if (this.username == null)
@@ -31,7 +31,7 @@ public class UserDTO {
             throw new IllegalArgumentException("Name Cannot Be NULL");
         if (this.role == null)
             throw new IllegalArgumentException("Role Cannot Be NULL");
-        if (this.password == null)
+        if (this.password == null && isRegistration)
             throw new IllegalArgumentException("Password Cannot Be NULL");
         if (this.role != null && !Role.checkExist(this.role))
             throw new IllegalArgumentException("Invalid Role: " + this.role);

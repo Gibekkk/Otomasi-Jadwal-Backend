@@ -211,7 +211,7 @@ public class UserController {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            userDTO.checkDTO();
+            userDTO.checkDTO(true);
             if (userDTO.getProdiId() != null && !categoryService.isProdiExistById(userDTO.getProdiId()))
                 throw new IllegalArgumentException("Prodi ID Not Found");
             if (authService.isExistByUsername(userDTO.getUsername()))
@@ -278,7 +278,7 @@ public class UserController {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            userDTO.checkDTO();
+            userDTO.checkDTO(false);
             if (userDTO.getProdiId() != null && !categoryService.isProdiExistById(userDTO.getProdiId()))
                 throw new IllegalArgumentException("Prodi ID Not Found");
 
