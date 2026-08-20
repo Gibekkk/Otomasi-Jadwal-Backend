@@ -79,7 +79,11 @@ public class RoomService {
 
     public void deleteLabGroup(LabGroup labGroup) {
         labGroup.setDeletedAt(LocalDateTime.now());
-        labGroupRepository.save(labGroup);
+        LabGroup deletedLabGroup = labGroupRepository.save(labGroup);
+        for(Room room : deletedLabGroup.getLabRooms()) {
+            room.setLabGroupId(null);
+            roomRepository.save(room);
+        }
     }
 
     public void deleteRoom(Room room) {
