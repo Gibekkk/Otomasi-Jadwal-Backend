@@ -24,12 +24,12 @@ public class LecturerDTO {
     private List<String> specializations;
     private List<String> schedules;
 
-    public void checkDTO() {
+    public void checkDTO(Boolean isProdiAdmin) {
         trim();
         checkLength();
         if (this.name == null)
             throw new IllegalArgumentException("Name Cannot Be NULL");
-        if (this.categoryId == null)
+        if (this.categoryId == null && !isProdiAdmin)
             throw new IllegalArgumentException("Category ID Cannot Be NULL");
         if (this.religion == null)
             throw new IllegalArgumentException("Religion Cannot Be NULL");

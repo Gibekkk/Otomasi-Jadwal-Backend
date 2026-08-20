@@ -242,24 +242,25 @@ public class LecturerController {
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Lecturer> lecturerOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user)) {
-                        lecturerOpt = lecturerService.findLecturerById(lecturerId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        Category category = user.getProdiId();
-                        lecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
-                                category);
-                    } else if (authService.isNtHumAdmin(user)) {
-                        lecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdiscipline()
-                                        || lecturer.getCategoryId().getName().equals("Umum")
-                                        || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
-                    }
+                    Optional<Lecturer> lecturerOpt = lecturerService.findLecturerById(lecturerId);
                     if (lecturerOpt.isPresent()) {
                         Lecturer lecturer = lecturerOpt.get();
-                        lecturerService.deleteLecturer(lecturer);
-                        data = Map.ofEntries(
-                                Map.entry("message", "Lecturer Deleted Successfully"));
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = lecturer.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = lecturer.getCategoryId().getName().equals("Umum")
+                                    || lecturer.getCategoryId().getName().equals("Entrepreneurship");
+
+                        if (accessGranted) {
+                            lecturerService.deleteLecturer(lecturer);
+                            data = Map.ofEntries(
+                                    Map.entry("message", "Lecturer Deleted Successfully"));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Lecturer Not Found");
@@ -301,36 +302,38 @@ public class LecturerController {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            lecturerDTO.checkDTO();
-            if (!categoryService.isCategoryExistById(lecturerDTO.getCategoryId()))
-                throw new IllegalArgumentException("Category ID Not Found");
-            if (lecturerDTO.getSpecializations() != null && !lecturerDTO.getSpecializations().isEmpty()) {
-                List<String> nonExistentSpecializations = specializationService
-                        .checkNonExistentSpecializations(lecturerDTO.getSpecializations());
-                if (!nonExistentSpecializations.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
-                }
-            }
-            if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
-                List<String> nonExistentSchedules = scheduleService
-                        .checkNonExistentSchedules(lecturerDTO.getSchedules());
-                if (!nonExistentSchedules.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
-                }
-            }
-
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Category category = categoryService.findCategoryById(lecturerDTO.getCategoryId()).get();
-                    if ((authService.isProdiAdmin(user) && !user.getProdiId().equals(category)) ||
-                            (authService.isNtHumAdmin(user) && !(category.getName().equals("Umum")
-                                    || category.getName().equals("Entrepreneurship")))) {
+
+                    lecturerDTO.checkDTO(authService.isProdiAdmin(user));
+                    if (!categoryService.isCategoryExistById(lecturerDTO.getCategoryId())
+                            && !authService.isProdiAdmin(user))
+                        throw new IllegalArgumentException("Category ID Not Found");
+                    if (lecturerDTO.getSpecializations() != null && !lecturerDTO.getSpecializations().isEmpty()) {
+                        List<String> nonExistentSpecializations = specializationService
+                                .checkNonExistentSpecializations(lecturerDTO.getSpecializations());
+                        if (!nonExistentSpecializations.isEmpty()) {
+                            throw new IllegalArgumentException(
+                                    "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                        }
+                    }
+                    if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
+                        List<String> nonExistentSchedules = scheduleService
+                                .checkNonExistentSchedules(lecturerDTO.getSchedules());
+                        if (!nonExistentSchedules.isEmpty()) {
+                            throw new IllegalArgumentException(
+                                    "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                        }
+                    }
+
+                    Category category = authService.isProdiAdmin(user) ? user.getProdiId()
+                            : categoryService.findCategoryById(lecturerDTO.getCategoryId()).get();
+                    if (authService.isNtHumAdmin(user) && !(category.getName().equals("Umum")
+                            || category.getName().equals("Entrepreneurship"))) {
                         httpCode = HTTPCode.FORBIDDEN;
                         data = new ErrorMessage(httpCode, "Category Not Permitted");
                         return ResponseEntity
@@ -394,67 +397,73 @@ public class LecturerController {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            lecturerDTO.checkDTO();
-            if (!categoryService.isCategoryExistById(lecturerDTO.getCategoryId()))
-                throw new IllegalArgumentException("Category ID Not Found");
-            if (lecturerDTO.getSpecializations() != null && !lecturerDTO.getSpecializations().isEmpty()) {
-                List<String> nonExistentSpecializations = specializationService
-                        .checkNonExistentSpecializations(lecturerDTO.getSpecializations());
-                if (!nonExistentSpecializations.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
-                }
-            }
-            if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
-                List<String> nonExistentSchedules = scheduleService
-                        .checkNonExistentSchedules(lecturerDTO.getSchedules());
-                if (!nonExistentSchedules.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
-                }
-            }
-
             Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Lecturer> editedLecturerOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user)) {
-                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        Category category = user.getProdiId();
-                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
-                                category);
-                    } else if (authService.isNtHumAdmin(user)) {
-                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdiscipline()
-                                        || lecturer.getCategoryId().getName().equals("Umum")
-                                        || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
+
+                    lecturerDTO.checkDTO(authService.isProdiAdmin(user));
+                    if (!categoryService.isCategoryExistById(lecturerDTO.getCategoryId())
+                            && !authService.isProdiAdmin(user))
+                        throw new IllegalArgumentException("Category ID Not Found");
+                    if (lecturerDTO.getSpecializations() != null && !lecturerDTO.getSpecializations().isEmpty()) {
+                        List<String> nonExistentSpecializations = specializationService
+                                .checkNonExistentSpecializations(lecturerDTO.getSpecializations());
+                        if (!nonExistentSpecializations.isEmpty()) {
+                            throw new IllegalArgumentException(
+                                    "Specialization IDs Not Found: " + String.join(", ", nonExistentSpecializations));
+                        }
                     }
+                    if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
+                        List<String> nonExistentSchedules = scheduleService
+                                .checkNonExistentSchedules(lecturerDTO.getSchedules());
+                        if (!nonExistentSchedules.isEmpty()) {
+                            throw new IllegalArgumentException(
+                                    "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                        }
+                    }
+
+                    Optional<Lecturer> editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
                     if (editedLecturerOpt.isPresent()) {
                         Lecturer editedLecturer = editedLecturerOpt.get();
-                        Category category = categoryService.findCategoryById(lecturerDTO.getCategoryId()).get();
-                        List<Specialization> specializations = specializationService
-                                .findAllSpecializationById(lecturerDTO.getSpecializations());
-                        List<Schedule> schedules = scheduleService.findAllScheduleById(lecturerDTO.getSchedules());
-                        editedLecturer = lecturerService.editLecturer(editedLecturer, lecturerDTO, category, user,
-                                specializations, schedules);
-                        data = Map.ofEntries(
-                                Map.entry("id", editedLecturer.getId()),
-                                Map.entry("name", editedLecturer.getName()),
-                                Map.entry("isDlb", editedLecturer.isDlb()),
-                                Map.entry("isMale", editedLecturer.getIsMale()),
-                                Map.entry("isActive", editedLecturer.getIsActive()),
-                                Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
-                                Map.entry("religion", editedLecturer.getReligion().toString()),
-                                Map.entry("category", editedLecturer.getCategoryId().getName()),
-                            Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
-                                Map.entry("specializations", mapSpecializations(editedLecturer)),
-                                Map.entry("schedules", mapSchedules(editedLecturer)),
-                                Map.entry("createdAt", editedLecturer.getCreatedAt()),
-                                Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
+                        Category category = authService.isProdiAdmin(user) ? user.getProdiId()
+                                : categoryService.findCategoryById(lecturerDTO.getCategoryId()).get();
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = editedLecturer.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = (editedLecturer.getCategoryId().getName().equals("Umum")
+                                    || editedLecturer.getCategoryId().getName().equals("Entrepreneurship"))
+                                    && (category.getName().equals("Umum")
+                                            || category.getName().equals("Entrepreneurship"));
+
+                        if (accessGranted) {
+                            List<Specialization> specializations = specializationService
+                                    .findAllSpecializationById(lecturerDTO.getSpecializations());
+                            List<Schedule> schedules = scheduleService.findAllScheduleById(lecturerDTO.getSchedules());
+                            editedLecturer = lecturerService.editLecturer(editedLecturer, lecturerDTO, category, user,
+                                    specializations, schedules);
+                            data = Map.ofEntries(
+                                    Map.entry("id", editedLecturer.getId()),
+                                    Map.entry("name", editedLecturer.getName()),
+                                    Map.entry("isDlb", editedLecturer.isDlb()),
+                                    Map.entry("isMale", editedLecturer.getIsMale()),
+                                    Map.entry("isActive", editedLecturer.getIsActive()),
+                                    Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
+                                    Map.entry("religion", editedLecturer.getReligion().toString()),
+                                    Map.entry("category", editedLecturer.getCategoryId().getName()),
+                                    Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
+                                    Map.entry("specializations", mapSpecializations(editedLecturer)),
+                                    Map.entry("schedules", mapSchedules(editedLecturer)),
+                                    Map.entry("createdAt", editedLecturer.getCreatedAt()),
+                                    Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Lecturer Not Found");
@@ -500,36 +509,38 @@ public class LecturerController {
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Lecturer> editedLecturerOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user)) {
-                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        Category category = user.getProdiId();
-                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
-                                category);
-                    } else if (authService.isNtHumAdmin(user)) {
-                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdiscipline()
-                                        || lecturer.getCategoryId().getName().equals("Umum")
-                                        || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
-                    }
+                    Optional<Lecturer> editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
+
                     if (editedLecturerOpt.isPresent()) {
                         Lecturer editedLecturer = editedLecturerOpt.get();
-                        Boolean isActive = lecturerService.makeLecturerActive(editedLecturer, user);
-                        data = Map.ofEntries(
-                                Map.entry("id", editedLecturer.getId()),
-                                Map.entry("name", editedLecturer.getName()),
-                                Map.entry("isDlb", editedLecturer.isDlb()),
-                                Map.entry("isMale", editedLecturer.getIsMale()),
-                                Map.entry("isActive", isActive),
-                                Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
-                                Map.entry("religion", editedLecturer.getReligion().toString()),
-                                Map.entry("category", editedLecturer.getCategoryId().getName()),
-                            Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
-                                Map.entry("specializations", mapSpecializations(editedLecturer)),
-                                Map.entry("schedules", mapSchedules(editedLecturer)),
-                                Map.entry("createdAt", editedLecturer.getCreatedAt()),
-                                Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = editedLecturer.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = editedLecturer.getCategoryId().getName().equals("Umum")
+                                    || editedLecturer.getCategoryId().getName().equals("Entrepreneurship");
+
+                        if (accessGranted) {
+                            Boolean isActive = lecturerService.makeLecturerActive(editedLecturer, user);
+                            data = Map.ofEntries(
+                                    Map.entry("id", editedLecturer.getId()),
+                                    Map.entry("name", editedLecturer.getName()),
+                                    Map.entry("isDlb", editedLecturer.isDlb()),
+                                    Map.entry("isMale", editedLecturer.getIsMale()),
+                                    Map.entry("isActive", isActive),
+                                    Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
+                                    Map.entry("religion", editedLecturer.getReligion().toString()),
+                                    Map.entry("category", editedLecturer.getCategoryId().getName()),
+                                    Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
+                                    Map.entry("specializations", mapSpecializations(editedLecturer)),
+                                    Map.entry("schedules", mapSchedules(editedLecturer)),
+                                    Map.entry("createdAt", editedLecturer.getCreatedAt()),
+                                    Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Lecturer Not Found");
@@ -575,36 +586,38 @@ public class LecturerController {
                 User user = session.getUserId();
                 if (authService.isSuperAdmin(user) || authService.isProdiAdmin(user)
                         || authService.isNtHumAdmin(user)) {
-                    Optional<Lecturer> editedLecturerOpt = Optional.empty();
-                    if (authService.isSuperAdmin(user)) {
-                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
-                    } else if (authService.isProdiAdmin(user)) {
-                        Category category = user.getProdiId();
-                        editedLecturerOpt = lecturerService.findLecturerByIdAndCategoryAndInterdiscipline(lecturerId,
-                                category);
-                    } else if (authService.isNtHumAdmin(user)) {
-                        editedLecturerOpt = lecturerService.findLecturerById(lecturerId)
-                                .filter(lecturer -> lecturer.getIsInterdiscipline()
-                                        || lecturer.getCategoryId().getName().equals("Umum")
-                                        || lecturer.getCategoryId().getName().equals("Entrepreneurship"));
-                    }
+                    Optional<Lecturer> editedLecturerOpt = lecturerService.findLecturerById(lecturerId);
+
                     if (editedLecturerOpt.isPresent()) {
                         Lecturer editedLecturer = editedLecturerOpt.get();
-                        Boolean isActive = lecturerService.makeLecturerInactive(editedLecturer, user);
-                        data = Map.ofEntries(
-                                Map.entry("id", editedLecturer.getId()),
-                                Map.entry("name", editedLecturer.getName()),
-                                Map.entry("isDlb", editedLecturer.isDlb()),
-                                Map.entry("isMale", editedLecturer.getIsMale()),
-                                Map.entry("isActive", isActive),
-                                Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
-                                Map.entry("religion", editedLecturer.getReligion().toString()),
-                                Map.entry("category", editedLecturer.getCategoryId().getName()),
-                            Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
-                                Map.entry("specializations", mapSpecializations(editedLecturer)),
-                                Map.entry("schedules", mapSchedules(editedLecturer)),
-                                Map.entry("createdAt", editedLecturer.getCreatedAt()),
-                                Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
+
+                        Boolean accessGranted = true;
+                        if (authService.isProdiAdmin(user))
+                            accessGranted = editedLecturer.getCategoryId().equals(user.getProdiId());
+                        else if (authService.isNtHumAdmin(user))
+                            accessGranted = editedLecturer.getCategoryId().getName().equals("Umum")
+                                    || editedLecturer.getCategoryId().getName().equals("Entrepreneurship");
+
+                        if (accessGranted) {
+                            Boolean isActive = lecturerService.makeLecturerInactive(editedLecturer, user);
+                            data = Map.ofEntries(
+                                    Map.entry("id", editedLecturer.getId()),
+                                    Map.entry("name", editedLecturer.getName()),
+                                    Map.entry("isDlb", editedLecturer.isDlb()),
+                                    Map.entry("isMale", editedLecturer.getIsMale()),
+                                    Map.entry("isActive", isActive),
+                                    Map.entry("isInterdiscipline", editedLecturer.getIsInterdiscipline()),
+                                    Map.entry("religion", editedLecturer.getReligion().toString()),
+                                    Map.entry("category", editedLecturer.getCategoryId().getName()),
+                                    Map.entry("categoryId", editedLecturer.getCategoryId().getId()),
+                                    Map.entry("specializations", mapSpecializations(editedLecturer)),
+                                    Map.entry("schedules", mapSchedules(editedLecturer)),
+                                    Map.entry("createdAt", editedLecturer.getCreatedAt()),
+                                    Map.entry("updatedAt", editedLecturer.getUpdatedAt()));
+                        } else {
+                            httpCode = HTTPCode.FORBIDDEN;
+                            data = new ErrorMessage(httpCode, "Access Denied");
+                        }
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
                         data = new ErrorMessage(httpCode, "Lecturer Not Found");
