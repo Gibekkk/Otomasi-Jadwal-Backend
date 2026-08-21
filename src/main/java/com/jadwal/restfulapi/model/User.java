@@ -84,12 +84,6 @@ public class User {
     private Set<Room> userRoomEditedBy;
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseSchedule> userCourseScheduleCreatedBy;
-
-    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseSchedule> userCourseScheduleEditedBy;
-
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Category> userCategoryCreatedBy;
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
