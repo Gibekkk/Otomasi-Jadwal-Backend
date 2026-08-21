@@ -27,11 +27,11 @@ public class CourseSpecialization {
     private String id;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "course_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_specialization_course_id"))
+    @JoinColumn(nullable = false, name = "course_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_specialization_course_id"))
     private Course courseId;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "specialization_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_specialization_specialization_id"))
+    @JoinColumn(nullable = false, name = "specialization_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_specialization_specialization_id"))
     private Specialization specializationId;
 
 }

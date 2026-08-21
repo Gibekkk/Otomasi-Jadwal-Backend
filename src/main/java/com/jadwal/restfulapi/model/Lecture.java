@@ -33,7 +33,7 @@ public class Lecture {
     private Lecturer lecturerId;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "course_schedule_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_course_schedule_id"))
+    @JoinColumn(nullable = false, name = "course_schedule_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_course_schedule_id"))
     private CourseSchedule courseScheduleId;
 
     @ManyToOne
@@ -43,6 +43,9 @@ public class Lecture {
     @ManyToOne
     @JoinColumn(nullable = false, name = "edited_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_edited_by"))
     private User editedBy;
+
+    @Column(name = "fallback_reason", nullable = true, length = 255)
+    private String fallbackReason;
 
     @Column(name = "deleted_at", nullable = true)
     private LocalDateTime deletedAt;

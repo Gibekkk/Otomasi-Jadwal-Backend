@@ -47,15 +47,15 @@ public class CourseSchedule {
     private Day day;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "schedule_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_schedule_id"))
+    @JoinColumn(nullable = false, name = "schedule_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_schedule_id"))
     private Schedule scheduleId;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "course_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_course_id"))
+    @JoinColumn(nullable = false, name = "course_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_course_id"))
     private Course courseId;
 
     @ManyToOne
-    @JoinColumn(nullable = true, name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_room_id"))
+    @JoinColumn(nullable = false, name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_room_id"))
     private Room roomId;
 
     @ManyToOne
