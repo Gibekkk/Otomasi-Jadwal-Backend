@@ -27,8 +27,6 @@ public class DataSeeder implements CommandLineRunner {
     private static final LocalTime SCHEDULE_END = LocalTime.of(16, 40);
     private static final int SCHEDULE_INTERVAL_MINUTES = 50;
 
-    private static final int FREE_TABLE_YEAR = 2026;
-    private static final boolean FREE_TABLE_IS_ODD = true;
     private static final boolean FREE_TABLE_IS_GENERATING = false;
 
     @Override
@@ -70,7 +68,7 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedFreeTable() {
         boolean exists = freeTableRepository
-                .findByAcademicYearAndIsOdd(FREE_TABLE_YEAR, FREE_TABLE_IS_ODD)
+                .findFirstByOrderByIdAsc()
                 .isPresent();
         if (!exists) {
             FreeTable freeTable = new FreeTable();
