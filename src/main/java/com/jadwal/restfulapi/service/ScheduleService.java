@@ -3,7 +3,11 @@ package com.jadwal.restfulapi.service;
 import java.util.Optional;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,51 @@ public class ScheduleService {
 
     public List<Schedule> findAllSchedule() {
         return scheduleRepository.findAll();
+    }
+
+    /**
+     * Semua slot jadwal diurutkan berdasarkan timeStart (bukan berdasarkan id/UUID-nya).
+     * Dipakai sebagai dasar "urutan slot ke berapa" karena tabel schedules tidak
+     * punya kolom urutan eksplisit.
+     */
+    public List<Schedule> findAllScheduleSortedByTimeStart() {
+        return scheduleRepository.findAll().stream()
+                .sorted(Comparator.comparing(Schedule::getTimeStart))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Peta id slot -> posisi urutannya di dalam list yang sudah terurut berdasarkan timeStart.
+     * Bangun sekali lalu pakai berulang kali (mis. di dalam loop) supaya tidak sort ulang tiap iterasi.
+     */
+    public Map<String, Integer> buildScheduleOrderIndex(List<Schedule> sortedSchedules) {
+        Map<String, Integer> orderIndex = new HashMap<>();
+        for (int i = 0; i < sortedSchedules.size(); i++) {
+            orderIndex.put(sortedSchedules.get(i).getId(), i);
+        }
+        return orderIndex;
+    }
+
+    /**
+     * Menentukan timeEnd suatu mata kuliah berdasarkan slot awalnya (startSchedule) dan
+     * berapa banyak slot yang dipakai (sksCount). Misal startSchedule ada di urutan ke-4
+     * dan sksCount 3, maka dipakai slot 4, 5, 6 -- timeEnd yang dikembalikan adalah
+     * timeEnd dari slot ke-6.
+     */
+    public LocalTime resolveTimeEnd(List<Schedule> sortedSchedules, Map<String, Integer> orderIndex,
+            Schedule startSchedule, int sksCount) {
+        Integer startIndex = orderIndex.get(startSchedule.getId());
+        if (startIndex == null) {
+            throw new IllegalStateException("Slot jadwal tidak ditemukan: " + startSchedule.getId());
+        }
+
+        int endIndex = startIndex + sksCount - 1;
+        if (endIndex >= sortedSchedules.size()) {
+            throw new IllegalStateException(
+                    "SKS count (" + sksCount + ") melebihi slot yang tersedia setelah " + startSchedule.getTimeStart());
+        }
+
+        return sortedSchedules.get(endIndex).getTimeEnd();
     }
 
     public List<Schedule> findAllScheduleById(List<String> scheduleIds) {
