@@ -28,7 +28,7 @@ public class AuthService {
     @Autowired
     private PasswordHasherMatcher passwordMaker;
 
-    private final int SESSION_TIMEOUT_MINUTES = 60;
+    private final int SESSION_TIMEOUT_MINUTES = 180;
 
     @Transactional
     public void deleteSession(Session session) {

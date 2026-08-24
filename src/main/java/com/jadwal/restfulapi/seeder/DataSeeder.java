@@ -75,8 +75,6 @@ public class DataSeeder implements CommandLineRunner {
         if (!exists) {
             FreeTable freeTable = new FreeTable();
             freeTable.setIsGenerating(FREE_TABLE_IS_GENERATING);
-            freeTable.setIsOdd(FREE_TABLE_IS_ODD);
-            freeTable.setAcademicYear(FREE_TABLE_YEAR);
             freeTableRepository.save(freeTable);
             System.out.println("FreeTable seeder: data ditambahkan.");
         }

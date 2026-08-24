@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.jadwal.restfulapi.model.enums.Day;
@@ -57,15 +56,6 @@ public class CourseSchedule {
     @ManyToOne
     @JoinColumn(nullable = false, name = "room_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_schedule_room_id"))
     private Room roomId;
-
-    @Column(name = "deleted_at", nullable = true)
-    private LocalDateTime deletedAt;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "courseScheduleId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Lecture> lectures;

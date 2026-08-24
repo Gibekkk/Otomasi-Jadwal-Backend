@@ -14,8 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @Entity
@@ -37,23 +35,10 @@ public class Lecture {
     private CourseSchedule courseScheduleId;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_created_by"))
-    private User createdBy;
-
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "edited_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_edited_by"))
-    private User editedBy;
+    @JoinColumn(nullable = false, name = "timeline_generation_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_timeline_generation_id"))
+    private TimelineGeneration timelineGenerationId;
 
     @Column(name = "fallback_reason", nullable = true, length = 255)
     private String fallbackReason;
-
-    @Column(name = "deleted_at", nullable = true)
-    private LocalDateTime deletedAt;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
 }

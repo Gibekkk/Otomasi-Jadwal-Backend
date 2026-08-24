@@ -6,9 +6,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.dto.GenerateDTO;
 import com.jadwal.restfulapi.model.FreeTable;
+import com.jadwal.restfulapi.model.TimelineGeneration;
 import com.jadwal.restfulapi.repository.FreeTableRepository;
+import com.jadwal.restfulapi.repository.TimelineGenerationRepository;
 import com.jadwal.restfulapi.util.PasswordHasherMatcher;
 
 @Service
@@ -16,6 +19,9 @@ public class FreeTableService {
 
     @Autowired
     private FreeTableRepository freeTableRepository;
+
+    @Autowired
+    private TimelineGenerationRepository timelineGenerationRepository;
 
     @Autowired
     private AlgorithmService algorithmService;
@@ -27,11 +33,16 @@ public class FreeTableService {
         return freeTableRepository.findFirstByOrderByIdAsc();
     }
 
-    public FreeTable startGenerating(FreeTable freeTable, GenerateDTO generateDTO) {
+    public FreeTable startGenerating(FreeTable freeTable, GenerateDTO generateDTO, User user) {
+        TimelineGeneration timelineGeneration = new TimelineGeneration();
+        timelineGeneration.setAcademicYear(generateDTO.getAcademicYear());
+        timelineGeneration.setGeneratedBy(user);
+        timelineGeneration.setIsOdd(generateDTO.getIsOdd());
+        TimelineGeneration newTimelineGeneration = timelineGenerationRepository.save(timelineGeneration);
+
         String secretKey = generateSecretKey();
         freeTable.setIsGenerating(true);
-        freeTable.setAcademicYear(generateDTO.getAcademicYear());
-        freeTable.setIsOdd(generateDTO.getIsOdd());
+        freeTable.setTimelineGenerationId(newTimelineGeneration);
         freeTable.setSecretKey(secretKey);
         FreeTable updatedFreeTable = freeTableRepository.save(freeTable);
         algorithmService.triggerStartGenerate(secretKey);

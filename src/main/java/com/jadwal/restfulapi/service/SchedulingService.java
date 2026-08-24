@@ -12,6 +12,6 @@ public class SchedulingService {
     
     @Scheduled(fixedRate = 5000)
     public void doSomethingEvery5Secs() {
-        // authService.deleteExpiredSessions();
+        authService.deleteExpiredSessions();
     }
 }
