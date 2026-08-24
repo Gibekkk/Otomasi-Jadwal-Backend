@@ -31,6 +31,6 @@ public class TimelineService {
 
     public List<Lecture> getLectures() {
         FreeTable freeTable = freeTableRepository.findFirstByOrderByIdAsc().get();
-        return lectureRepository.findAllByTimelineGenerationid(freeTable.getTimelineGenerationId());
+        return lectureRepository.findAllByTimelineGenerationId(freeTable.getTimelineGenerationId());
     }
 }
