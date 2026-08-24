@@ -43,9 +43,9 @@ public class TimelineGeneration {
     @JoinColumn(nullable = false, name = "generated_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_timeline_generated_by"))
     private User generatedBy;
 
-    @OneToOne(mappedBy = "generationTimelineId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "timelineGenerationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FreeTable freeTableId;
 
-    @OneToMany(mappedBy = "generationTimelineId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "timelineGenerationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Lecture> generatedLectures;
 }
