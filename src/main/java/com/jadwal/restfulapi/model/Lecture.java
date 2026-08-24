@@ -38,7 +38,7 @@ public class Lecture {
     @JoinColumn(nullable = false, name = "timeline_generation_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lecture_timeline_generation_id"))
     private TimelineGeneration timelineGenerationId;
 
-    @Column(name = "fallback_reason", nullable = true, length = 255)
+    @Column(name = "fallback_reason", nullable = true, columnDefinition = "LONGTEXT")
     private String fallbackReason;
 
 }
