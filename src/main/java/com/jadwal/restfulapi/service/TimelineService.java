@@ -9,7 +9,6 @@ import com.jadwal.restfulapi.model.Lecture;
 import com.jadwal.restfulapi.model.FreeTable;
 import com.jadwal.restfulapi.repository.LectureRepository;
 import com.jadwal.restfulapi.repository.FreeTableRepository;
-import com.jadwal.restfulapi.repository.TimelineGenerationRepository;
 
 @Service
 public class TimelineService {
@@ -19,9 +18,6 @@ public class TimelineService {
 
     @Autowired
     private FreeTableRepository freeTableRepository;
-
-    @Autowired
-    private TimelineGenerationRepository timelineGenerationRepository;
 
     public List<Lecture> getLectures() {
         FreeTable freeTable = freeTableRepository.findFirstByOrderByIdAsc().get();
