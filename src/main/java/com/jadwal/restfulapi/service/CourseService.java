@@ -110,7 +110,7 @@ public class CourseService {
         course.setCapacity(courseDTO.getCapacity());
         course.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         course.setIsOdd(courseDTO.getIsOdd());
-        course.setIsActive(courseDTO.getIsActive());
+        course.setIsActive(true);
         course.setIsLab(courseDTO.getIsLab());
         course.setCategoryId(category);
         course.setCreatedBy(admin);
@@ -133,7 +133,6 @@ public class CourseService {
         editedCourse.setCapacity(courseDTO.getCapacity());
         editedCourse.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         editedCourse.setIsOdd(courseDTO.getIsOdd());
-        editedCourse.setIsActive(courseDTO.getIsActive());
         editedCourse.setIsLab(courseDTO.getIsLab());
         editedCourse.setCategoryId(category);
         editedCourse.setEditedBy(admin);

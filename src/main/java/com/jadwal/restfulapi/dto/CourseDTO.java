@@ -21,7 +21,6 @@ public class CourseDTO {
     private int capacity;
     private Boolean isInterdiscipline;
     private Boolean isOdd;
-    private Boolean isActive;
     private Boolean isLab;
     private String categoryId;
     private List<String> specializations;
