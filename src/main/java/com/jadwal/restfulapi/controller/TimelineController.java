@@ -88,8 +88,9 @@ public class TimelineController {
 
                 Schedule startSchedule = courseSchedule.getScheduleId();
                 int sksCount = courseSchedule.getSksCount();
+                Boolean isLab = courseSchedule.getIsLab();
                 LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
-                        startSchedule, sksCount);
+                        startSchedule, sksCount, isLab);
 
                 // Pakai LinkedHashMap (bukan Map.ofEntries) karena "dosen" bisa null
                 // (lecturerId nullable di model Lecture) -- Map.entry melempar NPE untuk value null.

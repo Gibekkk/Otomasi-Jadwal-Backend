@@ -58,12 +58,13 @@ public class ScheduleService {
      * timeEnd dari slot ke-6.
      */
     public LocalTime resolveTimeEnd(List<Schedule> sortedSchedules, Map<String, Integer> orderIndex,
-            Schedule startSchedule, int sksCount) {
+            Schedule startSchedule, int sksCount, Boolean isLab) {
         Integer startIndex = orderIndex.get(startSchedule.getId());
         if (startIndex == null) {
             throw new IllegalStateException("Slot jadwal tidak ditemukan: " + startSchedule.getId());
         }
 
+        if(isLab) sksCount = sksCount + 2;
         int endIndex = startIndex + sksCount - 1;
         if (endIndex >= sortedSchedules.size()) {
             throw new IllegalStateException(
