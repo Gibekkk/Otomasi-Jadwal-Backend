@@ -87,7 +87,7 @@ public class TimelineController {
                 Day day = courseSchedule.getDay();
 
                 Schedule startSchedule = courseSchedule.getScheduleId();
-                int sksCount = courseSchedule.getCourseId().getSksCount();
+                int sksCount = courseSchedule.getSksCount();
                 LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
                         startSchedule, sksCount);
 

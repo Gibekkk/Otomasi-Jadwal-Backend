@@ -41,6 +41,9 @@ public class CourseSchedule {
     @Column(name = "course_index", nullable = false, length = 1)
     private String courseIndex;
 
+    @Column(name = "sks_count", nullable = false)
+    private int sksCount;
+
     // Nama kolom di-quote (backtick) karena "day" adalah reserved word di H2
     // (dipakai environment mvn test) -- Hibernate otomatis translate ke tanda kutip
     // yang benar per dialect (backtick di MariaDB, double-quote di H2), jadi aman
