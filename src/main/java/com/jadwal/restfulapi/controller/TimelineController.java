@@ -88,6 +88,7 @@ public class TimelineController {
 
                 Schedule startSchedule = courseSchedule.getScheduleId();
                 int sksCount = courseSchedule.getSksCount();
+                if(sksCount <= 0) continue;
                 Boolean isLab = courseSchedule.getIsLab();
                 LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
                         startSchedule, sksCount, isLab);

@@ -61,14 +61,14 @@ public class ScheduleService {
             Schedule startSchedule, int sksCount, Boolean isLab) {
         Integer startIndex = orderIndex.get(startSchedule.getId());
         if (startIndex == null) {
-            throw new IllegalStateException("Slot jadwal tidak ditemukan: " + startSchedule.getId());
+            throw new IllegalStateException("Schedule Slot Not Found: " + startSchedule.getId());
         }
 
         if(isLab) sksCount = sksCount + 2;
         int endIndex = startIndex + sksCount - 1;
         if (endIndex >= sortedSchedules.size()) {
             throw new IllegalStateException(
-                    "SKS count (" + sksCount + ") melebihi slot yang tersedia setelah " + startSchedule.getTimeStart());
+                    "SKS Count (" + sksCount + ") Exceeds The Schedule Slots " + startSchedule.getTimeStart());
         }
 
         return sortedSchedules.get(endIndex).getTimeEnd();
