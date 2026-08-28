@@ -10,7 +10,6 @@ import com.jadwal.restfulapi.model.Lecturer;
 import com.jadwal.restfulapi.model.TimelineGeneration;
 
 public interface LectureRepository extends JpaRepository<Lecture, String> {
-    public List<Lecture> findAllByLecturerId(Lecturer lecturerId);
     public List<Lecture> findAllByCourseScheduleId(CourseSchedule courseScheduleId);
     public List<Lecture> findAllByTimelineGenerationId(TimelineGeneration timelineGenerationId);
 }
