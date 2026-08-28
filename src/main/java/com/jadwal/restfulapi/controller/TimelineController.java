@@ -108,6 +108,8 @@ public class TimelineController {
                 lectureData.put("timeStart", startSchedule.getTimeStart());
                 lectureData.put("timeEnd", timeEnd);
                 lectureData.put("mataKuliah", courseSchedule.getCourseId().getName());
+                lectureData.put("isLab", isLab);
+                lectureData.put("courseIndex", courseSchedule.getCourseIndex());
                 lectureData.put("ruangan", courseSchedule.getRoomId().getName());
                 lectureData.put("dosen", lecturers);
                 lectureData.put("kategori", courseSchedule.getCourseId().getCategoryId().getName());
