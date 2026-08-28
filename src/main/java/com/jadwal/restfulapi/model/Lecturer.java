@@ -81,7 +81,7 @@ public class Lecturer {
     private Set<LecturerSchedule> lecturerSchedules;
 
     @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecture> lectures;
+    private Set<LectureLecturer> lectureLecturers;
 
     public Boolean isDlb() {
         return Optional.ofNullable(this.lecturerSchedules).map(s -> s.size() > 0).orElse(false);

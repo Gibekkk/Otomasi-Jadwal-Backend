@@ -26,8 +26,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.jadwal.restfulapi.model.CourseSchedule;
 import com.jadwal.restfulapi.model.FreeTable;
 import com.jadwal.restfulapi.model.Schedule;
-import com.jadwal.restfulapi.model.Lecturer;
 import com.jadwal.restfulapi.model.Lecture;
+import com.jadwal.restfulapi.model.LectureLecturer;
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.enums.Day;
@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.ArrayList;
 
 @RestController
@@ -83,7 +84,14 @@ public class TimelineController {
 
             for (Lecture lecture : timelineService.getLectures()) {
                 CourseSchedule courseSchedule = lecture.getCourseScheduleId();
-                Optional<Lecturer> lecturerOpt = Optional.ofNullable(lecture.getLecturerId());
+                Set<LectureLecturer> lectureLecturers = lecture.getLectureLecturers();
+                ArrayList<Map<String, Object>> lecturers = new ArrayList<Map<String, Object>>();
+                for (LectureLecturer lectureLecturer : lectureLecturers) {
+                    lecturers.add(Map.of(
+                        "lecturerName", lectureLecturer.getLecturerId().getName(),
+                        "isMainLecturer", lectureLecturer.getIsMainLecturer()
+                    ));
+                }
                 Day day = courseSchedule.getDay();
 
                 Schedule startSchedule = courseSchedule.getScheduleId();
@@ -101,7 +109,7 @@ public class TimelineController {
                 lectureData.put("timeEnd", timeEnd);
                 lectureData.put("mataKuliah", courseSchedule.getCourseId().getName());
                 lectureData.put("ruangan", courseSchedule.getRoomId().getName());
-                lectureData.put("dosen", lecturerOpt.map(Lecturer::getName).orElse(null));
+                lectureData.put("dosen", lecturers);
                 lectureData.put("kategori", courseSchedule.getCourseId().getCategoryId().getName());
 
                 switch (day) {
