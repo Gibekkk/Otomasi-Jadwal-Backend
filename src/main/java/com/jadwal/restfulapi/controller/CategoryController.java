@@ -44,6 +44,35 @@ public class CategoryController {
 
     private Object data = "";
 
+    @NoAuth
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Wajib\",\"isProdi\":false,"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
+    @GetMapping("/all")
+    public ResponseEntity<Object> getAllCategory(HttpServletRequest request) {
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            List<Category> categories = categoryService.findAllCategory();
+            for (Category category : categories) {
+                categoryList.add(Map.of(
+                    "id", category.getId(),
+                    "name", category.getName(),
+                    "isProdi", category.getIsProdi()));
+            }
+            data = categoryList;
+        } catch (IllegalArgumentException e) {
+            httpCode = HTTPCode.BAD_REQUEST;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
+
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Wajib\",\"isProdi\":false,"
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
