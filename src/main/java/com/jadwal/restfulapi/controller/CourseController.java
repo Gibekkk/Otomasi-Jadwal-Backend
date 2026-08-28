@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 
 import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.annotation.SuccessExample;
+import com.jadwal.restfulapi.annotation.NoAuth;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.CourseService;
 import com.jadwal.restfulapi.service.CategoryService;
