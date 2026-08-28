@@ -52,6 +52,7 @@ public class CategoryController {
     public ResponseEntity<Object> getAllCategory(HttpServletRequest request) {
         HTTPCode httpCode = HTTPCode.OK;
         try {
+            ArrayList<Map<String, Object>> categoryList = new ArrayList<>();
             List<Category> categories = categoryService.findAllCategory();
             for (Category category : categories) {
                 categoryList.add(Map.of(
