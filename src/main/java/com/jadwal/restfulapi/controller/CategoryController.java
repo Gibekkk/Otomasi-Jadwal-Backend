@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.jadwal.restfulapi.annotation.ErrorExample;
 import com.jadwal.restfulapi.annotation.SuccessExample;
+import com.jadwal.restfulapi.annotation.NoAuth;
 import com.jadwal.restfulapi.service.AuthService;
 import com.jadwal.restfulapi.service.CategoryService;
 import com.jadwal.restfulapi.util.ErrorMessage;
