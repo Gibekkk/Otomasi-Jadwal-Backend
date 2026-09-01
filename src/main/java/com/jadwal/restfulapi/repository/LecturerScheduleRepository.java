@@ -11,8 +11,7 @@ import com.jadwal.restfulapi.model.Schedule;
 
 public interface LecturerScheduleRepository extends JpaRepository<LecturerSchedule, String> {
     public List<LecturerSchedule> findAllByLecturerId(Lecturer lecturerId);
-    public List<LecturerSchedule> findAllByScheduleId(Schedule scheduleId);
-
+   
     @Transactional
     public void deleteAllByLecturerId(Lecturer lecturerId);
 }
