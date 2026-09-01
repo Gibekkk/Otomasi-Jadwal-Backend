@@ -64,4 +64,7 @@ public class Category {
     @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Lecturer> categoryLecturers;
 
+    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<SubMajor> categorySubMajors;
+
 }

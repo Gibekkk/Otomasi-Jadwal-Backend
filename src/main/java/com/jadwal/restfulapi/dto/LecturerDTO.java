@@ -22,7 +22,7 @@ public class LecturerDTO {
     private String religion;
     private String categoryId;
     private List<String> specializations;
-    private List<String> schedules;
+    private List<LecturerScheduleDTO> schedules;
 
     public void checkDTO(Boolean isProdiAdmin) {
         trim();

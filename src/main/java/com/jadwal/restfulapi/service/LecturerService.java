@@ -12,13 +12,16 @@ import com.jadwal.restfulapi.model.LecturerSpecialization;
 import com.jadwal.restfulapi.model.Specialization;
 import com.jadwal.restfulapi.model.Schedule;
 import com.jadwal.restfulapi.model.LecturerSchedule;
+import com.jadwal.restfulapi.model.LecturerScheduleTime;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.enums.Religion;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.dto.LecturerDTO;
 import com.jadwal.restfulapi.repository.LecturerRepository;
 import com.jadwal.restfulapi.repository.LecturerSpecializationRepository;
+import com.jadwal.restfulapi.wrapper.LecturerScheduleWrapper;
 import com.jadwal.restfulapi.repository.LecturerScheduleRepository;
+import com.jadwal.restfulapi.repository.LecturerScheduleTimeRepository;
 
 @Service
 public class LecturerService {
@@ -31,6 +34,9 @@ public class LecturerService {
 
     @Autowired
     private LecturerScheduleRepository lecturerScheduleRepository;
+
+    @Autowired
+    private LecturerScheduleTimeRepository lecturerScheduleTimeRepository;
 
     public Optional<Lecturer> findLecturerById(String id) {
         return lecturerRepository.findByIdAndDeletedAtIsNull(id);
@@ -83,7 +89,7 @@ public class LecturerService {
     }
 
     public Lecturer createLecturer(LecturerDTO lecturerDTO, Category category, User admin,
-            List<Specialization> specializations, List<Schedule> schedules) {
+            List<Specialization> specializations, List<LecturerScheduleWrapper> schedules) {
         Lecturer lecturer = new Lecturer();
         lecturer.setName(lecturerDTO.getName());
         lecturer.setIsMale(lecturerDTO.getIsMale());
@@ -101,15 +107,18 @@ public class LecturerService {
             lecturerSpecializationRepository.save(new LecturerSpecialization(null, savedLecturer, specialization));
         }
 
-        for (Schedule schedule : schedules) {
-            lecturerScheduleRepository.save(new LecturerSchedule(null, savedLecturer, schedule));
+        for (LecturerScheduleWrapper scheduleWrapper : schedules) {
+            LecturerSchedule lecturerSchedule = lecturerScheduleRepository.save(new LecturerSchedule(null, savedLecturer, scheduleWrapper.getDay(), null));
+            for (Schedule schedule : scheduleWrapper.getSchedules()) {
+                lecturerScheduleTimeRepository.save(new LecturerScheduleTime(null, lecturerSchedule, schedule));
+            }
         }
 
         return savedLecturer;
     }
 
     public Lecturer editLecturer(Lecturer editedLecturer, LecturerDTO lecturerDTO, Category category, User admin,
-            List<Specialization> specializations, List<Schedule> schedules) {
+            List<Specialization> specializations, List<LecturerScheduleWrapper> schedules) {
         editedLecturer.setName(lecturerDTO.getName());
         editedLecturer.setIsMale(lecturerDTO.getIsMale());
         editedLecturer.setIsInterdiscipline(lecturerDTO.getIsInterdiscipline());
@@ -123,12 +132,18 @@ public class LecturerService {
         for (Specialization specialization : specializations) {
             lecturerSpecializationRepository.save(new LecturerSpecialization(null, savedLecturer, specialization));
         }
-
-        deleteLecturerSchedulesByLecturer(savedLecturer);
-        for (Schedule schedule : schedules) {
-            lecturerScheduleRepository.save(new LecturerSchedule(null, savedLecturer, schedule));
+        
+        for (LecturerSchedule lecturerSchedule : savedLecturer.getLecturerSchedules()) {
+            deleteLecturerScheduleTimesByLecturerSchedule(lecturerSchedule);
         }
-
+        deleteLecturerSchedulesByLecturer(savedLecturer);
+        for (LecturerScheduleWrapper scheduleWrapper : schedules) {
+            LecturerSchedule lecturerSchedule = lecturerScheduleRepository.save(new LecturerSchedule(null, savedLecturer, scheduleWrapper.getDay(), null));
+            for (Schedule schedule : scheduleWrapper.getSchedules()) {
+                lecturerScheduleTimeRepository.save(new LecturerScheduleTime(null, lecturerSchedule, schedule));
+            }
+        }
+        
         return savedLecturer;
     }
 
@@ -138,5 +153,9 @@ public class LecturerService {
 
     public void deleteLecturerSchedulesByLecturer(Lecturer lecturer) {
         lecturerScheduleRepository.deleteAllByLecturerId(lecturer);
+    }
+
+    public void deleteLecturerScheduleTimesByLecturerSchedule(LecturerSchedule lecturerSchedule) {
+        lecturerScheduleTimeRepository.deleteAllByLecturerScheduleId(lecturerSchedule);
     }
 }

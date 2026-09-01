@@ -3,7 +3,6 @@ package com.jadwal.restfulapi.dto;
 import lombok.Setter;
 
 import java.util.Optional;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,16 +12,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDTO {
+public class SubMajorDTO {
 
     private String name;
-    private List<String> subMajors;
+    private String prodiId;
 
     public void checkDTO() {
         trim();
         checkLength();
         if (this.name == null)
             throw new IllegalArgumentException("Name Cannot Be NULL");
+        if (this.prodiId == null)
+            throw new IllegalArgumentException("Prodi ID Cannot Be NULL");
     }
 
     public void checkLength() {
@@ -36,6 +37,7 @@ public class CategoryDTO {
 
     public void trim() {
         this.name = Optional.ofNullable(this.name).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
+        this.prodiId = Optional.ofNullable(this.prodiId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
     }
 
 }

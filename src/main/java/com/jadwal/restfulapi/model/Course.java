@@ -43,6 +43,11 @@ public class Course {
     private int sksCount;
 
     @Min(1)
+    @Max(8)
+    @Column(name = "semester", nullable = false, length = 1)
+    private int semester;
+
+    @Min(1)
     @Max(3)
     @Column(name = "lecturer_count", nullable = false, length = 1)
     private int lecturerCount;
@@ -67,6 +72,10 @@ public class Course {
     @ManyToOne
     @JoinColumn(nullable = false, name = "category_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_category_id"))
     private Category categoryId;
+
+    @ManyToOne
+    @JoinColumn(nullable = true, name = "submajor_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_submajor_id"))
+    private SubMajor subMajorId;
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_course_created_by"))

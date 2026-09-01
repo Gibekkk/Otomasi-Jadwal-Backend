@@ -101,6 +101,12 @@ public class User {
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<LabGroup> userLabGroupEditedBy;
 
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<SubMajor> userSubMajorCreatedBy;
+
+    @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<SubMajor> userSubMajorEditedBy;
+
     @OneToMany(mappedBy = "generatedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<TimelineGeneration> userTimelineGenerationGeneratedBy;
 

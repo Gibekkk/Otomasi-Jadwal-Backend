@@ -30,10 +30,14 @@ import com.jadwal.restfulapi.model.Schedule;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Lecturer;
+import com.jadwal.restfulapi.wrapper.LecturerScheduleWrapper;
 import com.jadwal.restfulapi.dto.LecturerDTO;
+import com.jadwal.restfulapi.dto.LecturerScheduleDTO;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,14 +76,36 @@ public class LecturerController {
     }
 
     private List<Map<String, Object>> mapSchedules(Lecturer lecturer) {
-        return Optional.ofNullable(lecturer.getLecturerSchedules())
-                .filter(s -> !s.isEmpty())
-                .map(scheds -> scheds.stream()
-                        .map(ls -> Map.<String, Object>of(
-                                "timeStart", ls.getScheduleId().getTimeStart(),
-                                "timeEnd", ls.getScheduleId().getTimeEnd()))
-                        .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
+        // Jika schedule null atau kosong, langsung return list kosong
+        if (lecturer.getLecturerSchedules() == null || lecturer.getLecturerSchedules().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return lecturer.getLecturerSchedules().stream()
+                .map(ls -> {
+                    // Gunakan HashMap biasa agar aman dari nilai null
+                    Map<String, Object> scheduleMap = new HashMap<>();
+                    scheduleMap.put("day", ls.getDay().toString());
+
+                    List<Map<String, Object>> timesList = Collections.emptyList();
+
+                    if (ls.getLecturerScheduleTimes() != null) {
+                        timesList = ls.getLecturerScheduleTimes().stream()
+                                .map(lst -> {
+                                    Map<String, Object> timeMap = new HashMap<>();
+                                    if (lst.getScheduleId() != null) {
+                                        timeMap.put("timeStart", lst.getScheduleId().getTimeStart());
+                                        timeMap.put("timeEnd", lst.getScheduleId().getTimeEnd());
+                                    }
+                                    return timeMap;
+                                })
+                                .collect(Collectors.toList());
+                    }
+
+                    scheduleMap.put("times", timesList);
+                    return scheduleMap;
+                })
+                .collect(Collectors.toList());
     }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
@@ -322,11 +348,15 @@ public class LecturerController {
                         }
                     }
                     if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
-                        List<String> nonExistentSchedules = scheduleService
-                                .checkNonExistentSchedules(lecturerDTO.getSchedules());
-                        if (!nonExistentSchedules.isEmpty()) {
-                            throw new IllegalArgumentException(
-                                    "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                        for (LecturerScheduleDTO scheduleDTO : lecturerDTO.getSchedules()) {
+                            scheduleDTO.checkDTO();
+
+                            List<String> nonExistentSchedules = scheduleService
+                                    .checkNonExistentSchedules(scheduleDTO.getScheduleIds());
+                            if (!nonExistentSchedules.isEmpty()) {
+                                throw new IllegalArgumentException(
+                                        "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                            }
                         }
                     }
 
@@ -343,7 +373,7 @@ public class LecturerController {
                     }
                     List<Specialization> specializations = specializationService
                             .findAllSpecializationById(lecturerDTO.getSpecializations());
-                    List<Schedule> schedules = scheduleService.findAllScheduleById(lecturerDTO.getSchedules());
+                    List<LecturerScheduleWrapper> schedules = scheduleService.findAllScheduleByIdLecturer(lecturerDTO.getSchedules());
                     Lecturer createdLecturer = lecturerService.createLecturer(lecturerDTO, category, user,
                             specializations, schedules);
                     data = Map.ofEntries(
@@ -417,11 +447,15 @@ public class LecturerController {
                         }
                     }
                     if (lecturerDTO.getSchedules() != null && !lecturerDTO.getSchedules().isEmpty()) {
-                        List<String> nonExistentSchedules = scheduleService
-                                .checkNonExistentSchedules(lecturerDTO.getSchedules());
-                        if (!nonExistentSchedules.isEmpty()) {
-                            throw new IllegalArgumentException(
-                                    "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                        for (LecturerScheduleDTO scheduleDTO : lecturerDTO.getSchedules()) {
+                            scheduleDTO.checkDTO();
+
+                            List<String> nonExistentSchedules = scheduleService
+                                    .checkNonExistentSchedules(scheduleDTO.getScheduleIds());
+                            if (!nonExistentSchedules.isEmpty()) {
+                                throw new IllegalArgumentException(
+                                        "Schedule IDs Not Found: " + String.join(", ", nonExistentSchedules));
+                            }
                         }
                     }
 
@@ -443,7 +477,7 @@ public class LecturerController {
                         if (accessGranted) {
                             List<Specialization> specializations = specializationService
                                     .findAllSpecializationById(lecturerDTO.getSpecializations());
-                            List<Schedule> schedules = scheduleService.findAllScheduleById(lecturerDTO.getSchedules());
+                            List<LecturerScheduleWrapper> schedules = scheduleService.findAllScheduleByIdLecturer(lecturerDTO.getSchedules());
                             editedLecturer = lecturerService.editLecturer(editedLecturer, lecturerDTO, category, user,
                                     specializations, schedules);
                             data = Map.ofEntries(

@@ -8,10 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.dto.CategoryDTO;
 import com.jadwal.restfulapi.model.Category;
+import com.jadwal.restfulapi.model.Course;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Lecturer;
+import com.jadwal.restfulapi.model.SubMajor;
 import com.jadwal.restfulapi.repository.CategoryRepository;
 import com.jadwal.restfulapi.repository.LecturerRepository;
+import com.jadwal.restfulapi.repository.SubMajorRepository;
+import com.jadwal.restfulapi.repository.CourseRepository;
 
 @Service
 public class CategoryService {
@@ -21,6 +25,12 @@ public class CategoryService {
 
     @Autowired
     private LecturerRepository lecturerRepository;
+
+    @Autowired
+    private SubMajorRepository subMajorRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     public Boolean isProdiExistById(String prodiId) {
         return findProdiById(prodiId).isPresent();
@@ -64,6 +74,16 @@ public class CategoryService {
         }
     }
 
+    public void deleteSubMajor(SubMajor subMajor) {
+        subMajor.setDeletedAt(LocalDateTime.now());
+        SubMajor savedSubMajor = subMajorRepository.save(subMajor);
+
+        for(Course course : savedSubMajor.getSubMajorCourses()) {
+            course.setSubMajorId(null);
+            courseRepository.save(course);
+        }
+    }
+
     public Category createCategory(CategoryDTO categoryDTO, User user) {
         Category category = new Category();
         category.setName(categoryDTO.getName());
@@ -100,5 +120,40 @@ public class CategoryService {
         editedProdi.setEditedBy(user);
         editedProdi.setUpdatedAt(LocalDateTime.now());
         return categoryRepository.save(editedProdi);
+    }
+
+    public Boolean isSubMajorExistByNameAndCategory(String name, Category category) {
+        return subMajorRepository.existsByNameAndCategoryIdAndDeletedAtIsNull(name, category);
+    }
+
+    public Boolean isSubMajorExistByNameAndCategoryAndIdNot(String name, Category category, String id) {
+        return subMajorRepository.existsByNameAndCategoryIdAndDeletedAtIsNullAndIdNot(name, category, id);
+    }
+
+    public List<SubMajor> findAllSubMajorsByCategory(Category category) {
+        return subMajorRepository.findAllByCategoryId(category);
+    }
+
+    public Optional<SubMajor> findSubMajorByIdAndCategory(String subMajorId, Category category) {
+        return subMajorRepository.findByIdAndCategoryIdAndDeletedAtIsNull(subMajorId, category);
+    }
+
+    public SubMajor createSubMajor(String subMajorName, Category category, User user) {
+        SubMajor subMajor = new SubMajor();
+        subMajor.setName(subMajorName);
+        subMajor.setCategoryId(category);
+        subMajor.setCreatedBy(user);
+        subMajor.setEditedBy(user);
+        subMajor.setCreatedAt(LocalDateTime.now());
+        subMajor.setUpdatedAt(LocalDateTime.now());
+        return subMajorRepository.save(subMajor);
+    }
+
+    public SubMajor editSubMajor(SubMajor subMajor, String subMajorName, Category category, User user) {
+        subMajor.setName(subMajorName);
+        subMajor.setCategoryId(category);
+        subMajor.setEditedBy(user);
+        subMajor.setUpdatedAt(LocalDateTime.now());
+        return subMajorRepository.save(subMajor);
     }
 }

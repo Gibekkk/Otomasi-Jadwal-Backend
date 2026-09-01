@@ -11,8 +11,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jadwal.restfulapi.dto.LecturerScheduleDTO;
 import com.jadwal.restfulapi.model.Schedule;
+import com.jadwal.restfulapi.model.enums.Day;
 import com.jadwal.restfulapi.repository.ScheduleRepository;
+import com.jadwal.restfulapi.wrapper.LecturerScheduleWrapper;
 
 @Service
 public class ScheduleService {
@@ -29,7 +32,8 @@ public class ScheduleService {
     }
 
     /**
-     * Semua slot jadwal diurutkan berdasarkan timeStart (bukan berdasarkan id/UUID-nya).
+     * Semua slot jadwal diurutkan berdasarkan timeStart (bukan berdasarkan
+     * id/UUID-nya).
      * Dipakai sebagai dasar "urutan slot ke berapa" karena tabel schedules tidak
      * punya kolom urutan eksplisit.
      */
@@ -40,8 +44,10 @@ public class ScheduleService {
     }
 
     /**
-     * Peta id slot -> posisi urutannya di dalam list yang sudah terurut berdasarkan timeStart.
-     * Bangun sekali lalu pakai berulang kali (mis. di dalam loop) supaya tidak sort ulang tiap iterasi.
+     * Peta id slot -> posisi urutannya di dalam list yang sudah terurut berdasarkan
+     * timeStart.
+     * Bangun sekali lalu pakai berulang kali (mis. di dalam loop) supaya tidak sort
+     * ulang tiap iterasi.
      */
     public Map<String, Integer> buildScheduleOrderIndex(List<Schedule> sortedSchedules) {
         Map<String, Integer> orderIndex = new HashMap<>();
@@ -52,8 +58,10 @@ public class ScheduleService {
     }
 
     /**
-     * Menentukan timeEnd suatu mata kuliah berdasarkan slot awalnya (startSchedule) dan
-     * berapa banyak slot yang dipakai (sksCount). Misal startSchedule ada di urutan ke-4
+     * Menentukan timeEnd suatu mata kuliah berdasarkan slot awalnya (startSchedule)
+     * dan
+     * berapa banyak slot yang dipakai (sksCount). Misal startSchedule ada di urutan
+     * ke-4
      * dan sksCount 3, maka dipakai slot 4, 5, 6 -- timeEnd yang dikembalikan adalah
      * timeEnd dari slot ke-6.
      */
@@ -64,7 +72,8 @@ public class ScheduleService {
             throw new IllegalStateException("Schedule Slot Not Found: " + startSchedule.getId());
         }
 
-        if(isLab) sksCount = sksCount + 2;
+        if (isLab)
+            sksCount = sksCount + 2;
         int endIndex = startIndex + sksCount - 1;
         if (endIndex >= sortedSchedules.size()) {
             throw new IllegalStateException(
@@ -76,6 +85,16 @@ public class ScheduleService {
 
     public List<Schedule> findAllScheduleById(List<String> scheduleIds) {
         return scheduleRepository.findAllByIdIn(scheduleIds);
+    }
+
+    public List<LecturerScheduleWrapper> findAllScheduleByIdLecturer(
+            List<LecturerScheduleDTO> lecturerScheduleDTOList) {
+        return lecturerScheduleDTOList.stream()
+                .map(dto -> {
+                    var schedules = scheduleRepository.findAllByIdIn(dto.getScheduleIds());
+                    return new LecturerScheduleWrapper(Day.fromString(dto.getDay()), schedules);
+                })
+                .collect(Collectors.toList());
     }
 
     public Optional<Schedule> findScheduleByTimeStart(LocalTime timeStart) {
