@@ -39,6 +39,6 @@ public class Schedule {
     private Set<CourseSchedule> courseSchedules;
 
     @OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSchedule> lecturerSchedules;
+    private Set<LecturerScheduleTime> lecturerScheduleTimes;
 
 }
