@@ -15,15 +15,12 @@ import lombok.NoArgsConstructor;
 public class SubMajorDTO {
 
     private String name;
-    private String prodiId;
 
     public void checkDTO() {
         trim();
         checkLength();
         if (this.name == null)
             throw new IllegalArgumentException("Name Cannot Be NULL");
-        if (this.prodiId == null)
-            throw new IllegalArgumentException("Prodi ID Cannot Be NULL");
     }
 
     public void checkLength() {
@@ -37,7 +34,6 @@ public class SubMajorDTO {
 
     public void trim() {
         this.name = Optional.ofNullable(this.name).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
-        this.prodiId = Optional.ofNullable(this.prodiId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
     }
 
 }

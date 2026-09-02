@@ -34,8 +34,8 @@ import java.util.ArrayList;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "${storage.api-prefix}/all/submajor")
-public class SubMajorController {
+@RequestMapping(value = "${storage.api-prefix}/prodiAdmin/submajor")
+public class SubMajorProdiAdminController {
 
     @Autowired
     private AuthService authService;
@@ -49,8 +49,8 @@ public class SubMajorController {
             + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
-    @GetMapping("/{prodiId}")
-    public ResponseEntity<Object> getSubMajors(HttpServletRequest request, @PathVariable String prodiId) {
+    @GetMapping
+    public ResponseEntity<Object> getSubMajors(HttpServletRequest request) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -58,23 +58,17 @@ public class SubMajorController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> categoryOpt = categoryService.findProdiById(prodiId);
-                    if (categoryOpt.isPresent()) {
-                        Category category = categoryOpt.get();
-                        ArrayList<Map<String, Object>> categoryList = new ArrayList<>();
-                        for (SubMajor subMajor : categoryService.findAllSubMajorsByCategory(category)) {
-                            categoryList.add(Map.of(
-                                    "id", subMajor.getId(),
-                                    "name", subMajor.getName(),
-                                    "createdAt", subMajor.getCreatedAt(),
-                                    "updatedAt", subMajor.getUpdatedAt()));
-                        }
-                        data = categoryList;
-                    } else {
-                        httpCode = HTTPCode.FORBIDDEN;
-                        data = new ErrorMessage(httpCode, "Category Not Prodi");
+                if (authService.isProdiAdmin(user)) {
+                    Category category = user.getProdiId();
+                    ArrayList<Map<String, Object>> categoryList = new ArrayList<>();
+                    for (SubMajor subMajor : categoryService.findAllSubMajorsByCategory(category)) {
+                        categoryList.add(Map.of(
+                                "id", subMajor.getId(),
+                                "name", subMajor.getName(),
+                                "createdAt", subMajor.getCreatedAt(),
+                                "updatedAt", subMajor.getUpdatedAt()));
                     }
+                    data = categoryList;
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -102,8 +96,8 @@ public class SubMajorController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "SubMajor Not Found")
-    @GetMapping("/{prodiId}/{subMajorId}")
-    public ResponseEntity<Object> getSubMajorById(HttpServletRequest request, @PathVariable String prodiId,
+    @GetMapping("/{subMajorId}")
+    public ResponseEntity<Object> getSubMajorById(HttpServletRequest request,
             @PathVariable String subMajorId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
@@ -112,26 +106,20 @@ public class SubMajorController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> categoryOpt = categoryService.findProdiById(prodiId);
-                    if (categoryOpt.isPresent()) {
-                        Category category = categoryOpt.get();
-                        Optional<SubMajor> subMajorOpt = categoryService.findSubMajorByIdAndCategory(subMajorId,
-                                category);
-                        if (subMajorOpt.isPresent()) {
-                            SubMajor subMajor = subMajorOpt.get();
-                            data = Map.of(
-                                    "id", subMajor.getId(),
-                                    "name", subMajor.getName(),
-                                    "createdAt", subMajor.getCreatedAt(),
-                                    "updatedAt", subMajor.getUpdatedAt());
-                        } else {
-                            httpCode = HTTPCode.NOT_FOUND;
-                            data = new ErrorMessage(httpCode, "SubMajor Not Found");
-                        }
+                if (authService.isProdiAdmin(user)) {
+                    Category category = user.getProdiId();
+                    Optional<SubMajor> subMajorOpt = categoryService.findSubMajorByIdAndCategory(subMajorId,
+                            category);
+                    if (subMajorOpt.isPresent()) {
+                        SubMajor subMajor = subMajorOpt.get();
+                        data = Map.of(
+                                "id", subMajor.getId(),
+                                "name", subMajor.getName(),
+                                "createdAt", subMajor.getCreatedAt(),
+                                "updatedAt", subMajor.getUpdatedAt());
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Prodi Not Found");
+                        data = new ErrorMessage(httpCode, "SubMajor Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
@@ -159,8 +147,8 @@ public class SubMajorController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "SubMajor Not Found")
-    @DeleteMapping("/{prodiId}/{subMajorId}")
-    public ResponseEntity<Object> deleteSubMajor(HttpServletRequest request, @PathVariable String prodiId,
+    @DeleteMapping("/{subMajorId}")
+    public ResponseEntity<Object> deleteSubMajor(HttpServletRequest request,
             @PathVariable String subMajorId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
@@ -169,23 +157,17 @@ public class SubMajorController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
-                    Optional<Category> categoryOpt = categoryService.findProdiById(prodiId);
-                    if (categoryOpt.isPresent()) {
-                        Category c = categoryOpt.get();
-                        Optional<SubMajor> subMajorOpt = categoryService.findSubMajorByIdAndCategory(subMajorId, c);
-                        if (subMajorOpt.isPresent()) {
-                            SubMajor subMajor = subMajorOpt.get();
-                            categoryService.deleteSubMajor(subMajor);
-                            data = Map.of(
-                                    "message", "SubMajor Deleted Successfully");
-                        } else {
-                            httpCode = HTTPCode.NOT_FOUND;
-                            data = new ErrorMessage(httpCode, "SubMajor Not Found");
-                        }
+                if (authService.isProdiAdmin(user)) {
+                    Category category = user.getProdiId();
+                    Optional<SubMajor> subMajorOpt = categoryService.findSubMajorByIdAndCategory(subMajorId, category);
+                    if (subMajorOpt.isPresent()) {
+                        SubMajor subMajor = subMajorOpt.get();
+                        categoryService.deleteSubMajor(subMajor);
+                        data = Map.of(
+                                "message", "SubMajor Deleted Successfully");
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Prodi Not Found");
+                        data = new ErrorMessage(httpCode, "SubMajor Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
@@ -214,7 +196,7 @@ public class SubMajorController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
-    @PostMapping("/{prodiId}")
+    @PostMapping
     public ResponseEntity<Object> createSubMajor(HttpServletRequest request, @RequestBody SubMajorDTO subMajorDTO,
             @PathVariable String prodiId) {
         String sessionToken = request.getHeader("Token");
@@ -224,24 +206,18 @@ public class SubMajorController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                if (authService.isProdiAdmin(user)) {
                     subMajorDTO.checkDTO();
-                    Optional<Category> categoryOpt = categoryService.findProdiById(prodiId);
-                    if (categoryOpt.isPresent()) {
-                        Category category = categoryOpt.get();
-                        if (categoryService.isSubMajorExistByNameAndCategory(subMajorDTO.getName(), category))
-                            throw new IllegalArgumentException("Name Already Exist");
+                    Category category = user.getProdiId();
+                    if (categoryService.isSubMajorExistByNameAndCategory(subMajorDTO.getName(), category))
+                        throw new IllegalArgumentException("Name Already Exist");
 
-                        SubMajor subMajor = categoryService.createSubMajor(subMajorDTO, category, user);
-                        data = Map.of(
-                                "id", subMajor.getId(),
-                                "name", subMajor.getName(),
-                                "createdAt", subMajor.getCreatedAt(),
-                                "updatedAt", subMajor.getUpdatedAt());
-                    } else {
-                        httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Prodi Not Found");
-                    }
+                    SubMajor subMajor = categoryService.createSubMajor(subMajorDTO, category, user);
+                    data = Map.of(
+                            "id", subMajor.getId(),
+                            "name", subMajor.getName(),
+                            "createdAt", subMajor.getCreatedAt(),
+                            "updatedAt", subMajor.getUpdatedAt());
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;
                     data = new ErrorMessage(httpCode, "Access Denied");
@@ -279,30 +255,26 @@ public class SubMajorController {
             if (sessionOpt.isPresent()) {
                 Session session = sessionOpt.get();
                 User user = session.getUserId();
-                if (authService.isSuperAdmin(user) || authService.isBaaAdmin(user)) {
+                if (authService.isProdiAdmin(user)) {
                     subMajorDTO.checkDTO();
-                    Optional<Category> categoryOpt = categoryService.findProdiById(prodiId);
-                    if (categoryOpt.isPresent()) {
-                        Category category = categoryOpt.get();
-                        Optional<SubMajor> subMajorOpt = categoryService.findSubMajorByIdAndCategory(subMajorId,
-                                category);
-                        if (subMajorOpt.isPresent()) {
-                            if (categoryService.isSubMajorExistByNameAndCategoryAndIdNot(subMajorDTO.getName(), category, subMajorId))
-                                throw new IllegalArgumentException("Name Already Exist");
-                            SubMajor currentSubMajor = subMajorOpt.get();
-                            SubMajor subMajor = categoryService.editSubMajor(currentSubMajor, subMajorDTO, category, user);
-                            data = Map.of(
-                                    "id", subMajor.getId(),
-                                    "name", subMajor.getName(),
-                                    "createdAt", subMajor.getCreatedAt(),
-                                    "updatedAt", subMajor.getUpdatedAt());
-                        } else {
-                            httpCode = HTTPCode.NOT_FOUND;
-                            data = new ErrorMessage(httpCode, "SubMajor Not Found");
-                        }
+                    Category category = user.getProdiId();
+                    Optional<SubMajor> subMajorOpt = categoryService.findSubMajorByIdAndCategory(subMajorId,
+                            category);
+                    if (subMajorOpt.isPresent()) {
+                        if (categoryService.isSubMajorExistByNameAndCategoryAndIdNot(subMajorDTO.getName(),
+                                category, subMajorId))
+                            throw new IllegalArgumentException("Name Already Exist");
+                        SubMajor currentSubMajor = subMajorOpt.get();
+                        SubMajor subMajor = categoryService.editSubMajor(currentSubMajor, subMajorDTO,
+                                category, user);
+                        data = Map.of(
+                                "id", subMajor.getId(),
+                                "name", subMajor.getName(),
+                                "createdAt", subMajor.getCreatedAt(),
+                                "updatedAt", subMajor.getUpdatedAt());
                     } else {
                         httpCode = HTTPCode.NOT_FOUND;
-                        data = new ErrorMessage(httpCode, "Prodi Not Found");
+                        data = new ErrorMessage(httpCode, "SubMajor Not Found");
                     }
                 } else {
                     httpCode = HTTPCode.FORBIDDEN;

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.dto.CategoryDTO;
+import com.jadwal.restfulapi.dto.SubMajorDTO;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.Course;
 import com.jadwal.restfulapi.model.User;
@@ -138,9 +139,9 @@ public class CategoryService {
         return subMajorRepository.findByIdAndCategoryIdAndDeletedAtIsNull(subMajorId, category);
     }
 
-    public SubMajor createSubMajor(String subMajorName, Category category, User user) {
+    public SubMajor createSubMajor(SubMajorDTO subMajorDTO, Category category, User user) {
         SubMajor subMajor = new SubMajor();
-        subMajor.setName(subMajorName);
+        subMajor.setName(subMajorDTO.getName());
         subMajor.setCategoryId(category);
         subMajor.setCreatedBy(user);
         subMajor.setEditedBy(user);
@@ -149,8 +150,8 @@ public class CategoryService {
         return subMajorRepository.save(subMajor);
     }
 
-    public SubMajor editSubMajor(SubMajor subMajor, String subMajorName, Category category, User user) {
-        subMajor.setName(subMajorName);
+    public SubMajor editSubMajor(SubMajor subMajor, SubMajorDTO subMajorDTO, Category category, User user) {
+        subMajor.setName(subMajorDTO.getName());
         subMajor.setCategoryId(category);
         subMajor.setEditedBy(user);
         subMajor.setUpdatedAt(LocalDateTime.now());
