@@ -132,7 +132,7 @@ public class CategoryService {
     }
 
     public List<SubMajor> findAllSubMajorsByCategory(Category category) {
-        return subMajorRepository.findAllByCategoryId(category);
+        return subMajorRepository.findAllByCategoryIdAndDeletedAtIsNull(category);
     }
 
     public Optional<SubMajor> findSubMajorByIdAndCategory(String subMajorId, Category category) {
