@@ -197,8 +197,7 @@ public class SubMajorProdiAdminController {
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
     @PostMapping
-    public ResponseEntity<Object> createSubMajor(HttpServletRequest request, @RequestBody SubMajorDTO subMajorDTO,
-            @PathVariable String prodiId) {
+    public ResponseEntity<Object> createSubMajor(HttpServletRequest request, @RequestBody SubMajorDTO subMajorDTO) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
@@ -245,9 +244,8 @@ public class SubMajorProdiAdminController {
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "400", name = "invalid-body", message = "Name Cannot Be NULL")
-    @PutMapping("/{prodiId}/{subMajorId}")
-    public ResponseEntity<Object> editSubMajor(HttpServletRequest request, @RequestBody SubMajorDTO subMajorDTO,
-            @PathVariable String prodiId, @PathVariable String subMajorId) {
+    @PutMapping("/{subMajorId}")
+    public ResponseEntity<Object> editSubMajor(HttpServletRequest request, @RequestBody SubMajorDTO subMajorDTO, @PathVariable String subMajorId) {
         String sessionToken = request.getHeader("Token");
         HTTPCode httpCode = HTTPCode.OK;
         try {
