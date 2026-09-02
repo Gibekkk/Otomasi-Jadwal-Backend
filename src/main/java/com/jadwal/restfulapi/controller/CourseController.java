@@ -67,7 +67,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40, \"categoryId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40, \"categoryId\":\"uuid\",\"subMajor\":\"FSD\", \"subMajorId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -109,6 +109,8 @@ public class CourseController {
                                 Map.entry("isLab", course.getIsLab()),
                                 Map.entry("category", course.getCategoryId().getName()),
                                 Map.entry("categoryId", course.getCategoryId().getId()),
+                                Map.entry("subMajor", course.getSubMajorId().getName()),
+                                Map.entry("subMajorId", course.getSubMajorId().getId()),
                                 Map.entry("createdAt", course.getCreatedAt()),
                                 Map.entry("updatedAt", course.getUpdatedAt()),
                                 Map.entry("specializations", mapSpecializations(course))));
@@ -137,7 +139,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40, \"categoryId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40, \"categoryId\":\"uuid\",\"subMajor\":\"FSD\", \"subMajorId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -179,6 +181,8 @@ public class CourseController {
                                 Map.entry("isLab", c.getIsLab()),
                                 Map.entry("category", c.getCategoryId().getName()),
                                 Map.entry("categoryId", c.getCategoryId().getId()),
+                                Map.entry("subMajor", c.getSubMajorId().getName()),
+                                Map.entry("subMajorId", c.getSubMajorId().getId()),
                                 Map.entry("createdAt", c.getCreatedAt()),
                                 Map.entry("updatedAt", c.getUpdatedAt()),
                                 Map.entry("specializations", mapSpecializations(c)));
@@ -269,7 +273,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40, \"categoryId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40, \"categoryId\":\"uuid\",\"subMajor\":\"FSD\", \"subMajorId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -329,6 +333,8 @@ public class CourseController {
                             Map.entry("isLab", createdCourse.getIsLab()),
                             Map.entry("category", createdCourse.getCategoryId().getName()),
                             Map.entry("categoryId", createdCourse.getCategoryId().getId()),
+                            Map.entry("subMajor", createdCourse.getSubMajorId().getName()),
+                            Map.entry("subMajorId", createdCourse.getSubMajorId().getId()),
                             Map.entry("createdAt", createdCourse.getCreatedAt()),
                             Map.entry("updatedAt", createdCourse.getUpdatedAt()),
                             Map.entry("specializations", mapSpecializations(createdCourse)));
@@ -355,7 +361,7 @@ public class CourseController {
     }
 
     @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
-            + "\"capacity\":40, \"categoryId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
+            + "\"capacity\":40, \"categoryId\":\"uuid\",\"subMajor\":\"FSD\", \"subMajorId\":\"uuid\",\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":true,\"isLab\":false,"
             + "\"category\":\"Wajib\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
@@ -423,6 +429,8 @@ public class CourseController {
                                     Map.entry("isLab", editedCourse.getIsLab()),
                                     Map.entry("category", editedCourse.getCategoryId().getName()),
                                     Map.entry("categoryId", editedCourse.getCategoryId().getId()),
+                                    Map.entry("subMajor", editedCourse.getSubMajorId().getName()),
+                                    Map.entry("subMajorId", editedCourse.getSubMajorId().getId()),
                                     Map.entry("createdAt", editedCourse.getCreatedAt()),
                                     Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                     Map.entry("specializations", mapSpecializations(editedCourse)));
@@ -458,7 +466,7 @@ public class CourseController {
 
     @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
             + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":false,\"isLab\":false,"
-            + "\"category\":\"Wajib\", \"categoryId\":\"uuid\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+            + "\"category\":\"Wajib\", \"categoryId\":\"uuid\",\"subMajor\":\"FSD\", \"subMajorId\":\"uuid\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "Course Not Found")
@@ -498,6 +506,8 @@ public class CourseController {
                                     Map.entry("isLab", editedCourse.getIsLab()),
                                     Map.entry("category", editedCourse.getCategoryId().getName()),
                                     Map.entry("categoryId", editedCourse.getCategoryId().getId()),
+                                    Map.entry("subMajor", editedCourse.getSubMajorId().getName()),
+                                    Map.entry("subMajorId", editedCourse.getSubMajorId().getId()),
                                     Map.entry("createdAt", editedCourse.getCreatedAt()),
                                     Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                     Map.entry("specializations", mapSpecializations(editedCourse)));
@@ -533,7 +543,7 @@ public class CourseController {
 
     @SuccessExample(value = "{\"courseId\":\"uuid\",\"name\":\"Algoritma\",\"sksCount\":3,\"lecturerCount\":1,"
             + "\"capacity\":40,\"isInterdiscipline\":false,\"isOdd\":true,\"isActive\":false,\"isLab\":false,"
-            + "\"category\":\"Wajib\", \"categoryId\":\"uuid\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
+            + "\"category\":\"Wajib\", \"categoryId\":\"uuid\",\"subMajor\":\"FSD\", \"subMajorId\":\"uuid\",\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-02T00:00:00\"}")
     @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
     @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
     @ErrorExample(code = "404", name = "not-found", message = "Course Not Found")
@@ -573,6 +583,8 @@ public class CourseController {
                                     Map.entry("isLab", editedCourse.getIsLab()),
                                     Map.entry("category", editedCourse.getCategoryId().getName()),
                                     Map.entry("categoryId", editedCourse.getCategoryId().getId()),
+                                    Map.entry("subMajor", editedCourse.getSubMajorId().getName()),
+                                    Map.entry("subMajorId", editedCourse.getSubMajorId().getId()),
                                     Map.entry("createdAt", editedCourse.getCreatedAt()),
                                     Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                     Map.entry("specializations", mapSpecializations(editedCourse)));

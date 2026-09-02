@@ -23,6 +23,7 @@ public class CourseDTO {
     private Boolean isOdd;
     private Boolean isLab;
     private String categoryId;
+    private String subMajorId;
     private List<String> specializations;
 
     public void checkDTO(Boolean isProdiAdmin) {
@@ -52,6 +53,7 @@ public class CourseDTO {
     public void trim() {
         this.name = Optional.ofNullable(this.name).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
         this.categoryId = Optional.ofNullable(this.categoryId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
+        this.subMajorId = Optional.ofNullable(this.subMajorId).map(String::trim).filter(s -> !s.isBlank()).orElse(null);
     }
 
 }

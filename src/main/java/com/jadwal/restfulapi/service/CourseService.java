@@ -108,6 +108,7 @@ public class CourseService {
         course.setSksCount(courseDTO.getSksCount());
         course.setLecturerCount(courseDTO.getLecturerCount());
         course.setCapacity(courseDTO.getCapacity());
+        course.setSubMajorId(courseDTO.getSubMajorId());
         course.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         course.setIsOdd(courseDTO.getIsOdd());
         course.setIsActive(true);
@@ -131,6 +132,7 @@ public class CourseService {
         editedCourse.setSksCount(courseDTO.getSksCount());
         editedCourse.setLecturerCount(courseDTO.getLecturerCount());
         editedCourse.setCapacity(courseDTO.getCapacity());
+        editedCourse.setSubMajorId(courseDTO.getSubMajorId());
         editedCourse.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         editedCourse.setIsOdd(courseDTO.getIsOdd());
         editedCourse.setIsLab(courseDTO.getIsLab());
