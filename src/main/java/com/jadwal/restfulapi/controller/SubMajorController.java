@@ -24,7 +24,6 @@ import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.SubMajor;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
-import com.jadwal.restfulapi.dto.CategoryDTO;
 import com.jadwal.restfulapi.dto.SubMajorDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +31,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @CrossOrigin

@@ -26,7 +26,6 @@ import com.jadwal.restfulapi.util.HTTPCode;
 
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.Specialization;
-import com.jadwal.restfulapi.model.Schedule;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Lecturer;

@@ -39,6 +39,11 @@ public class AuthService {
         Optional<User> userOpt = userRepository.findByUsernameAndDeletedAtIsNull(username);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+
+            if (user.getRole().equals(Role.PRODI) && !isProdiAdmin(user)) {
+                return Optional.empty();
+            }
+
             if (passwordMaker.matchPassword(password, user.getPassword())) {
                 Session session = regenerateSessionToken(user);
                 return Optional.of(session);
@@ -52,7 +57,9 @@ public class AuthService {
     }
 
     public Boolean isProdiAdmin(User user) {
-        return user.getRole().equals(Role.PRODI);
+        Boolean prodiExist = Optional.ofNullable(user.getProdiId())
+                .map(prodi -> prodi.getDeletedAt() == null && prodi.getIsProdi()).orElse(false);
+        return user.getRole().equals(Role.PRODI) && prodiExist;
     }
 
     public Boolean isBaaAdmin(User user) {
@@ -106,9 +113,21 @@ public class AuthService {
             return Optional.empty();
         }
         Optional<Session> sessionOpt = sessionRepository.findById(sessionToken);
-        if (sessionOpt.isPresent())
-            updateSessionLastSeen(sessionOpt.get());
+        if (sessionOpt.isPresent()) {
+            Session session = sessionOpt.get();
+            if (isSessionRoleValid(session)) {
+                updateSessionLastSeen(session);
+            } else {
+                deleteSession(session);
+                return Optional.empty();
+            }
+        }
         return sessionOpt;
+    }
+
+    public Boolean isSessionRoleValid(Session session) {
+        User user = session.getUserId();
+        return isSuperAdmin(user) || isProdiAdmin(user) || isBaaAdmin(user) || isNtHumAdmin(user) || isPmAdmin(user);
     }
 
     public void updateSessionLastSeen(Session session) {
