@@ -25,6 +25,7 @@ import com.jadwal.restfulapi.util.HTTPCode;
 
 import com.jadwal.restfulapi.model.Session;
 import com.jadwal.restfulapi.model.Specialization;
+import com.jadwal.restfulapi.model.SubMajor;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Course;
@@ -318,9 +319,17 @@ public class CourseController {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(data);
                     }
+                    Optional<SubMajor> subMajorOpt = Optional.empty();
+                    if (courseDTO.getSubMajorId() != null) {
+                        subMajorOpt = categoryService
+                                .findSubMajorByIdAndCategory(courseDTO.getSubMajorId(), category);
+                        if (subMajorOpt.isEmpty()) {
+                            throw new IllegalArgumentException("SubMajor Not Found");
+                        }
+                    }
                     List<Specialization> specializations = specializationService
                             .findAllSpecializationById(courseDTO.getSpecializations());
-                    Course createdCourse = courseService.createCourse(courseDTO, category, user, specializations);
+                    Course createdCourse = courseService.createCourse(courseDTO, category, user, specializations, subMajorOpt);
                     data = Map.ofEntries(
                             Map.entry("courseId", createdCourse.getId()),
                             Map.entry("name", createdCourse.getName()),
@@ -413,10 +422,18 @@ public class CourseController {
                                             || category.getName().equals("Entrepreneurship"));
 
                         if (accessGranted) {
+                            Optional<SubMajor> subMajorOpt = Optional.empty();
+                            if (courseDTO.getSubMajorId() != null) {
+                                subMajorOpt = categoryService
+                                        .findSubMajorByIdAndCategory(courseDTO.getSubMajorId(), category);
+                                if (subMajorOpt.isEmpty()) {
+                                    throw new IllegalArgumentException("SubMajor Not Found");
+                                }
+                            }
                             List<Specialization> specializations = specializationService
                                     .findAllSpecializationById(courseDTO.getSpecializations());
                             editedCourse = courseService.editCourse(editedCourse, courseDTO, category, user,
-                                    specializations);
+                                    specializations, subMajorOpt);
                             data = Map.ofEntries(
                                     Map.entry("courseId", editedCourse.getId()),
                                     Map.entry("name", editedCourse.getName()),

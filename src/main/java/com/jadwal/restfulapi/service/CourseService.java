@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.jadwal.restfulapi.model.Course;
 import com.jadwal.restfulapi.model.CourseSpecialization;
 import com.jadwal.restfulapi.model.Specialization;
+import com.jadwal.restfulapi.model.SubMajor;
 import com.jadwal.restfulapi.model.User;
 import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.dto.CourseDTO;
@@ -102,13 +103,13 @@ public class CourseService {
         return course.getIsActive();
     }
 
-    public Course createCourse(CourseDTO courseDTO, Category category, User admin, List<Specialization> specializations) {
+    public Course createCourse(CourseDTO courseDTO, Category category, User admin, List<Specialization> specializations, Optional<SubMajor> subMajorOpt) {
         Course course = new Course();
         course.setName(courseDTO.getName());
         course.setSksCount(courseDTO.getSksCount());
         course.setLecturerCount(courseDTO.getLecturerCount());
         course.setCapacity(courseDTO.getCapacity());
-        course.setSubMajorId(courseDTO.getSubMajorId());
+        course.setSubMajorId(subMajorOpt.orElse(null));
         course.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         course.setIsOdd(courseDTO.getIsOdd());
         course.setIsActive(true);
@@ -127,12 +128,12 @@ public class CourseService {
         return savedCourse;
     }
 
-    public Course editCourse(Course editedCourse, CourseDTO courseDTO, Category category, User admin, List<Specialization> specializations) {
+    public Course editCourse(Course editedCourse, CourseDTO courseDTO, Category category, User admin, List<Specialization> specializations, Optional<SubMajor> subMajorOpt) {
         editedCourse.setName(courseDTO.getName());
         editedCourse.setSksCount(courseDTO.getSksCount());
         editedCourse.setLecturerCount(courseDTO.getLecturerCount());
         editedCourse.setCapacity(courseDTO.getCapacity());
-        editedCourse.setSubMajorId(courseDTO.getSubMajorId());
+        editedCourse.setSubMajorId(subMajorOpt.orElse(null));
         editedCourse.setIsInterdiscipline(courseDTO.getIsInterdiscipline());
         editedCourse.setIsOdd(courseDTO.getIsOdd());
         editedCourse.setIsLab(courseDTO.getIsLab());
