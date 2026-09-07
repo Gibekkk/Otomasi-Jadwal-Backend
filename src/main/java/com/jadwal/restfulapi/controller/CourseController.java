@@ -342,8 +342,8 @@ public class CourseController {
                             Map.entry("isLab", createdCourse.getIsLab()),
                             Map.entry("category", createdCourse.getCategoryId().getName()),
                             Map.entry("categoryId", createdCourse.getCategoryId().getId()),
-                            Map.entry("subMajor", Optional.ofNullable(createdCourse.getSubMajorId()).map(s -> s.getName())).orElse(""),
-                            Map.entry("subMajorId", Optional.ofNullable(createdCourse.getSubMajorId()).map(s -> s.getId())).orElse(""),
+                            Map.entry("subMajor", Optional.ofNullable(createdCourse.getSubMajorId()).map(s -> s.getName()).orElse("")),
+                            Map.entry("subMajorId", Optional.ofNullable(createdCourse.getSubMajorId()).map(s -> s.getId()).orElse("")),
                             Map.entry("createdAt", createdCourse.getCreatedAt()),
                             Map.entry("updatedAt", createdCourse.getUpdatedAt()),
                             Map.entry("specializations", mapSpecializations(createdCourse)));
@@ -446,8 +446,8 @@ public class CourseController {
                                     Map.entry("isLab", editedCourse.getIsLab()),
                                     Map.entry("category", editedCourse.getCategoryId().getName()),
                                     Map.entry("categoryId", editedCourse.getCategoryId().getId()),
-                                    Map.entry("subMajor", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getName())).orElse(""),
-                                    Map.entry("subMajorId", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getId())).orElse(""),
+                                    Map.entry("subMajor", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getName()).orElse("")),
+                                    Map.entry("subMajorId", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getId()).orElse("")),
                                     Map.entry("createdAt", editedCourse.getCreatedAt()),
                                     Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                     Map.entry("specializations", mapSpecializations(editedCourse)));
@@ -523,8 +523,8 @@ public class CourseController {
                                     Map.entry("isLab", editedCourse.getIsLab()),
                                     Map.entry("category", editedCourse.getCategoryId().getName()),
                                     Map.entry("categoryId", editedCourse.getCategoryId().getId()),
-                                    Map.entry("subMajor", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getName())).orElse(""),
-                                    Map.entry("subMajorId", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getId())).orElse(""),
+                                    Map.entry("subMajor", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getName()).orElse("")),
+                                    Map.entry("subMajorId", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getId()).orElse("")),
                                     Map.entry("createdAt", editedCourse.getCreatedAt()),
                                     Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                     Map.entry("specializations", mapSpecializations(editedCourse)));
@@ -600,8 +600,8 @@ public class CourseController {
                                     Map.entry("isLab", editedCourse.getIsLab()),
                                     Map.entry("category", editedCourse.getCategoryId().getName()),
                                     Map.entry("categoryId", editedCourse.getCategoryId().getId()),
-                                    Map.entry("subMajor", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getName())).orElse(""),
-                                    Map.entry("subMajorId", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getId())).orElse(""),
+                                    Map.entry("subMajor", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getName()).orElse("")),
+                                    Map.entry("subMajorId", Optional.ofNullable(editedCourse.getSubMajorId()).map(s -> s.getId()).orElse("")),
                                     Map.entry("createdAt", editedCourse.getCreatedAt()),
                                     Map.entry("updatedAt", editedCourse.getUpdatedAt()),
                                     Map.entry("specializations", mapSpecializations(editedCourse)));
