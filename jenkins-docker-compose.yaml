@@ -10,6 +10,8 @@ services:
           memory: 2048M
     hostname: Jenkins
     image: jenkins/jenkins:lts-jdk17
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - target: 8080
         published: "8080"
