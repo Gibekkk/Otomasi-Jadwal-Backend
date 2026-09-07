@@ -110,8 +110,8 @@ public class CourseController {
                                 Map.entry("isLab", course.getIsLab()),
                                 Map.entry("category", course.getCategoryId().getName()),
                                 Map.entry("categoryId", course.getCategoryId().getId()),
-                                Map.entry("subMajor", Optional.ofNullable(course.getSubMajorId()).map(s -> s.getName())).orElse(""),
-                                Map.entry("subMajorId", Optional.ofNullable(course.getSubMajorId()).map(s -> s.getId())).orElse(""),
+                                Map.entry("subMajor", Optional.ofNullable(course.getSubMajorId()).map(s -> s.getName()).orElse("")),
+                                Map.entry("subMajorId", Optional.ofNullable(course.getSubMajorId()).map(s -> s.getId()).orElse("")),
                                 Map.entry("createdAt", course.getCreatedAt()),
                                 Map.entry("updatedAt", course.getUpdatedAt()),
                                 Map.entry("specializations", mapSpecializations(course))));
@@ -182,8 +182,8 @@ public class CourseController {
                                 Map.entry("isLab", c.getIsLab()),
                                 Map.entry("category", c.getCategoryId().getName()),
                                 Map.entry("categoryId", c.getCategoryId().getId()),
-                                Map.entry("subMajor", Optional.ofNullable(c.getSubMajorId()).map(s -> s.getName())).orElse(""),
-                                Map.entry("subMajorId", Optional.ofNullable(c.getSubMajorId()).map(s -> s.getId())).orElse(""),
+                                Map.entry("subMajor", Optional.ofNullable(c.getSubMajorId()).map(s -> s.getName()).orElse("")),
+                                Map.entry("subMajorId", Optional.ofNullable(c.getSubMajorId()).map(s -> s.getId()).orElse("")),
                                 Map.entry("createdAt", c.getCreatedAt()),
                                 Map.entry("updatedAt", c.getUpdatedAt()),
                                 Map.entry("specializations", mapSpecializations(c)));
