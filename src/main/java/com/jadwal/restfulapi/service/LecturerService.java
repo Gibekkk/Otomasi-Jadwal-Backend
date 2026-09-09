@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jadwal.restfulapi.model.Lecturer;
 import com.jadwal.restfulapi.model.LecturerSpecialization;
@@ -136,7 +137,6 @@ public class LecturerService {
         for (LecturerSchedule lecturerSchedule : savedLecturer.getLecturerSchedules()) {
             deleteLecturerScheduleTimesByLecturerSchedule(lecturerSchedule);
         }
-        deleteLecturerSchedulesByLecturer(savedLecturer);
         for (LecturerScheduleWrapper scheduleWrapper : schedules) {
             if (scheduleWrapper.getSchedules().size() > 0){
                 LecturerSchedule lecturerSchedule = lecturerScheduleRepository.save(new LecturerSchedule(null, savedLecturer, scheduleWrapper.getDay(), null));
@@ -155,6 +155,11 @@ public class LecturerService {
 
     public void deleteLecturerSchedulesByLecturer(Lecturer lecturer) {
         lecturerScheduleRepository.deleteAllByLecturerId(lecturer);
+    }
+
+    @Transactional
+    public void deleteLecturerSchedule(LecturerSchedule lecturerSchedule) {
+        lecturerScheduleRepository.delete(lecturerSchedule);
     }
 
     public void deleteLecturerScheduleTimesByLecturerSchedule(LecturerSchedule lecturerSchedule) {
