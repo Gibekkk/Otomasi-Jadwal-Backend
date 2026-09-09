@@ -138,10 +138,11 @@ public class LecturerService {
         }
         deleteLecturerSchedulesByLecturer(savedLecturer);
         for (LecturerScheduleWrapper scheduleWrapper : schedules) {
-            if (scheduleWrapper.getSchedules().size() > 0)
+            if (scheduleWrapper.getSchedules().size() > 0){
                 LecturerSchedule lecturerSchedule = lecturerScheduleRepository.save(new LecturerSchedule(null, savedLecturer, scheduleWrapper.getDay(), null));
-            for (Schedule schedule : scheduleWrapper.getSchedules()) {
-                lecturerScheduleTimeRepository.save(new LecturerScheduleTime(null, lecturerSchedule, schedule));
+                for (Schedule schedule : scheduleWrapper.getSchedules()) {
+                    lecturerScheduleTimeRepository.save(new LecturerScheduleTime(null, lecturerSchedule, schedule));
+                }
             }
         }
         
