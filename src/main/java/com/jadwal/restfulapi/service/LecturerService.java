@@ -118,8 +118,10 @@ public class LecturerService {
         return savedLecturer;
     }
 
+    @Transactional
     public Lecturer editLecturer(Lecturer editedLecturer, LecturerDTO lecturerDTO, Category category, User admin,
             List<Specialization> specializations, List<LecturerScheduleWrapper> schedules) {
+        
         editedLecturer.setName(lecturerDTO.getName());
         editedLecturer.setIsMale(lecturerDTO.getIsMale());
         editedLecturer.setIsInterdiscipline(lecturerDTO.getIsInterdiscipline());
@@ -138,6 +140,11 @@ public class LecturerService {
             deleteLecturerScheduleTimesByLecturerSchedule(lecturerSchedule);
             deleteLecturerSchedule(lecturerSchedule);
         }
+        
+        if (savedLecturer.getLecturerSchedules() != null) {
+            savedLecturer.getLecturerSchedules().clear();
+        }
+
         for (LecturerScheduleWrapper scheduleWrapper : schedules) {
             if (scheduleWrapper.getSchedules().size() > 0){
                 LecturerSchedule lecturerSchedule = lecturerScheduleRepository.save(new LecturerSchedule(null, savedLecturer, scheduleWrapper.getDay(), null));
