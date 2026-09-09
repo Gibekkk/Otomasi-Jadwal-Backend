@@ -136,6 +136,7 @@ public class LecturerService {
         
         for (LecturerSchedule lecturerSchedule : savedLecturer.getLecturerSchedules()) {
             deleteLecturerScheduleTimesByLecturerSchedule(lecturerSchedule);
+            deleteLecturerSchedule(lecturerSchedule);
         }
         for (LecturerScheduleWrapper scheduleWrapper : schedules) {
             if (scheduleWrapper.getSchedules().size() > 0){
