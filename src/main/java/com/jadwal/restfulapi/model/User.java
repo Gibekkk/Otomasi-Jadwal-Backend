@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.jadwal.restfulapi.model.enums.Role;
@@ -63,51 +64,51 @@ public class User {
     private Category prodiId;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Session> userSessions;
+    private Set<Session> userSessions = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecturer> userLecturerCreatedBy;
+    private Set<Lecturer> userLecturerCreatedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecturer> userLecturerEditedBy;
+    private Set<Lecturer> userLecturerEditedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> userCourseCreatedBy;
+    private Set<Course> userCourseCreatedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> userCourseEditedBy;
+    private Set<Course> userCourseEditedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Room> userRoomCreatedBy;
+    private Set<Room> userRoomCreatedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Room> userRoomEditedBy;
+    private Set<Room> userRoomEditedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Category> userCategoryCreatedBy;
+    private Set<Category> userCategoryCreatedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Category> userCategoryEditedBy;
+    private Set<Category> userCategoryEditedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Specialization> userSpecializationCreatedBy;
+    private Set<Specialization> userSpecializationCreatedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Specialization> userSpecializationEditedBy;
+    private Set<Specialization> userSpecializationEditedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LabGroup> userLabGroupCreatedBy;
+    private Set<LabGroup> userLabGroupCreatedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LabGroup> userLabGroupEditedBy;
+    private Set<LabGroup> userLabGroupEditedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<SubMajor> userSubMajorCreatedBy;
+    private Set<SubMajor> userSubMajorCreatedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "editedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<SubMajor> userSubMajorEditedBy;
+    private Set<SubMajor> userSubMajorEditedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "generatedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TimelineGeneration> userTimelineGenerationGeneratedBy;
+    private Set<TimelineGeneration> userTimelineGenerationGeneratedBy = new HashSet<>();
 
 }

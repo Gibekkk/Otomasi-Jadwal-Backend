@@ -1,6 +1,7 @@
 package com.jadwal.restfulapi.model;
 
 import com.jadwal.restfulapi.model.enums.Day;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -43,6 +44,6 @@ public class LecturerSchedule {
     private Day day;
 
     @OneToMany(mappedBy = "lecturerScheduleId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerScheduleTime> lecturerScheduleTimes;
+    private Set<LecturerScheduleTime> lecturerScheduleTimes = new HashSet<>();
 
 }

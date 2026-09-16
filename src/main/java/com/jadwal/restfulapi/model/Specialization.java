@@ -1,5 +1,6 @@
 package com.jadwal.restfulapi.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -54,11 +55,11 @@ public class Specialization {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "specializationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LabSpecialization> labSpecializations;
+    private Set<LabSpecialization> labSpecializations = new HashSet<>();
 
     @OneToMany(mappedBy = "specializationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSpecialization> lecturerSpecializations;
+    private Set<LecturerSpecialization> lecturerSpecializations = new HashSet<>();
 
     @OneToMany(mappedBy = "specializationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseSpecialization> courseSpecializations;
+    private Set<CourseSpecialization> courseSpecializations = new HashSet<>();
 }

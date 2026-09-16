@@ -21,6 +21,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.jadwal.restfulapi.model.enums.Religion;
@@ -75,13 +76,13 @@ public class Lecturer {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSpecialization> lecturerSpecializations;
+    private Set<LecturerSpecialization> lecturerSpecializations = new HashSet<>();
 
     @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerSchedule> lecturerSchedules;
+    private Set<LecturerSchedule> lecturerSchedules = new HashSet<>();
 
     @OneToMany(mappedBy = "lecturerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LectureLecturer> lectureLecturers;
+    private Set<LectureLecturer> lectureLecturers = new HashSet<>();
 
     public Boolean isDlb() {
         return Optional.ofNullable(this.lecturerSchedules).map(s -> s.size() > 0).orElse(false);

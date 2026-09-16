@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -56,15 +57,15 @@ public class Category {
     private User editedBy;
 
     @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> categoryCourses;
+    private Set<Course> categoryCourses = new HashSet<>();
 
     @OneToMany(mappedBy = "prodiId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<User> categoryUsers;
+    private Set<User> categoryUsers = new HashSet<>();
 
     @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecturer> categoryLecturers;
+    private Set<Lecturer> categoryLecturers = new HashSet<>();
 
     @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<SubMajor> categorySubMajors;
+    private Set<SubMajor> categorySubMajors = new HashSet<>();
 
 }

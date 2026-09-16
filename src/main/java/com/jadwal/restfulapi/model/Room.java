@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -60,5 +61,5 @@ public class Room {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseSchedule> courseSchedules;
+    private Set<CourseSchedule> courseSchedules = new HashSet<>();
 }

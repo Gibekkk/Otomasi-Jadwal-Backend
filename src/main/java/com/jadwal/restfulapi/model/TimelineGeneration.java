@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -47,5 +48,5 @@ public class TimelineGeneration {
     private FreeTable freeTableId;
 
     @OneToMany(mappedBy = "timelineGenerationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecture> generatedLectures;
+    private Set<Lecture> generatedLectures = new HashSet<>();
 }

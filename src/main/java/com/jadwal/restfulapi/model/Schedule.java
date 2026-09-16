@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -36,9 +37,9 @@ public class Schedule {
     private LocalTime timeEnd;
 
     @OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CourseSchedule> courseSchedules;
+    private Set<CourseSchedule> courseSchedules = new HashSet<>();
 
     @OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LecturerScheduleTime> lecturerScheduleTimes;
+    private Set<LecturerScheduleTime> lecturerScheduleTimes = new HashSet<>();
 
 }

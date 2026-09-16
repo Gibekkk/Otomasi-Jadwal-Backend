@@ -1,6 +1,7 @@
 package com.jadwal.restfulapi.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -36,10 +37,10 @@ public class LabGroup {
     private String name;
 
     @OneToMany(mappedBy = "labGroupId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LabSpecialization> labSpecializations;
+    private Set<LabSpecialization> labSpecializations = new HashSet<>();
 
     @OneToMany(mappedBy = "labGroupId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Room> labRooms;
+    private Set<Room> labRooms = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "created_by", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_lab_group_created_by"))

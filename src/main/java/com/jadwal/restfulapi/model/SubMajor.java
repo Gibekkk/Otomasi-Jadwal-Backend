@@ -1,6 +1,7 @@
 package com.jadwal.restfulapi.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -57,6 +58,6 @@ public class SubMajor {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "subMajorId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> subMajorCourses;
+    private Set<Course> subMajorCourses = new HashSet<>();
 
 }

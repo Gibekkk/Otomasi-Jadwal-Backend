@@ -1,5 +1,6 @@
 package com.jadwal.restfulapi.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -43,6 +44,6 @@ public class Lecture {
     private String fallbackReason;
 
     @OneToMany(mappedBy = "lectureId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<LectureLecturer> lectureLecturers;
+    private Set<LectureLecturer> lectureLecturers = new HashSet<>();
 
 }

@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.jadwal.restfulapi.model.enums.Day;
@@ -68,6 +69,6 @@ public class CourseSchedule {
     private Room roomId;
 
     @OneToMany(mappedBy = "courseScheduleId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Lecture> lectures;
+    private Set<Lecture> lectures = new HashSet<>();
 
 }
