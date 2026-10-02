@@ -67,7 +67,7 @@ public class TimelineController {
     private Object data = "";
 
     @NoAuth
-    @SuccessExample(value = "{\"monday\":[{\"id\":\"129322a8\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"ruangan\":\"R.301\",\"dosen\":\"Dr. Andi Wijaya\",\"kategori\":\"informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
+    @SuccessExample(value = "{\"monday\":[{\"id\":\"550e8400-e29b-41d4-a716-446655440000\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"isLab\":false,\"courseIndex\":1,\"ruangan\":\"R.301\",\"dosen\":[{\"lecturerName\":\"Dr. Andi Wijaya\",\"isMainLecturer\":true}],\"kategori\":\"Informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
     @GetMapping("/lectures")
     public ResponseEntity<Object> getLectures() {
         HTTPCode httpCode = HTTPCode.OK;
@@ -78,10 +78,6 @@ public class TimelineController {
             ArrayList<Object> thursday = new ArrayList<Object>();
             ArrayList<Object> friday = new ArrayList<Object>();
 
-            // Semua slot waktu diurutkan berdasarkan timeStart sekali di awal (bukan
-            // UUID-nya),
-            // supaya bisa dipakai berulang untuk menghitung timeEnd tiap lecture tanpa sort
-            // ulang.
             List<Schedule> sortedSchedules = scheduleService.findAllScheduleSortedByTimeStart();
             Map<String, Integer> scheduleOrderIndex = scheduleService.buildScheduleOrderIndex(sortedSchedules);
 
@@ -104,9 +100,6 @@ public class TimelineController {
                 LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
                         startSchedule, sksCount, isLab);
 
-                // Pakai LinkedHashMap (bukan Map.ofEntries) karena "dosen" bisa null
-                // (lecturerId nullable di model Lecture) -- Map.entry melempar NPE untuk value
-                // null.
                 Map<String, Object> lectureData = new LinkedHashMap<>();
                 lectureData.put("id", lecture.getId());
                 lectureData.put("timeStart", startSchedule.getTimeStart());
@@ -145,7 +138,7 @@ public class TimelineController {
     }
 
     @NoAuth
-    @SuccessExample(value = "{\"monday\":[{\"id\":\"129322a8\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"ruangan\":\"R.301\",\"dosen\":\"Dr. Andi Wijaya\",\"kategori\":\"informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
+    @SuccessExample(value = "[{\"id\":\"550e8400-e29b-41d4-a716-446655440000\",\"day\":\"MONDAY\",\"scheduleId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"ruangan\":\"R.301\",\"ruanganId\":\"7c9e6679-7425-40de-944b-e07fc1f90ae7\",\"sksCount\":2}]")
     @ErrorExample(code = "404", name = "not-found", message = "Lecture Not Found")
     @GetMapping("/lectures/{lectureId}/splits")
     public ResponseEntity<Object> getLectureSplitsById(@PathVariable String lectureId) {
@@ -196,7 +189,7 @@ public class TimelineController {
     }
 
     @NoAuth
-    @SuccessExample(value = "{\"monday\":[{\"id\":\"129322a8\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"ruangan\":\"R.301\",\"dosen\":\"Dr. Andi Wijaya\",\"kategori\":\"informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
+    @SuccessExample(value = "{\"id\":\"550e8400-e29b-41d4-a716-446655440000\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"isLab\":false,\"courseIndex\":1,\"ruangan\":\"R.301\",\"dosen\":[{\"lecturerName\":\"Dr. Andi Wijaya\",\"isMainLecturer\":true}],\"kategori\":\"Informatika\",\"canEdit\":false}")
     @ErrorExample(code = "404", name = "not-found", message = "Lecture Not Found")
     @GetMapping("/lectures/{lectureId}")
     public ResponseEntity<Object> getLecturesById(HttpServletRequest request, @PathVariable String lectureId) {
@@ -274,7 +267,7 @@ public class TimelineController {
     }
 
     @NoAuth
-    @SuccessExample(value = "[{\"id\":\"uuid\",\"timeStart\":\"7.30\",\"timeEnd\":\"8.20\"}]")
+    @SuccessExample(value = "[{\"id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"timeStart\":\"07:30:00\",\"timeEnd\":\"08:20:00\"}]")
     @ErrorExample(code = "404", name = "not-found", message = "Status Not Found")
     @GetMapping("/schedules")
     public ResponseEntity<Object> getShcedules() {
@@ -300,7 +293,7 @@ public class TimelineController {
     }
 
     @NoAuth
-    @SuccessExample(value = "{\"id\":\"uuid\",\"isGenerating\":false,\"isOdd\":true,\"academicYear\":2026}")
+    @SuccessExample(value = "{\"isGenerating\":false,\"isOdd\":true,\"academicYear\":2026}")
     @ErrorExample(code = "404", name = "not-found", message = "Status Not Found")
     @GetMapping("/status")
     public ResponseEntity<Object> getStatus() {
@@ -384,7 +377,7 @@ public class TimelineController {
                 .body(data);
     }
 
-    @SuccessExample(value = "{\"isGenerating\":true,\"isOdd\":true,\"academicYear\":2026}")
+    @SuccessExample(value = "{\"isGenerating\":false,\"isOdd\":true,\"academicYear\":2026}")
     @ErrorExample(code = "404", name = "not-found", message = "Status Not Found")
     @PostMapping("/generateComplete")
     public ResponseEntity<Object> generateComplete(@RequestBody String secretKey) {
