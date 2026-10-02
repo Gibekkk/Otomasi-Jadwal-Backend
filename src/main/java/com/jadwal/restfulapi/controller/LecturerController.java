@@ -179,6 +179,79 @@ public class LecturerController {
                 .body(data);
     }
 
+    @SuccessExample(value = "[{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
+            + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
+            + "\"specializations\":[\"Jaringan Komputer\"],"
+            + "\"schedules\":[{\"timeStart\":\"08:00:00\",\"timeEnd\":\"09:40:00\"}],"
+            + "\"createdAt\":\"2026-01-01T00:00:00\",\"updatedAt\":\"2026-01-01T00:00:00\"}]")
+    @ErrorExample(code = "401", name = "session-invalid", message = "Authentication Failed")
+    @ErrorExample(code = "403", name = "access-denied", message = "Access Denied")
+    @ErrorExample(code = "404", name = "category-not-found", message = "Category not found")
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Object> getLecturersByCategory(@PathVariable String categoryId, HttpServletRequest request) {
+        String sessionToken = request.getHeader("Token");
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken);
+            if (sessionOpt.isPresent()) {
+                Session session = sessionOpt.get();
+                User user = session.getUserId();
+                if (authService.isSuperAdmin(user) || authService.isProdiAdmin(user)
+                        || authService.isNtHumAdmin(user)) {
+                    Optional<Category> categoryOpt = categoryService.findCategoryById(categoryId);
+                    if (categoryOpt.isPresent()) {
+                        Category category = categoryOpt.get();
+                        List<Lecturer> lecturers = new ArrayList<>();
+                        lecturers = lecturerService.findLecturerByCategoryAndInterdiscipline(category);
+
+                        ArrayList<Map<String, Object>> lecturerList = new ArrayList<>();
+                        for (Lecturer lecturer : lecturers) {
+                            lecturerList.add(Map.ofEntries(
+                                    Map.entry("id", lecturer.getId()),
+                                    Map.entry("name", lecturer.getName()),
+                                    Map.entry("isDlb", lecturer.isDlb()),
+                                    Map.entry("isMale", lecturer.getIsMale()),
+                                    Map.entry("isActive", lecturer.getIsActive()),
+                                    Map.entry("isInterdiscipline", lecturer.getIsInterdiscipline()),
+                                    Map.entry("religion", lecturer.getReligion().toString()),
+                                    Map.entry("category", lecturer.getCategoryId().getName()),
+                                    Map.entry("categoryId", lecturer.getCategoryId().getId()),
+                                    Map.entry("specializations", mapSpecializations(lecturer)),
+                                    Map.entry("schedules", mapSchedules(lecturer)),
+                                    Map.entry("createdAt", lecturer.getCreatedAt()),
+                                    Map.entry("updatedAt", lecturer.getUpdatedAt())));
+                        }
+                        data = lecturerList;
+                    } else {
+                        httpCode = HTTPCode.NOT_FOUND;
+                        data = new ErrorMessage(httpCode, "Category not found");
+                        return ResponseEntity
+                                .status(httpCode.getStatus())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .body(data);
+                    }
+                } else {
+                    httpCode = HTTPCode.FORBIDDEN;
+                    data = new ErrorMessage(httpCode, "Access Denied");
+                }
+            } else {
+                httpCode = HTTPCode.UNAUTHORIZED;
+                data = new ErrorMessage(httpCode, "Authentication Failed");
+            }
+        } catch (IllegalArgumentException e) {
+            httpCode = HTTPCode.BAD_REQUEST;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
+
     @SuccessExample(value = "{\"id\":\"uuid\",\"name\":\"Budi Dosen\",\"isDlb\":false,\"isMale\":true,"
             + "\"isActive\":true,\"isInterdiscipline\":false,\"religion\":\"ISLAM\",\"category\":\"Wajib\", \"categoryId\":\"uuid\","
             + "\"specializations\":[\"Jaringan Komputer\"],"
@@ -372,7 +445,8 @@ public class LecturerController {
                     }
                     List<Specialization> specializations = specializationService
                             .findAllSpecializationById(lecturerDTO.getSpecializations());
-                    List<LecturerScheduleWrapper> schedules = scheduleService.findAllScheduleByIdLecturer(lecturerDTO.getSchedules());
+                    List<LecturerScheduleWrapper> schedules = scheduleService
+                            .findAllScheduleByIdLecturer(lecturerDTO.getSchedules());
                     Lecturer createdLecturer = lecturerService.createLecturer(lecturerDTO, category, user,
                             specializations, schedules);
                     data = Map.ofEntries(
@@ -476,7 +550,8 @@ public class LecturerController {
                         if (accessGranted) {
                             List<Specialization> specializations = specializationService
                                     .findAllSpecializationById(lecturerDTO.getSpecializations());
-                            List<LecturerScheduleWrapper> schedules = scheduleService.findAllScheduleByIdLecturer(lecturerDTO.getSchedules());
+                            List<LecturerScheduleWrapper> schedules = scheduleService
+                                    .findAllScheduleByIdLecturer(lecturerDTO.getSchedules());
                             editedLecturer = lecturerService.editLecturer(editedLecturer, lecturerDTO, category, user,
                                     specializations, schedules);
                             data = Map.ofEntries(
