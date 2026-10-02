@@ -293,40 +293,4 @@ public class TimelineController {
                 .body(data);
     }
 
-    // Only for testing, delete ASAP
-    @NoAuth
-    @SuccessExample(value = "{\"id\":\"uuid\",\"isGenerating\":true,\"isOdd\":true,\"academicYear\":2026}")
-    @ErrorExample(code = "404", name = "not-found", message = "Status Not Found")
-    @GetMapping("/toggleGenerate")
-    public ResponseEntity<Object> toggleGenerate() {
-        HTTPCode httpCode = HTTPCode.OK;
-        try {
-            Optional<FreeTable> freeTableOpt = freeTableService.findStatus();
-            if (freeTableOpt.isPresent()) {
-                FreeTable freeTable = freeTableService.toggleGenerating(freeTableOpt.get());
-                Map<String, Object> statusPayload = Map.ofEntries(
-                        Map.entry("id", freeTable.getId()),
-                        Map.entry("isGenerating", freeTable.getIsGenerating()),
-                        Map.entry("isOdd",
-                                Optional.ofNullable(freeTable.getTimelineGenerationId()).map(t -> t.getIsOdd())
-                                        .orElse(false)),
-                        Map.entry("academicYear", Optional.ofNullable(freeTable.getTimelineGenerationId())
-                                .map(t -> t.getAcademicYear()).orElse(0)));
-                statusHandler.broadcast(objectMapper.writeValueAsString(statusPayload));
-                data = statusPayload;
-            } else {
-                httpCode = HTTPCode.NOT_FOUND;
-                data = new ErrorMessage(httpCode, "Status Not Found");
-            }
-        } catch (Exception e) {
-            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
-            data = new ErrorMessage(httpCode, e.getMessage());
-        }
-
-        return ResponseEntity
-                .status(httpCode.getStatus())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(data);
-    }
-
 }
