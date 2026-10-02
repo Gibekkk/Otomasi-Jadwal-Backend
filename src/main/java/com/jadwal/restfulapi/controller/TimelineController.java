@@ -24,6 +24,7 @@ import com.jadwal.restfulapi.util.HTTPCode;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.jadwal.restfulapi.model.Category;
 import com.jadwal.restfulapi.model.CourseSchedule;
 import com.jadwal.restfulapi.model.FreeTable;
 import com.jadwal.restfulapi.model.Schedule;
@@ -198,46 +199,54 @@ public class TimelineController {
     @SuccessExample(value = "{\"monday\":[{\"id\":\"129322a8\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"ruangan\":\"R.301\",\"dosen\":\"Dr. Andi Wijaya\",\"kategori\":\"informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
     @ErrorExample(code = "404", name = "not-found", message = "Lecture Not Found")
     @GetMapping("/lectures/{lectureId}")
-    public ResponseEntity<Object> getLecturesById(@PathVariable String lectureId) {
+    public ResponseEntity<Object> getLecturesById(HttpServletRequest request, @PathVariable String lectureId) {
+        Optional<String> sessionToken = Optional.ofNullable(request.getHeader("Token"));
         HTTPCode httpCode = HTTPCode.OK;
         try {
-            ArrayList<Object> monday = new ArrayList<Object>();
-            ArrayList<Object> tuesday = new ArrayList<Object>();
-            ArrayList<Object> wednesday = new ArrayList<Object>();
-            ArrayList<Object> thursday = new ArrayList<Object>();
-            ArrayList<Object> friday = new ArrayList<Object>();
+            Optional<Lecture> lectureOpt = timelineService.getLectureById(lectureId);
 
-            // Semua slot waktu diurutkan berdasarkan timeStart sekali di awal (bukan
-            // UUID-nya),
-            // supaya bisa dipakai berulang untuk menghitung timeEnd tiap lecture tanpa sort
-            // ulang.
-            List<Schedule> sortedSchedules = scheduleService.findAllScheduleSortedByTimeStart();
-            Map<String, Integer> scheduleOrderIndex = scheduleService.buildScheduleOrderIndex(sortedSchedules);
+            if (lectureOpt.isPresent()) {
+                Lecture pointedLecture = lectureOpt.get();
+                CourseSchedule courseSchedule = pointedLecture.getCourseScheduleId();
 
-            for (Lecture lecture : timelineService.getLectures()) {
-                CourseSchedule courseSchedule = lecture.getCourseScheduleId();
-                Set<LectureLecturer> lectureLecturers = lecture.getLectureLecturers();
+                Set<LectureLecturer> lectureLecturers = pointedLecture.getLectureLecturers();
                 ArrayList<Map<String, Object>> lecturers = new ArrayList<Map<String, Object>>();
                 for (LectureLecturer lectureLecturer : lectureLecturers) {
                     lecturers.add(Map.of(
                             "lecturerName", lectureLecturer.getLecturerId().getName(),
                             "isMainLecturer", lectureLecturer.getIsMainLecturer()));
                 }
-                Day day = courseSchedule.getDay();
+
+                List<Schedule> sortedSchedules = scheduleService.findAllScheduleSortedByTimeStart();
+                Map<String, Integer> scheduleOrderIndex = scheduleService.buildScheduleOrderIndex(sortedSchedules);
 
                 Schedule startSchedule = courseSchedule.getScheduleId();
                 int sksCount = courseSchedule.getSksCount();
-                if (sksCount <= 0)
-                    continue;
                 Boolean isLab = courseSchedule.getIsLab();
                 LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
                         startSchedule, sksCount, isLab);
 
-                // Pakai LinkedHashMap (bukan Map.ofEntries) karena "dosen" bisa null
-                // (lecturerId nullable di model Lecture) -- Map.entry melempar NPE untuk value
-                // null.
+                Boolean canEdit = false;
+                if (sessionToken.isPresent()) {
+                    Optional<Session> sessionOpt = authService.findSessionBySessionToken(sessionToken.get());
+                    if (sessionOpt.isPresent()) {
+                        Category courseCategory = courseSchedule.getCourseId().getCategoryId();
+                        Session session = sessionOpt.get();
+                        User user = session.getUserId();
+                        if (authService.isSuperAdmin(user))
+                            canEdit = true;
+                        else if (authService.isBaaAdmin(user))
+                            canEdit = true;
+                        else if (authService.isProdiAdmin(user) && courseCategory.equals(user.getProdiId()))
+                            canEdit = true;
+                        else if (authService.isNtHumAdmin(user) && (courseCategory.getName().equals("Entrepreneurship")
+                                || courseCategory.getName().equals("Umum")))
+                            canEdit = true;
+                    }
+                }
+
                 Map<String, Object> lectureData = new LinkedHashMap<>();
-                lectureData.put("id", lecture.getId());
+                lectureData.put("id", pointedLecture.getId());
                 lectureData.put("timeStart", startSchedule.getTimeStart());
                 lectureData.put("timeEnd", timeEnd);
                 lectureData.put("mataKuliah", courseSchedule.getCourseId().getName());
@@ -246,22 +255,13 @@ public class TimelineController {
                 lectureData.put("ruangan", courseSchedule.getRoomId().getName());
                 lectureData.put("dosen", lecturers);
                 lectureData.put("kategori", courseSchedule.getCourseId().getCategoryId().getName());
+                lectureData.put("canEdit", canEdit);
 
-                switch (day) {
-                    case MONDAY -> monday.add(lectureData);
-                    case TUESDAY -> tuesday.add(lectureData);
-                    case WEDNESDAY -> wednesday.add(lectureData);
-                    case THURSDAY -> thursday.add(lectureData);
-                    case FRIDAY -> friday.add(lectureData);
-                }
+                data = lectureData;
+            } else {
+                httpCode = HTTPCode.NOT_FOUND;
+                data = new ErrorMessage(httpCode, "Lecture Not Found");
             }
-
-            data = Map.ofEntries(
-                    Map.entry("monday", monday),
-                    Map.entry("tuesday", tuesday),
-                    Map.entry("wednesday", wednesday),
-                    Map.entry("thursday", thursday),
-                    Map.entry("friday", friday));
         } catch (Exception e) {
             httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
             data = new ErrorMessage(httpCode, e.getMessage());

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jadwal.restfulapi.model.Lecture;
+import java.util.Optional;
 import com.jadwal.restfulapi.model.Course;
 import com.jadwal.restfulapi.model.CourseSchedule;
 import com.jadwal.restfulapi.model.FreeTable;
@@ -25,6 +26,10 @@ public class TimelineService {
     public List<Lecture> getLectures() {
         FreeTable freeTable = freeTableRepository.findFirstByOrderByIdAsc().get();
         return lectureRepository.findAllByTimelineGenerationId(freeTable.getTimelineGenerationId());
+    }
+
+    public Optional<Lecture> getLectureById(String lectureId) {
+        return lectureRepository.findById(lectureId);
     }
 
     public ArrayList<Lecture> getLectureSplitsByLecture(Lecture pointedLecture) {
