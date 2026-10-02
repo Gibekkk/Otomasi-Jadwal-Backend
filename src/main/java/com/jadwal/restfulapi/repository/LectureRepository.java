@@ -11,4 +11,5 @@ import com.jadwal.restfulapi.model.TimelineGeneration;
 public interface LectureRepository extends JpaRepository<Lecture, String> {
     public List<Lecture> findAllByCourseScheduleId(CourseSchedule courseScheduleId);
     public List<Lecture> findAllByTimelineGenerationId(TimelineGeneration timelineGenerationId);
+    public List<Lecture> findAllByTimelineGenerationIdAndNotId(TimelineGeneration timelineGenerationId, String lectureId);
 }

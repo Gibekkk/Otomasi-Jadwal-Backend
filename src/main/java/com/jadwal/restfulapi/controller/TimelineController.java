@@ -3,6 +3,7 @@ package com.jadwal.restfulapi.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,6 @@ public class TimelineController {
 
     @NoAuth
     @SuccessExample(value = "{\"monday\":[{\"id\":\"129322a8\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"ruangan\":\"R.301\",\"dosen\":\"Dr. Andi Wijaya\",\"kategori\":\"informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
-    @ErrorExample(code = "404", name = "not-found", message = "Status Not Found")
     @GetMapping("/lectures")
     public ResponseEntity<Object> getLectures() {
         HTTPCode httpCode = HTTPCode.OK;
@@ -77,8 +77,10 @@ public class TimelineController {
             ArrayList<Object> thursday = new ArrayList<Object>();
             ArrayList<Object> friday = new ArrayList<Object>();
 
-            // Semua slot waktu diurutkan berdasarkan timeStart sekali di awal (bukan UUID-nya),
-            // supaya bisa dipakai berulang untuk menghitung timeEnd tiap lecture tanpa sort ulang.
+            // Semua slot waktu diurutkan berdasarkan timeStart sekali di awal (bukan
+            // UUID-nya),
+            // supaya bisa dipakai berulang untuk menghitung timeEnd tiap lecture tanpa sort
+            // ulang.
             List<Schedule> sortedSchedules = scheduleService.findAllScheduleSortedByTimeStart();
             Map<String, Integer> scheduleOrderIndex = scheduleService.buildScheduleOrderIndex(sortedSchedules);
 
@@ -88,21 +90,152 @@ public class TimelineController {
                 ArrayList<Map<String, Object>> lecturers = new ArrayList<Map<String, Object>>();
                 for (LectureLecturer lectureLecturer : lectureLecturers) {
                     lecturers.add(Map.of(
-                        "lecturerName", lectureLecturer.getLecturerId().getName(),
-                        "isMainLecturer", lectureLecturer.getIsMainLecturer()
-                    ));
+                            "lecturerName", lectureLecturer.getLecturerId().getName(),
+                            "isMainLecturer", lectureLecturer.getIsMainLecturer()));
                 }
                 Day day = courseSchedule.getDay();
 
                 Schedule startSchedule = courseSchedule.getScheduleId();
                 int sksCount = courseSchedule.getSksCount();
-                if(sksCount <= 0) continue;
+                if (sksCount <= 0)
+                    continue;
                 Boolean isLab = courseSchedule.getIsLab();
                 LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
                         startSchedule, sksCount, isLab);
 
                 // Pakai LinkedHashMap (bukan Map.ofEntries) karena "dosen" bisa null
-                // (lecturerId nullable di model Lecture) -- Map.entry melempar NPE untuk value null.
+                // (lecturerId nullable di model Lecture) -- Map.entry melempar NPE untuk value
+                // null.
+                Map<String, Object> lectureData = new LinkedHashMap<>();
+                lectureData.put("id", lecture.getId());
+                lectureData.put("timeStart", startSchedule.getTimeStart());
+                lectureData.put("timeEnd", timeEnd);
+                lectureData.put("mataKuliah", courseSchedule.getCourseId().getName());
+                lectureData.put("isLab", isLab);
+                lectureData.put("courseIndex", courseSchedule.getCourseIndex());
+                lectureData.put("ruangan", courseSchedule.getRoomId().getName());
+                lectureData.put("dosen", lecturers);
+                lectureData.put("kategori", courseSchedule.getCourseId().getCategoryId().getName());
+
+                switch (day) {
+                    case MONDAY -> monday.add(lectureData);
+                    case TUESDAY -> tuesday.add(lectureData);
+                    case WEDNESDAY -> wednesday.add(lectureData);
+                    case THURSDAY -> thursday.add(lectureData);
+                    case FRIDAY -> friday.add(lectureData);
+                }
+            }
+
+            data = Map.ofEntries(
+                    Map.entry("monday", monday),
+                    Map.entry("tuesday", tuesday),
+                    Map.entry("wednesday", wednesday),
+                    Map.entry("thursday", thursday),
+                    Map.entry("friday", friday));
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
+
+    @NoAuth
+    @SuccessExample(value = "{\"monday\":[{\"id\":\"129322a8\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"ruangan\":\"R.301\",\"dosen\":\"Dr. Andi Wijaya\",\"kategori\":\"informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
+    @ErrorExample(code = "404", name = "not-found", message = "Lecture Not Found")
+    @GetMapping("/lectures/{lectureId}/splits")
+    public ResponseEntity<Object> getLectureSplitsById(@PathVariable String lectureId) {
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            Optional<Lecture> lectureOpt = timelineService.getLectures().stream()
+                    .filter(lecture -> lecture.getId().equals(lectureId))
+                    .findFirst();
+
+            if (lectureOpt.isPresent()) {
+                Lecture pointedLecture = lectureOpt.get();
+                List<Schedule> sortedSchedules = scheduleService.findAllScheduleSortedByTimeStart();
+                Map<String, Integer> scheduleOrderIndex = scheduleService.buildScheduleOrderIndex(sortedSchedules);
+                ArrayList<Lecture> lectureSplits = timelineService.getLectureSplitsByLecture(pointedLecture);
+                ArrayList<Object> lectureSplitsData = new ArrayList<Object>();
+                for (Lecture lecture : lectureSplits) {
+                    CourseSchedule courseSchedule = lecture.getCourseScheduleId();
+                    int sksCount = courseSchedule.getSksCount();
+                    if (sksCount <= 0)
+                        continue;
+                    LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
+                            courseSchedule.getScheduleId(), sksCount, false);
+
+                    lectureSplitsData.add(Map.ofEntries(
+                            Map.entry("id", lecture.getId()),
+                            Map.entry("day", courseSchedule.getDay()),
+                            Map.entry("scheduleId", courseSchedule.getScheduleId()),
+                            Map.entry("timeStart", courseSchedule.getScheduleId().getTimeStart()),
+                            Map.entry("timeEnd", timeEnd),
+                            Map.entry("ruangan", courseSchedule.getRoomId().getName()),
+                            Map.entry("ruanganId", courseSchedule.getRoomId().getId()),
+                            Map.entry("sksCount", courseSchedule.getSksCount())));
+                }
+                data = lectureSplitsData;
+            } else {
+                httpCode = HTTPCode.NOT_FOUND;
+                data = new ErrorMessage(httpCode, "Lecture Not Found");
+            }
+        } catch (Exception e) {
+            httpCode = HTTPCode.INTERNAL_SERVER_ERROR;
+            data = new ErrorMessage(httpCode, e.getMessage());
+        }
+
+        return ResponseEntity
+                .status(httpCode.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(data);
+    }
+
+    @NoAuth
+    @SuccessExample(value = "{\"monday\":[{\"id\":\"129322a8\",\"timeStart\":\"08:20:00\",\"timeEnd\":\"09:10:00\",\"mataKuliah\":\"Pemrograman Web\",\"ruangan\":\"R.301\",\"dosen\":\"Dr. Andi Wijaya\",\"kategori\":\"informatika\"}],\"tuesday\":[],\"wednesday\":[],\"thursday\":[],\"friday\":[]}")
+    @ErrorExample(code = "404", name = "not-found", message = "Lecture Not Found")
+    @GetMapping("/lectures/{lectureId}")
+    public ResponseEntity<Object> getLecturesById(@PathVariable String lectureId) {
+        HTTPCode httpCode = HTTPCode.OK;
+        try {
+            ArrayList<Object> monday = new ArrayList<Object>();
+            ArrayList<Object> tuesday = new ArrayList<Object>();
+            ArrayList<Object> wednesday = new ArrayList<Object>();
+            ArrayList<Object> thursday = new ArrayList<Object>();
+            ArrayList<Object> friday = new ArrayList<Object>();
+
+            // Semua slot waktu diurutkan berdasarkan timeStart sekali di awal (bukan
+            // UUID-nya),
+            // supaya bisa dipakai berulang untuk menghitung timeEnd tiap lecture tanpa sort
+            // ulang.
+            List<Schedule> sortedSchedules = scheduleService.findAllScheduleSortedByTimeStart();
+            Map<String, Integer> scheduleOrderIndex = scheduleService.buildScheduleOrderIndex(sortedSchedules);
+
+            for (Lecture lecture : timelineService.getLectures()) {
+                CourseSchedule courseSchedule = lecture.getCourseScheduleId();
+                Set<LectureLecturer> lectureLecturers = lecture.getLectureLecturers();
+                ArrayList<Map<String, Object>> lecturers = new ArrayList<Map<String, Object>>();
+                for (LectureLecturer lectureLecturer : lectureLecturers) {
+                    lecturers.add(Map.of(
+                            "lecturerName", lectureLecturer.getLecturerId().getName(),
+                            "isMainLecturer", lectureLecturer.getIsMainLecturer()));
+                }
+                Day day = courseSchedule.getDay();
+
+                Schedule startSchedule = courseSchedule.getScheduleId();
+                int sksCount = courseSchedule.getSksCount();
+                if (sksCount <= 0)
+                    continue;
+                Boolean isLab = courseSchedule.getIsLab();
+                LocalTime timeEnd = scheduleService.resolveTimeEnd(sortedSchedules, scheduleOrderIndex,
+                        startSchedule, sksCount, isLab);
+
+                // Pakai LinkedHashMap (bukan Map.ofEntries) karena "dosen" bisa null
+                // (lecturerId nullable di model Lecture) -- Map.entry melempar NPE untuk value
+                // null.
                 Map<String, Object> lectureData = new LinkedHashMap<>();
                 lectureData.put("id", lecture.getId());
                 lectureData.put("timeStart", startSchedule.getTimeStart());
@@ -213,7 +346,8 @@ public class TimelineController {
                     Optional<FreeTable> freeTableOpt = freeTableService.findStatus();
                     if (freeTableOpt.isPresent()) {
                         if (!freeTableOpt.get().getIsGenerating()) {
-                            FreeTable freeTable = freeTableService.startGenerating(freeTableOpt.get(), generateDTO, user);
+                            FreeTable freeTable = freeTableService.startGenerating(freeTableOpt.get(), generateDTO,
+                                    user);
                             Map<String, Object> statusPayload = Map.ofEntries(
                                     Map.entry("isGenerating", freeTable.getIsGenerating()),
                                     Map.entry("isOdd",
