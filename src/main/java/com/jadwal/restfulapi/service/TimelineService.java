@@ -35,7 +35,7 @@ public class TimelineService {
     public ArrayList<Lecture> getLectureSplitsByLecture(Lecture pointedLecture) {
         FreeTable freeTable = freeTableRepository.findFirstByOrderByIdAsc().get();
         List<Lecture> lectures = lectureRepository
-                .findAllByTimelineGenerationIdAndNotId(freeTable.getTimelineGenerationId(), pointedLecture.getId());
+                .findAllByTimelineGenerationIdAndIdNot(freeTable.getTimelineGenerationId(), pointedLecture.getId());
         ArrayList<Lecture> lectureSplits = new ArrayList<Lecture>();
         for (Lecture lecture : lectures) {
             CourseSchedule courseSchedule = lecture.getCourseScheduleId();
